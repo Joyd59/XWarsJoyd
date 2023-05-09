@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         XWars Alarm
+// @name         XWars Tools
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description
+// @author       DarthRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @grant        none
 // @require      //cdn.jsdelivr.net/npm/sweetalert2@11
@@ -11,133 +11,11 @@
 
 (function() {
     'use strict';
-    //   _____________________________
-    //  |                             |
-    //  |        Notification         |
-    //  |_____________________________|
-
-
-
-    /////---------------------------
-
-    var beep = new Audio ("https://soundbible.com//mp3/Fuzzy Beep-SoundBible.com-1580329899.mp3")
-    var bell = new Audio("https://www.tones7.com/media/sweet_text.mp3")
-    var bell2 = new Audio("https://www.tones7.com/media/sweet_text.mp3")
-    var alarm = new Audio("https://www.tones7.com/media/emergency_alarm.mp3");
-    var testSound = new Audio("https://www.tones7.com/media/text_notification.mp3")
-
-    var bellEnabled = true
-    var alarmEnabled = true
-    var updateEnabled = true
-    var updateNotificationEnabled = false
-    var notification_turned_off = true
-
+    
     setTimeout(setClickListener,1000)
     let nIntervId
 
-    let check_Inveravll
-
-    var audioPlayPromise = true
-
-    setInterval(timerIncrement, 1000)
-
-    testSound.volume = 0
-    var promise = testSound.play();
-    if (promise) {
-        promise.catch(function(error) {
-            audioPlayPromise = false
-        });
-    }
-
-
-    if (!check_Inveravll) {
-        if(notification_turned_off) return
-            check_Inveravll = setInterval(checkForMessages, 1000);
-        }
-
-    var idleTime = 0;
-
-    function ResetIdleTime(){
-        idleTime = 0
-    }
-
-    function updateUebersicht(){
-        idleTime = 0
-        console.log("Update")
-        window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(3)").click()
-        if(updateNotificationEnabled)beep.play()
-        setTimeout(() => {
-            window[6].onkeypress = ResetIdleTime
-            window[6].onmousemove = ResetIdleTime
-        }, 2000);
-
-    }
-
-    function timerIncrement() {
-        idleTime = idleTime + 1;
-        if (idleTime > 150 + Math.floor(Math.random() * 20) ){ // about 3 minutes
-            if(updateEnabled)updateUebersicht();
-        }
-    }
-
-    function checkForMessages(){
-        var nachricht = false
-        for (const a of window[6].document.querySelectorAll("a")) {
-            if (a.textContent.includes("Nachricht")) {
-                nachricht = true
-            }
-        }
-        var ereignis = false
-        for (const a of window[6].document.querySelectorAll("a")) {
-            if (a.textContent.includes("Ereignis")) {
-                ereignis = true
-            }
-        }
-        if(nachricht || ereignis){ // Bedingung für Message Sound
-            if(idleTime > 10 && bellEnabled){
-                bellEnabled = false
-                playBell()
-                setTimeout(playBell2,700)
-                setTimeout(bellEnable,8000)
-            }
-        }
-        if(false){ // Bedingung für Attack Alarm
-            startAlarm()
-        }
-    }
-
-
-    function startAlarm(){
-        if(alarmEnabled){
-            alarm.play()
-            alarmEnabled = false
-            setTimeout(stopAlarm,3600)
-        }
-    }
-
-    function stopAlarm(){
-        alarm.pause();
-        alarm.currentTime = 0;
-        setTimeout(enableAlarm,10000)
-    }
-
-    function enableAlarm(){
-        alarmEnabled = true
-    }
-    function bellEnable(){
-        bellEnabled = true
-    }
-
-    function playBell(){
-        bell.play()
-    }
-    function playBell2(){
-        bell2.play()
-    }
-
-
-
-
+    
     //   _____________________________
     //  |                             |
     //  |         Ress Saven          |
@@ -147,7 +25,6 @@
 
 
     function menu_clicked(clickedElement){
-        ResetIdleTime()
         //console.log(clickedElement.srcElement.innerText)
         setTimeout(setClickListener,400)
     }
@@ -159,7 +36,6 @@
     }
 
     function main_clicked(clickedElement){
-        ResetIdleTime()
         setTimeout(setClickListener,400)
         var elementText = clickedElement.srcElement.innerText
         //console.log(elementText)
@@ -218,8 +94,6 @@
         var m = heute.getMinutes()+""
         window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
     }
-
-
 
 
     function parseHTML(html) {
