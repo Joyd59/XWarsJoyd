@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         XWars Tool
+// @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  try to take over the world!
+// @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @match        *original.xwars.net/?id*
