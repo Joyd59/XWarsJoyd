@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.01
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
