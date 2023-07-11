@@ -17,7 +17,7 @@
     //  |           CONFIG            |
     //  |_____________________________|
 
-    var notification_enabled = true
+    var notification_enabled = false
     const debug = false
 
     //--------------------------------------------------
