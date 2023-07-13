@@ -19,6 +19,23 @@
       "fz": 25680,
       "au": 120
     },
+     {
+      "name": "SOE BFF-1-Klasse",
+      "shipClass": "schwer",
+      "att": 726,
+      "def": 2124 ,
+      "drive": "HYP",
+      "drive_s": 110,
+      "freight": 280000,
+      "lkom": true,
+      "tt": false,
+      "fe": 106320,
+      "kr": 60600,
+      "fr": 10600,
+      "or": 31080,
+      "fz": 13680,
+      "au": 120
+    },
     {
       "name": "SOE TIE-Fighter-Klasse",
       "shipClass": "leicht",
