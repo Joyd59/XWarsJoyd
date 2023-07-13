@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -55,6 +55,7 @@
         var elementText = clickedElement.srcElement.innerText
         if(clickedElement.srcElement.localName == "select" && clickedElement.button == -1){
             if(debug)console.log("Planentenwechsel")
+            resetBuild()
         }
         switch(elementText){
             case "Übersicht":
@@ -62,6 +63,7 @@
                 break;
             case "Konstruktion":
                 if(debug)console.log("Konstruktion")
+                setTimeout(getBuildLvl,500)
                 break;
             case "Forschung":
                 if(debug)console.log("Forschung")
@@ -129,6 +131,7 @@
         if(clickedElement.srcElement.innerText.split("x").length == 3 && clickedElement.srcElement.localName == "b"){
             if(clickedElement.srcElement.innerText.includes(":")) return
             if(debug)console.log("Planentenwechsel")
+            resetBuild()
         }
 
         var elementText = clickedElement.srcElement.innerText
@@ -368,7 +371,7 @@
         var h = (heute.getHours()+8)%24+""
         var m = heute.getMinutes()+""
         window[6].document.getElementsByName("tt_res[0]")[0].value = ""
-        window[6].document.getElementsByName("tt_res[5]")[0].value = 999999
+        window[6].document.getElementsByName("tt_res[5]")[0].value = 99999999
         window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
         var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
         var save_planetNR = 0
@@ -402,8 +405,9 @@
         }catch (error) {
         }
         addLogButton_COUNTER = 0
-        if(debug)console.log("Handellog Button hinzufügen")
         const user = window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
+        if(!(user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus"))return
+        if(debug)console.log("Handellog Button hinzufügen")
         const trader = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2)").innerText
         if(trader.includes(user)) return
         window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(9) > td").innerHTML += '[  <a href="#" id="logTrade">Annehmen + Log</a>  ]'
@@ -692,21 +696,6 @@
         window[6].document.getElementById("tab_res_or").innerText = currentRes[RES_OR]
         window[6].document.getElementById("tab_res_fu").innerText = currentRes[RES_FU]
         window[6].document.getElementById("tab_res_au").innerText = currentRes[RES_AU]
-        //window[6].document.getElementById("my_eisen").value = 0
-        //window[6].document.getElementById("my_kristall").value = 0
-        //window[6].document.getElementById("my_frubin").value = 0
-        //window[6].document.getElementById("my_orizin").value = 0
-        //window[6].document.getElementById("my_frurozin").value = 0
-        //window[6].document.getElementById("my_gold").value = 0
-        //window[6].document.getElementById("his_eisen").value = 0
-        //window[6].document.getElementById("his_kristall").value = 0
-        //window[6].document.getElementById("his_frubin").value = 0
-        //window[6].document.getElementById("his_orizin").value = 0
-        //window[6].document.getElementById("his_frurozin").value = 0
-        //window[6].document.getElementById("his_gold").value = 0
-        //window[6].document.getElementById("galaxyTrade").value = ""
-        //window[6].document.getElementById("systemTrade").value = ""
-        //window[6].document.getElementById("planetTrade").value = ""
     }
 
     function updateTable2(){
@@ -724,57 +713,233 @@
         window[6].document.getElementById("tab_res_or").innerText = currentRes[RES_OR]
         window[6].document.getElementById("tab_res_fu").innerText = currentRes[RES_FU]
         window[6].document.getElementById("tab_res_au").innerText = currentRes[RES_AU]
-        //document.getElementById("my_eisen").value = 0
-        //document.getElementById("my_kristall").value = 0
-        //document.getElementById("my_frubin").value = 0
-        //document.getElementById("my_orizin").value = 0
-        //document.getElementById("my_frurozin").value = 0
-        //document.getElementById("my_gold").value = 0
-        //document.getElementById("his_eisen").value = 0
-        //document.getElementById("his_kristall").value = 0
-        //document.getElementById("his_frubin").value = 0
-        //document.getElementById("his_orizin").value = 0
-        //document.getElementById("his_frurozin").value = 0
-        //document.getElementById("his_gold").value = 0
-        //document.getElementById("galaxyTrade").value = ""
-        //document.getElementById("systemTrade").value = ""
-        //document.getElementById("planetTrade").value = ""
+    }
+
+    var getBuildLvl_COUNTER = 0
+
+    function resetBuild(){
+        build[INDEX_HQ][LVL] = ""
+        build[INDEX_BZ][LVL] = ""
+        build[INDEX_FZ][LVL] = ""
+        build[INDEX_SS][LVL] = ""
+        build[INDEX_FE][LVL] = ""
+        build[INDEX_KR][LVL] = ""
+        build[INDEX_FR][LVL] = ""
+        build[INDEX_OR][LVL] = ""
+        build[INDEX_FU][LVL] = ""
+        build[INDEX_AU][LVL] = ""
+        build[INDEX_FEL][LVL] = ""
+        build[INDEX_KRL][LVL] = ""
+        build[INDEX_FRL][LVL] = ""
+        build[INDEX_ORL][LVL] = ""
+        build[INDEX_FUL][LVL] = ""
+        build[INDEX_AUL][LVL] = ""
+        build[INDEX_KKW][LVL] = ""
+        build[INDEX_FKW][LVL] = ""
+        build[INDEX_RSF][LVL] = ""
+        build[INDEX_VTS][LVL] = ""
+        build[INDEX_SPA][LVL] = ""
+        build[INDEX_FWA][LVL] = ""
+        build[INDEX_HP][LVL] = ""
+        build[INDEX_HZ][LVL] = ""
+        build[INDEX_BA][LVL] = ""
+        build[INDEX_GDZ][LVL] = ""
+        build[INDEX_KRE][LVL] = ""
+        build[INDEX_WER][LVL] = ""
+        build[INDEX_REC][LVL] = ""
+    }
+
+    function getBuildLvl(){
+        getBuildLvl_COUNTER++
+        var sringSplit = ""
+        try {
+            var string = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2)").innerText
+            if(!string.includes("Handelsgebäude"))setTimeout(getBuildLvl,200)
+            sringSplit = string.split("\n")
+        } catch (error) {
+            getBuildLvl_COUNTER ++
+            if(getBuildLvl_COUNTER>20){
+                getBuildLvl_COUNTER = 0
+                return
+            }
+            setTimeout(getBuildLvl,200)
+        }
+
+        getBuildLvl_COUNTER = 0
+
+        build[INDEX_HQ][LVL] = ""
+        build[INDEX_BZ][LVL] = ""
+        build[INDEX_FZ][LVL] = ""
+        build[INDEX_SS][LVL] = ""
+        build[INDEX_FE][LVL] = ""
+        build[INDEX_KR][LVL] = ""
+        build[INDEX_FR][LVL] = ""
+        build[INDEX_OR][LVL] = ""
+        build[INDEX_FU][LVL] = ""
+        build[INDEX_AU][LVL] = ""
+        build[INDEX_FEL][LVL] = ""
+        build[INDEX_KRL][LVL] = ""
+        build[INDEX_FRL][LVL] = ""
+        build[INDEX_ORL][LVL] = ""
+        build[INDEX_FUL][LVL] = ""
+        build[INDEX_AUL][LVL] = ""
+        build[INDEX_KKW][LVL] = ""
+        build[INDEX_FKW][LVL] = ""
+        build[INDEX_RSF][LVL] = ""
+        build[INDEX_VTS][LVL] = ""
+        build[INDEX_SPA][LVL] = ""
+        build[INDEX_FWA][LVL] = ""
+        build[INDEX_HP][LVL] = ""
+        build[INDEX_HZ][LVL] = ""
+        build[INDEX_BA][LVL] = ""
+        build[INDEX_GDZ][LVL] = ""
+        build[INDEX_KRE][LVL] = ""
+        build[INDEX_WER][LVL] = ""
+        build[INDEX_REC][LVL] = ""
+
+        for (let i = 0; i < sringSplit.length-1; i++) {
+
+            //Hauptgebäude
+            if(sringSplit[i].includes("Hauptquartier Stufe")){
+                build[INDEX_HQ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_HQ][LVL]++
+            }
+            if(sringSplit[i].includes("Bauzentrale Stufe")){
+                build[INDEX_BZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_BZ][LVL]++
+            }
+            if(sringSplit[i].includes("Forschungszentrale Stufe")){
+                build[INDEX_FZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FZ][LVL]++
+            }
+            if(sringSplit[i].includes("Spionagestation Stufe")){
+                build[INDEX_SS][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_SS][LVL]++
+            }
+
+            //Rohstoffgebäude
+            if(sringSplit[i].includes("Roheisen Mine Stufe")){
+                build[INDEX_FE][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FE][LVL]++
+            }
+            if(sringSplit[i].includes("Kristall Förderungsanlage Stufe")){
+                build[INDEX_KR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_KR][LVL]++
+            }
+            if(sringSplit[i].includes("Frubin Sammler Stufe")){
+                build[INDEX_FR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FR][LVL]++
+            }
+            if(sringSplit[i].includes("Orizin Gewinnungsanlage Stufe")){
+                build[INDEX_OR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_OR][LVL]++
+            }
+            if(sringSplit[i].includes("Frurozin Herstellung Stufe")){
+                build[INDEX_FU][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FU][LVL]++
+            }
+            if(sringSplit[i].includes("Goldmine Stufe")){
+                build[INDEX_AU][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_AU][LVL]++
+            }
+
+            //Lagergebäude
+            if(sringSplit[i].includes("Roheisen Lager Stufe")){
+                build[INDEX_FEL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FEL][LVL]++
+            }
+            if(sringSplit[i].includes("Kristall Lager Stufe")){
+                build[INDEX_KRL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_KRL][LVL]++
+            }
+            if(sringSplit[i].includes("Frubin Lager Stufe")){
+                build[INDEX_FRL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FRL][LVL]++
+            }
+            if(sringSplit[i].includes("Orizin Lager Stufe")){
+                build[INDEX_ORL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_ORL][LVL]++
+            }
+            if(sringSplit[i].includes("Frurozin Lager Stufe")){
+                build[INDEX_FUL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FUL][LVL]++
+            }
+            if(sringSplit[i].includes("Gold Lager Stufe")){
+                build[INDEX_AUL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_AUL][LVL]++
+            }
+
+            //Energiegebäude
+            if(sringSplit[i].includes("Kernkraftwerk Stufe")){
+                build[INDEX_KKW][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_KKW][LVL]++
+            }
+            if(sringSplit[i].includes("Fusionskraftwerk Stufe")){
+                build[INDEX_FKW][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FKW][LVL]++
+            }
+
+            //Raumschiff- und Verteidigungs-Gebäude
+            if(sringSplit[i].includes("Raumschiff Fabrik Stufe")){
+                build[INDEX_RSF][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_RSF][LVL]++
+            }
+            if(sringSplit[i].includes("Verteidigungsstation Stufe")){
+                build[INDEX_VTS][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_VTS][LVL]++
+            }
+            if(sringSplit[i].includes("Spionageabwehr Stufe")){
+                build[INDEX_SPA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_SPA][LVL]++
+            }
+            if(sringSplit[i].includes("Frühwarnanlage Stufe")){
+                build[INDEX_FWA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_FWA][LVL]++
+            }
+
+            //Handelsgebäude
+            if(sringSplit[i].includes("Handelsposten Stufe")){
+                build[INDEX_HP][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_HP][LVL]++
+            }
+            if(sringSplit[i].includes("Handelszentrum Stufe")){
+                build[INDEX_HZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_HZ][LVL]++
+            }
+            if(sringSplit[i].includes("X-Wars Bank Stufe")){
+                build[INDEX_BA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_BA][LVL]++
+            }
+
+            //Spezialgebäude
+            if(sringSplit[i].includes("Geheimdienstzentrum Stufe")){
+                build[INDEX_GDZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_GDZ][LVL]++
+            }
+            if(sringSplit[i].includes("X-Wars Kreditinstitut Stufe")){
+                build[INDEX_KRE][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_KRE][LVL]++
+            }
+            if(sringSplit[i].includes("Werkstatt Stufe")){
+                build[INDEX_WER][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_WER][LVL]++
+            }
+            if(sringSplit[i].includes("Recycler Stufe")){
+                build[INDEX_REC][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
+                if(sringSplit[i+1].includes("%")) build[INDEX_REC][LVL]++
+            }
+
+
+        }
     }
 
     function updateLvl(){
-        build[INDEX_HQ][LVL] = 1
-        build[INDEX_BZ][LVL] = 1
-        build[INDEX_FZ][LVL] = 1
-        build[INDEX_SS][LVL] = 1
-        build[INDEX_FE][LVL] = 1
-        build[INDEX_KR][LVL] = 1
-        build[INDEX_FR][LVL] = 1
-        build[INDEX_OR][LVL] = 1
-        build[INDEX_FU][LVL] = 1
-        build[INDEX_AU][LVL] = 1
-        build[INDEX_FEL][LVL] = 1
-        build[INDEX_KRL][LVL] = 1
-        build[INDEX_FRL][LVL] = 1
-        build[INDEX_ORL][LVL] = 1
-        build[INDEX_FUL][LVL] = 1
-        build[INDEX_AUL][LVL] = 1
-        build[INDEX_KKW][LVL] = 1
-        build[INDEX_FKW][LVL] = 1
-        build[INDEX_RSF][LVL] = 1
-        build[INDEX_VTS][LVL] = 1
-        build[INDEX_SPA][LVL] = 1
-        build[INDEX_FWA][LVL] = 1
-        build[INDEX_HP][LVL] = 1
-        build[INDEX_HZ][LVL] = 1
-        build[INDEX_BA][LVL] = 1
-        build[INDEX_GDZ][LVL] = 1
-        build[INDEX_KRE][LVL] = 1
-        build[INDEX_WER][LVL] = 1
-        build[INDEX_REC][LVL] = 1
+
     }
 
-    function checkLvl(){
-        return 1
+    function checkLvl(id){
+        //if (build[id][LW_ID] == window.BuildingNumber || build[id][LW_ID] == window.BuildingNumber2) return build[id][LVL] + 1
+        return build[id][LVL]
     }
 
     function generateTradeToolPage(){
@@ -930,13 +1095,13 @@
         const setTrade_td = setTrade_tr.insertCell();
         const setTrade_content = document.createElement("div");
 
-        var btn = parseHTML(' [  <a href="#" id="trade_build_request">Fordern</a>  ] ')
+        var btn = parseHTML(' [  <a href="#" id="trade_build_request">fordern</a>  ] ')
         setTrade_content.appendChild(btn)
 
-        var btn2 = parseHTML(' [  <a href="#" id="trade_build_save">Saven</a>  ] ')
+        var btn2 = parseHTML(' [  <a href="#" id="trade_build_save">saven</a>  ] ')
         setTrade_content.appendChild(btn2)
 
-        var btn3 = parseHTML(' [  <a href="#" id="trade_build_requestPlus">Fordern +</a>  ] ')
+        var btn3 = parseHTML(' [  <a href="#" id="trade_build_requestPlus">fordern +</a>  ] ')
         setTrade_content.appendChild(btn3)
 
         setTrade_td.className="first"
@@ -961,13 +1126,14 @@
 
     function setTrade(){
         var id = select.value
+        var lvl = window[6].document.getElementById("input-lvl").value-1
         var currentRes = build[id][RES](window[6].document.getElementById("input-lvl").value-1)
-        window[6].document.getElementById("tt_res0").value = currentRes[RES_FE]
-        window[6].document.getElementById("tt_res1").value = currentRes[RES_KR]
-        window[6].document.getElementById("tt_res2").value = currentRes[RES_FR]
-        window[6].document.getElementById("tt_res3").value = currentRes[RES_OR]
-        window[6].document.getElementById("tt_res4").value = currentRes[RES_FU]
-        window[6].document.getElementById("tt_res5").value = currentRes[RES_AU]
+        if(currentRes[RES_FE] > 0) {window[6].document.getElementById("tt_res0").value = currentRes[RES_FE]} else window[6].document.getElementById("tt_res0").value = ""
+        if(currentRes[RES_KR] > 0) {window[6].document.getElementById("tt_res1").value = currentRes[RES_KR]} else window[6].document.getElementById("tt_res1").value = ""
+        if(currentRes[RES_FR] > 0) {window[6].document.getElementById("tt_res2").value = currentRes[RES_FR]} else window[6].document.getElementById("tt_res2").value = ""
+        if(currentRes[RES_OR] > 0) {window[6].document.getElementById("tt_res3").value = currentRes[RES_OR]} else window[6].document.getElementById("tt_res3").value = ""
+        if(currentRes[RES_FU] > 0) {window[6].document.getElementById("tt_res4").value = currentRes[RES_FU]} else window[6].document.getElementById("tt_res4").value = ""
+        if(currentRes[RES_AU] > 0) {window[6].document.getElementById("tt_res5").value = currentRes[RES_AU]} else window[6].document.getElementById("tt_res5").value = ""
         window[6].document.getElementById("tf_res0").value = 1
         window[6].document.getElementById("tf_res1").value = ""
         window[6].document.getElementById("tf_res2").value = ""
@@ -978,12 +1144,13 @@
         const heute = new Date();
         var h = (heute.getHours())%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0')
+        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " Stufe "+(lvl+1)
     }
 
     function setTradePlus(){
         var id = select.value
         var reserve = 10
+        var lvl = window[6].document.getElementById("input-lvl").value-1
         var currentRes = build[id][RES](window[6].document.getElementById("input-lvl").value-1)
         const lose = getLose()
         var trade_FE = Math.ceil(currentRes[RES_FE]*(1+lose/100))
@@ -1008,30 +1175,30 @@
         const heute = new Date();
         var h = (heute.getHours())%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0')
+        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " Stufe "+(lvl+1)
     }
 
     function setSave(){
         var id = select.value
         var lvl = window[6].document.getElementById("input-lvl").value-1
         var currentRes = build[id][RES](lvl)
-        window[6].document.getElementById("tf_res0").value = currentRes[RES_FE]
-        window[6].document.getElementById("tf_res1").value = currentRes[RES_KR]
-        window[6].document.getElementById("tf_res2").value = currentRes[RES_FR]
-        window[6].document.getElementById("tf_res3").value = currentRes[RES_OR]
-        window[6].document.getElementById("tf_res4").value = currentRes[RES_FU]
-        window[6].document.getElementById("tf_res5").value = currentRes[RES_AU]
+        if(currentRes[RES_FE] > 0) {window[6].document.getElementById("tf_res0").value = currentRes[RES_FE]}else window[6].document.getElementById("tt_res0").value = ""
+        if(currentRes[RES_KR] > 0) {window[6].document.getElementById("tf_res1").value = currentRes[RES_KR]}else window[6].document.getElementById("tt_res1").value = ""
+        if(currentRes[RES_FR] > 0) {window[6].document.getElementById("tf_res2").value = currentRes[RES_FR]}else window[6].document.getElementById("tt_res2").value = ""
+        if(currentRes[RES_OR] > 0) {window[6].document.getElementById("tf_res3").value = currentRes[RES_OR]}else window[6].document.getElementById("tt_res3").value = ""
+        if(currentRes[RES_FU] > 0) {window[6].document.getElementById("tf_res4").value = currentRes[RES_FU]}else window[6].document.getElementById("tt_res4").value = ""
+        if(currentRes[RES_AU] > 0) {window[6].document.getElementById("tf_res5").value = currentRes[RES_AU]}else window[6].document.getElementById("tt_res5").value = ""
         window[6].document.getElementById("tt_res0").value = ""
         window[6].document.getElementById("tt_res1").value = ""
         window[6].document.getElementById("tt_res2").value = ""
         window[6].document.getElementById("tt_res3").value = ""
         window[6].document.getElementById("tt_res4").value = ""
-        window[6].document.getElementById("tt_res5").value = 999999
+        window[6].document.getElementById("tt_res5").value = 99999999
 
         const heute = new Date();
         var h = (heute.getHours()+8)%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE# // " + getBuildNames()[id] + " Stufe "+lvl+1
+        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE# // " + build[id][STRING] + " Stufe "+(lvl+1)
         var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
         var save_planetNR = 0
         if (planet_selector.selectedIndex == 0) save_planetNR = 1
@@ -1095,7 +1262,7 @@
         max.addEventListener("click", maxShip, false);
 
         var btn = document.createElement("a");
-        btn.innerHTML = ' [  <a href="#" id="trade_ship_set">Stellen</a>  ] '
+        btn.innerHTML = ' [  <a href="#" id="trade_ship_set">stellen</a>  ] '
         btn.addEventListener("click", setShipTrade, false);
 
         var values = getShipNames();
@@ -1449,11 +1616,11 @@
     build[INDEX_FWA][STRING] = "Frühwarnanlage"
     build[INDEX_HP][STRING] = "Handelsposten"
     build[INDEX_HZ][STRING] = "Handelszentrum"
-    build[INDEX_BA][STRING] = "Bank"
+    build[INDEX_BA][STRING] = "X-Wars Bank"
     build[INDEX_GDZ][STRING] = "Geheimdienstzentrum"
     build[INDEX_KRE][STRING] = "Kreditinstitut"
     build[INDEX_WER][STRING] = "Werkstatt"
-    build[INDEX_REC][STRING] = "Recycling Anlage"
+    build[INDEX_REC][STRING] = "Recycler"
 
     build[INDEX_HQ][RES] = ress_HQ
     build[INDEX_BZ][RES] = ress_BZ
