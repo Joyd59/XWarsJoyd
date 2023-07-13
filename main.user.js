@@ -28,7 +28,7 @@
     //  |_____________________________|
 
     setInterval(function () {runWhenReady(setClickListener)}, 1000);
-    setInterval(timerIncrement, 1000)
+    if(notification_enabled)setInterval(timerIncrement, 1000)
 
     //--------------------------------------------------
 
