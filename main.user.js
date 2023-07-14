@@ -407,7 +407,7 @@
         }
         addLogButton_COUNTER = 0
         const user = window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
-        if(!(user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus"))return
+        if(!(user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus" || user == "Macallen"))return
         if(debug)console.log("Handellog Button hinzufügen")
         const trader = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2)").innerText
         if(trader.includes(user)) return
