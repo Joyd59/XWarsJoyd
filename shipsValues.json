@@ -353,7 +353,7 @@
       "drive_s": 123,
       "freight": 14000,
       "lkom": true,
-      "tt": true,
+      "tt": false,
       "carrier": true,
       "fe": 127360,
       "kr": 89120,
