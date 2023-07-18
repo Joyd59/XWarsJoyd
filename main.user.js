@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.3.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -27,7 +27,15 @@
 
 
 
-    function addConigButton(){
+    function addConfigButton(){
+
+        try{
+            window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(35)").innerText
+        }
+        catch{
+            setTimeout(addConfigButton,200)
+            return
+        }
 
         const parent = window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)")
         const btn = parseHTML('<a id="config_button" href="#">SOE Tool</a>')
@@ -35,7 +43,7 @@
         window[5].document.getElementById("config_button").addEventListener("click", generateConfigPage)
     }
 
-    setTimeout(addConigButton,2000)
+    setTimeout(addConfigButton,500)
 
     function insertCss( code, windowID ) {
         var style = document.createElement('style');
