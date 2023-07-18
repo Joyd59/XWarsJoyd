@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.3.1
+// @version      1.3.2
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -203,7 +203,7 @@
         if(clickedElement.srcElement.localName == "select" && clickedElement.button == -1){
             if(debug)console.log("Planentenwechsel")
             resetBuild()
-            setTimeout(addConigButton,2000)
+            setTimeout(addConfigButton,500)
         }
         switch(elementText){
             case "Übersicht":
@@ -281,7 +281,7 @@
             if(clickedElement.srcElement.innerText.includes(":")) return
             if(debug)console.log("Planentenwechsel")
             resetBuild()
-            setTimeout(addConigButton,2000)
+            setTimeout(addConfigButton,500)
         }
 
         var elementText = clickedElement.srcElement.innerText
