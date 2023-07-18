@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @match        *original.xwars.net/?id*
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 (function() {
     'use strict';
-    
 
     //   _____________________________
     //  |                             |
@@ -20,6 +20,144 @@
 
     var notification_enabled = false
     const debug = false
+
+
+    var saveFile = GM_getValue("configfile", {index_saveCoords:0, saveCoords:""});
+
+
+
+
+    function addConigButton(){
+
+        const parent = window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)")
+        const btn = parseHTML('<a id="config_button" href="#">SOE Tool</a>')
+        parent.appendChild(btn)
+        window[5].document.getElementById("config_button").addEventListener("click", generateConfigPage)
+    }
+
+    setTimeout(addConigButton,2000)
+
+    function insertCss( code, windowID ) {
+        var style = document.createElement('style');
+        style.type = 'text/css';
+
+        if (style.styleSheet) {
+            // IE
+            style.styleSheet.cssText = code;
+        } else {
+            // Other browsers
+            style.innerHTML = code;
+        }
+
+        window[windowID].document.getElementsByTagName("head")[0].appendChild( style );
+    }
+
+    function generateConfigPage(){
+        if(window[9].document.querySelector("body > div > table:nth-child(1) > tr:nth-child(2) > td > h1") != null) return
+
+        insertCss("#config{color: #ffffff;font-family: verdana; font-size: 12px;} h1{color: #ffffff;font-family: verdana; font-size: 14px;font-weight: bold;} ",9)
+
+        const newCss = ".saveButton { \
+        background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);\
+        background-color:#ffffff;\
+        border-radius:3px;\
+        display:inline-block;\
+        cursor:pointer;\
+        color:#666666;\
+        font-family:Verdana;\
+        font-size:14px;\
+        padding:2px 10px;\
+        text-decoration:none;\
+        text-shadow:0px 1px 0px #ffffff;\
+        }\
+        .saveButton:hover {\
+        background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);\
+        background-color:#f6f6f6;\
+        }\
+        .saveButton:active {\
+        position:relative;\
+        top:1px;\
+        }"
+
+        insertCss(newCss,9)
+
+
+        const parent = window[9].document.querySelector("body > div")
+        const reference = window[9].document.querySelector("body > div > table")
+
+
+
+        const table = document.createElement("table")
+        var tr = document.createElement("tr")
+        var td = document.createElement("td")
+
+        td.appendChild(parseHTML("<p></p>)"))
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.appendChild(parseHTML("<h1>Einstellungen SOE Tool</h1>"))
+        td.colSpan = "3"
+        tr.appendChild(td)
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.style.textAlign = "right"
+        td.appendChild(parseHTML('<a id = "config">Standartplanet für Savehandel</a>'))
+        tr.appendChild(td)
+
+        td = document.createElement("td")
+        var input = document.createElement("INPUT");
+        input.setAttribute("style", "width: 100px;");
+        input.name = "input_saveCoords"
+        input.value = saveFile.saveCoords
+        td.appendChild(input)
+        tr.appendChild(td)
+
+        const select = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select").cloneNode(true)
+        select.name = "sel_saveCoords"
+        select.onchange = null
+        var option = document.createElement("option");
+        option.text = "Planet auswählen";
+        select.add(option,0)
+        select.selectedIndex = saveFile.index_saveCoords
+        select.addEventListener ("change", function () {
+            window[9].document.getElementsByName("input_saveCoords")[0].value = select.options[select.selectedIndex].text
+        })
+        td = document.createElement("td")
+        td.appendChild(select)
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.appendChild(parseHTML("<p></p>)"))
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        const save_button = parseHTML('<a href="#" name="saveBtn" class="saveButton">speichern</a>')
+        td.appendChild(save_button)
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        parent.setAttribute("align", "left");
+        parent.insertBefore(table,reference)
+
+        window[9].document.getElementsByName("saveBtn")[0].onclick = saveConfig
+
+
+    }
+
+    function saveConfig(){
+        saveFile.saveCoords = window[9].document.getElementsByName("input_saveCoords")[0].value
+        saveFile.index_saveCoords = window[9].document.getElementsByName("sel_saveCoords")[0].selectedIndex
+        GM_setValue("configfile", saveFile);
+    }
 
     //--------------------------------------------------
 
@@ -57,6 +195,7 @@
         if(clickedElement.srcElement.localName == "select" && clickedElement.button == -1){
             if(debug)console.log("Planentenwechsel")
             resetBuild()
+            setTimeout(addConigButton,2000)
         }
         switch(elementText){
             case "Übersicht":
@@ -84,6 +223,7 @@
                 break;
             case "Rohstoffe":
                 if(debug)console.log("Rohstoffe")
+                setTimeout(generateRPH,200)
                 break;
             case "Planeten":
                 if(debug)console.log("Planeten")
@@ -133,6 +273,7 @@
             if(clickedElement.srcElement.innerText.includes(":")) return
             if(debug)console.log("Planentenwechsel")
             resetBuild()
+            setTimeout(addConigButton,2000)
         }
 
         var elementText = clickedElement.srcElement.innerText
@@ -165,6 +306,10 @@
                 logTrade()
                 setTimeout(hideSaveTrades,300)
                 break;
+            case "abbrechen":
+                if(debug)console.log("Annehmen + Log")
+                setTimeout(hideSaveTrades,300)
+                break;
 
                 // Navigation/Spionage
             case "Galaxieansicht":
@@ -177,7 +322,11 @@
                 if(debug)console.log("Planeten Observation")
                 break;
 
-                //
+                // Rohstoffe
+            case "Rohstoffe":
+                if(debug)console.log("Rohstoffe")
+                setTimeout(generateRPH,500)
+                break;
         }
     }
 
@@ -276,17 +425,17 @@
 
     function hideSaveTrades(){
         try {
-            hideSaveTrades_COUNTER ++
-            var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(1) > td > b")
-            if (test == null){
-                if(hideSaveTrades_COUNTER < 10)setTimeout(hideSaveTrades,200)
+            var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(1) > td > b").innerText
+            }catch (error) {
+                if(hideSaveTrades_COUNTER > 30) return
+                hideSaveTrades_COUNTER ++
+                setTimeout(hideSaveTrades,200)
                 return
             }
-        }catch (error) {
-        }
 
+        hideSaveTrades_COUNTER = 0
         try {
-            hideSaveTrades_COUNTER = 0
+
             if(debug)console.log("Savehandel ausblenden")
             var tradesTable = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table")
             var tradesRows = tradesTable.getElementsByTagName("tr");
@@ -374,10 +523,13 @@
         window[6].document.getElementsByName("tt_res[0]")[0].value = ""
         window[6].document.getElementsByName("tt_res[5]")[0].value = 99999999
         window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
-        var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
-        var save_planetNR = 0
-        if (planet_selector.selectedIndex == 0) save_planetNR = 1
-        window[6].document.getElementsByName("target")[0].value = planet_selector.options[save_planetNR].innerHTML
+        if(saveFile.saveCoords ==""){
+            var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+            var save_planetNR = 0
+            if (planet_selector.selectedIndex == 0) save_planetNR = 1
+            window[6].document.getElementsByName("target")[0].value = planet_selector.options[save_planetNR].innerHTML
+        }
+        else window[6].document.getElementsByName("target")[0].value = saveFile.saveCoords
     }
 
 
@@ -463,7 +615,7 @@
 
     //   _____________________________
     //  |                             |
-    //  |        Saveres Counter      |
+    //  |     Save Trade Overview     |
     //  |_____________________________|
 
     var countSaveRes_COUNTER = 0
@@ -1270,15 +1422,66 @@
         ship_select = document.createElement("select");
         ship_select.name = "shipSelect";
         ship_select.id = "shipSelect"
-        for (const val of values) {
+
+        var optionGroup_drones = document.createElement('OPTGROUP')
+        optionGroup_drones.label = "Flugkörper"
+        var optionGroup_tactical = document.createElement('OPTGROUP')
+        optionGroup_tactical.label = "Taktische Waffen"
+        var optionGroup_light = document.createElement('OPTGROUP')
+        optionGroup_light.label = "Leichte Schiffe"
+        var optionGroup_middle = document.createElement('OPTGROUP')
+        optionGroup_middle.label = "Mittlere Schiffe"
+        var optionGroup_heavy = document.createElement('OPTGROUP')
+        optionGroup_heavy.label = "Schwere Schiffe"
+
+        ship_select.appendChild(optionGroup_drones)
+
+        var t_set = false
+        var l_set = false
+        var m_set = false
+        var h_set = false
+
+        for (let i = 0; i < ships.length; i++) {
             var option = document.createElement("option");
-            option.value = val;
-            option.text = val.charAt(0).toUpperCase() + val.slice(1);
-            ship_select.appendChild(option);
+            option.value = i
+            option.text = ships[i].name.charAt(0).toUpperCase() + ships[i].name.slice(1);
+
+            if(ships[i].shipClass == "Drohne") optionGroup_drones.appendChild(option)
+            if(ships[i].shipClass == "Taktisch"){
+                if(!t_set){
+                    ship_select.appendChild(optionGroup_tactical)
+                    t_set = true
+                }
+                optionGroup_tactical.appendChild(option)
+            }
+            if(ships[i].shipClass == "Leicht"){
+                if(!l_set){
+                    ship_select.appendChild(optionGroup_light)
+                    l_set = true
+                }
+                optionGroup_light.appendChild(option)
+            }
+            if(ships[i].shipClass == "Mittel"){
+                if(!m_set){
+                    ship_select.appendChild(optionGroup_middle)
+                    m_set = true
+                }
+                optionGroup_middle.appendChild(option)
+            }
+            if(ships[i].shipClass == "Schwer"){
+                if(!h_set){
+                    ship_select.appendChild(optionGroup_heavy)
+                    h_set = true
+                }
+                optionGroup_heavy.appendChild(option)
+            }
         }
+
         ship_select.addEventListener ("change", function () {
             updateShipTable()
         })
+
+        ship_select.value = 11
 
         var table = document.createElement("table")
         table.border="0"
@@ -1301,7 +1504,7 @@
         var name_Titel = document.createElement("td")
         name_Titel.innerHTML = "<a></a> "
         name_Titel.className = "first"
-        firstRow.appendChild(name_Titel)
+        //firstRow.appendChild(name_Titel)
         var sClass = document.createElement("td")
         sClass.innerHTML = "<b>&nbsp;Klasse&nbsp;</b>"
         sClass.className = "first"
@@ -1327,12 +1530,17 @@
         tt_Titel.className = "first"
         firstRow.appendChild(tt_Titel)
         table.appendChild(firstRow)
+        var carrier_Titel = document.createElement("td")
+        carrier_Titel.innerHTML = "<b>&nbsp;Träger&nbsp;</b>"
+        carrier_Titel.className = "first"
+        firstRow.appendChild(carrier_Titel)
+        table.appendChild(firstRow)
 
         var secondRow = document.createElement("tr")
         var name_String = document.createElement("td")
         name_String.id = "name_String"
         name_String.className = "first"
-        secondRow.appendChild(name_String)
+        //secondRow.appendChild(name_String)
         var sClass_String = document.createElement("td")
         sClass_String.id = "sClass_String"
         sClass_String.className = "second"
@@ -1357,8 +1565,13 @@
         var tt_Value = document.createElement("td")
         tt_Value.id = "tt_Value"
         tt_Value.className = "second"
-        secondRow.className = "second"
+        tt_Value.style.textAlign = "center"
         secondRow.appendChild(tt_Value)
+        var carrier_Value = document.createElement("td")
+        carrier_Value.id = "carrier_Value"
+        carrier_Value.className = "second"
+        carrier_Value.style.textAlign = "center"
+        secondRow.appendChild(carrier_Value)
 
         table.appendChild(secondRow)
 
@@ -1369,17 +1582,21 @@
         var shipNr = ship_select.selectedIndex
         var temp
 
-        window[6].document.getElementById("name_String").innerText = " " + ships[shipNr].name + " "
+        //window[6].document.getElementById("name_String").innerText = " " + ships[shipNr].name + " "
         window[6].document.getElementById("sClass_String").innerText = " " + ships[shipNr].shipClass + " "
         window[6].document.getElementById("attDef_Value").innerText = " " + ships[shipNr].att + " / " + ships[shipNr].def + " "
         window[6].document.getElementById("drive_Value").innerText = " " + ships[shipNr].drive + " " + ships[shipNr].drive_s + "% "
         window[6].document.getElementById("freight_Value").innerText = " " + ships[shipNr].freight + " "
+
         if(ships[shipNr].lkom) temp = symbol_true
         else temp = symbol_false
         window[6].document.getElementById("lKom_Value").innerText = temp
         if(ships[shipNr].tt) temp = symbol_true
         else temp = symbol_false
         window[6].document.getElementById("tt_Value").innerText = temp
+        if(ships[shipNr].carrier) temp = symbol_true
+        else temp = symbol_false
+        window[6].document.getElementById("carrier_Value").innerText = temp
 
     }
 
@@ -1446,6 +1663,177 @@
         xhr.send();
     };
 
+    //   ________________________________
+    //  |                                |
+    //  |        Total Res Prod          |
+    //  |________________________________|
+
+    var totalRes = new Array()
+
+
+    function getAllCoords(){
+        var coords = new Array()
+        const select = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+        for (let i = 0; i < totalRes.length; i++) {
+            coords[i] = select.options[i].text;
+        }
+        return coords
+    }
+
+    function getCurrentCoords(){
+        const sel = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+        return sel.options[sel.selectedIndex].text
+    }
+
+    function getUserName(){
+        return window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
+    }
+
+    function getHourProduction(){
+        const coords = getAllCoords()
+        var ResPerHour = new Array()
+        ResPerHour[0] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+        ResPerHour[1] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(2) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+        ResPerHour[2] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+        ResPerHour[3] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+        ResPerHour[4] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+        ResPerHour[5] = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText.match(/\d+/)[0])
+
+        return ResPerHour
+    }
+
+    function storeHourProduction(rph){
+        var entryFound = false
+        for (let i = 0; i < totalRes.length; i++) {
+            if(totalRes[i].planet == getCurrentCoords()){
+                entryFound = true
+                totalRes[i].user = getUserName()
+                totalRes[i].rph = rph
+            }
+        }
+        if(!entryFound){
+            const newEntry = {user:getUserName(), planet:getCurrentCoords(), rph:rph};
+            totalRes.push(newEntry)
+        }
+    }
+
+    var generateRPH_COUNTER = 0
+
+    function generateRPH(){
+        try {
+            const test = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td:nth-child(1)").innerText
+        } catch (error) {
+            if(generateRPH_COUNTER > 30) return
+            generateRPH_COUNTER++
+            setTimeout(generateRPH,200)
+            return
+        }
+
+        generateRPH_COUNTER = 0
+
+        storeHourProduction(getHourProduction())
+
+        var table = document.createElement("table")
+        table.border="0"
+        table.cellSpacing="1"
+        table.cellPadding="1"
+
+        var input_tr = document.createElement("tr")
+        var input_td = document.createElement("td")
+        input_td.className="fourth"
+        input_td.colSpan = "7"
+        input_td.style.textAlign = "center"
+
+        input_td.appendChild(parseHTML("<b>Rohstoffproduktion</b>"))
+        input_tr.appendChild(input_td)
+        table.appendChild(input_tr)
+
+        var total = new Array(0,0,0,0,0,0)
+
+        for (let i = 0; i < totalRes.length; i++) {
+            if (totalRes[i].user == getUserName()){
+                var row = document.createElement("tr")
+                var td_planet = document.createElement("td")
+                td_planet.innerHTML = "<a>&nbsp;" + totalRes[i].planet + "&nbsp;</a>"
+                td_planet.className = "fourth"
+                td_planet.style.textAlign = "center"
+                row.appendChild(td_planet)
+                var td_Fe = document.createElement("td")
+                td_Fe.innerHTML = "<a>&nbsp;" + totalRes[i].rph[0].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Fe.className = "first"
+                td_planet.style.textAlign = "right"
+                total[0] += totalRes[i].rph[0]
+                row.appendChild(td_Fe)
+                var td_Kr = document.createElement("td")
+                td_Kr.innerHTML = "<a>&nbsp;" + totalRes[i].rph[1].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Kr.className = "second"
+                td_planet.style.textAlign = "right"
+                total[1] += totalRes[i].rph[1]
+                row.appendChild(td_Kr)
+                var td_Fb = document.createElement("td")
+                td_Fb.innerHTML = "<a>&nbsp;" + totalRes[i].rph[2].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Fb.className = "first"
+                td_planet.style.textAlign = "right"
+                total[2] += totalRes[i].rph[2]
+                row.appendChild(td_Fb)
+                var td_Or = document.createElement("td")
+                td_Or.innerHTML = "<a>&nbsp;" + totalRes[i].rph[3].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Or.className = "second"
+                td_planet.style.textAlign = "right"
+                total[3] += totalRes[i].rph[3]
+                row.appendChild(td_Or)
+                var td_Fr = document.createElement("td")
+                td_Fr.innerHTML = "<a>&nbsp;" + totalRes[i].rph[4].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Fr.className = "first"
+                td_planet.style.textAlign = "right"
+                total[4] += totalRes[i].rph[4]
+                row.appendChild(td_Fr)
+                var td_Au = document.createElement("td")
+                td_Au.innerHTML = "<a>&nbsp;" + totalRes[i].rph[5].toLocaleString("de-CH") + "&nbsp;</a>"
+                td_Au.className = "second"
+                td_planet.style.textAlign = "right"
+                total[5] += totalRes[i].rph[5]
+                row.appendChild(td_Au)
+                table.appendChild(row)
+            }
+        }
+
+        row = document.createElement("tr")
+        var td_tot_h = document.createElement("td")
+        td_tot_h.innerHTML = "<a>&nbsp;Total pro Stunde&nbsp;</a>"
+        td_tot_h.className = "fourth"
+        td_tot_h.style.textAlign = "center"
+        row.appendChild(td_tot_h)
+        for (let i = 0; i < total.length; i++){
+            var td = document.createElement("td")
+            td.innerHTML = "<b>&nbsp;" + total[i].toLocaleString("de-CH") + "&nbsp;</b>"
+            td.className = "first"
+            if (i % 2 !== 0) td.className = "second"
+            row.appendChild(td)
+        }
+        table.appendChild(row)
+
+        row = document.createElement("tr")
+        var td_tot_d = document.createElement("td")
+        td_tot_d.innerHTML = "<a>&nbsp;Total pro Tag&nbsp;</a>"
+        td_tot_d.className = "fourth"
+        td_tot_d.style.textAlign = "center"
+        row.appendChild(td_tot_d)
+        for (let i = 0; i < total.length; i++){
+            td = document.createElement("td")
+            td.innerHTML = "<b>&nbsp;" + (total[i]*24).toLocaleString("de-CH") + "&nbsp;</b>"
+            td.className = "first"
+            if (i % 2 !== 0) td.className = "second"
+            row.appendChild(td)
+        }
+        table.appendChild(row)
+
+        const parentDiv = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2)")
+        const referece = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table")
+        parentDiv.insertBefore(table, referece)
+        parentDiv.insertBefore(parseHTML("<p></p>"), referece)
+
+    }
 
 
 
