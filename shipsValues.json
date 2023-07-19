@@ -21,6 +21,24 @@
       "au": 0
     },
     {
+      "name": "SOE Fake-Klasse",
+      "shipClass": "Taktisch",
+      "att": 12,
+      "def": 0,
+      "drive": "ION",
+      "drive_s": 160,
+      "freight": 0,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 422,
+      "kr": 181,
+      "fr": 211,
+      "or": 0,
+      "fz": 370,
+      "au": 0
+    }
+    {
       "name": "SOE Hellfire-Klasse",
       "shipClass": "Taktisch",
       "att": 2321,
