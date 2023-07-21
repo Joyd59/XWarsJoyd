@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.4.0
+// @version      1.4.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -2210,17 +2210,40 @@
         const atts = table.children
         if(atts.length < 2) return
         for(let i=2; i<atts.length-1; i++){
-            if(atts[i].innerText.includes("Angriffsflotte")){
-                setObsLink(atts[i].children[0].children[0])
+            if(atts[i].innerText.includes("Eigene Angriffsflotte")){
+                setOwnAttObsLink(atts[i].children[0].children[0])
+            }
+            if(atts[i].innerText.includes("Angriffsflotte von")){
+                setEnemyAttObsLink(atts[i].children[0].children[0])
             }
         }
 
     }
 
-    function setObsLink(element){
+    function setOwnAttObsLink(element){
         var html = element.innerHTML
         const startCoords = html.indexOf("Planet")+7
         const endCoords = html.indexOf(" an")
+        const htmlPart1 = html.substring(0,startCoords)
+        const htmlPart2 = html.substring(endCoords,html.length)
+        const coords = html.substring(startCoords,endCoords)
+        const name = getObsTarget(coords)
+        if(name == null) return
+        var obsLink = getObsLink(coords)
+        const id = getRandomInt(1000)
+        var clickableCoords = '<a href="#" id= '+ id+ ' >'+coords+' ('+name+')</a>'
+        element.innerHTML = htmlPart1 + clickableCoords + htmlPart2
+        window[6].document.getElementById(id).addEventListener('click', function(){
+            let obsWindow = window.open(obsLink, 'obsWindow', 'dependent=yes,location=no,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no')
+            obsWindow.focus();
+
+        });
+    }
+
+    function setEnemyAttObsLink(element){
+        var html = element.innerHTML
+        const startCoords = html.indexOf("von")+4
+        const endCoords = html.indexOf(" greift")
         const htmlPart1 = html.substring(0,startCoords)
         const htmlPart2 = html.substring(endCoords,html.length)
         const coords = html.substring(startCoords,endCoords)
