@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.4.2
+// @version      1.4.3
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -19,7 +19,7 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_142"
+    const configFile = "configfile_143"
 
     var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false});
 
@@ -274,6 +274,7 @@
 
     setInterval(function () {runWhenReady(setClickListener)}, 1000);
     if(saveFile.notification_enabled)setInterval(timerIncrement, 1000)
+    setTimeout(setAllObsLinkOverview,300)
 
     //--------------------------------------------------
 
@@ -301,12 +302,12 @@
         var elementText = clickedElement.srcElement.innerText
         if(clickedElement.srcElement.localName == "select" && clickedElement.button == -1){
             if(debug)console.log("Planentenwechsel")
-            resetBuild()
-            setTimeout(addConfigButton,800)
+            planetChange()
         }
         switch(elementText){
             case "Übersicht":
                 if(debug)console.log("Übersicht")
+                setTimeout(setAllObsLinkOverview,300)
                 break;
             case "Konstruktion":
                 if(debug)console.log("Konstruktion")
@@ -381,8 +382,8 @@
         if(clickedElement.srcElement.innerText.split("x").length == 3 && clickedElement.srcElement.localName == "b"){
             if(clickedElement.srcElement.innerText.includes(":")) return
             if(debug)console.log("Planentenwechsel")
-            resetBuild()
-            setTimeout(addConfigButton,800)
+            planetChange()
+            
         }
 
         if(clickedElement.srcElement.innerText.includes("Flottenbasis")){
@@ -457,6 +458,12 @@
                 setTimeout(fillOutLastCommand,200)
                 break;
         }
+    }
+
+    function planetChange(){
+        resetBuild()
+        setTimeout(addConfigButton,800)
+        setTimeout(setAllObsLinkOverview,500)
     }
 
     function setClickListener(){
@@ -2210,11 +2217,42 @@
         }
     }
 
+    var setAllObsLinkOverview_COUNTER = 0
+
+    function setAllObsLinkOverview(){
+        if(setAllObsLinkOverview_COUNTER>30){
+            setAllObsLinkOverview_COUNTER = 0
+            return
+        }
+        setAllObsLinkOverview_COUNTER++
+        try{
+            if(!window[6].document.querySelector("body").innerText.includes("Gesamtpunkte:")){
+                setTimeout(setAllObsLinkOverview,200)
+                return}
+            if(!window[6].document.querySelector("body").innerText.includes("lotte")){
+                return
+            }
+        }
+        catch{
+            setTimeout(setAllObsLinkOverview,200)
+            return
+        }
+        setAllObsLinkOverview_COUNTER = 0
+        const tr = window[6].document.getElementsByTagName("tr")
+        for(let i=5; i<tr.length-1; i++){
+            addObsLinkOverview(tr[i].children[0])
+            if(tr[i].children[0].innerText.includes("Planetenübersicht"))return
+        }
+    }
+
     function addObsLink(table){
+
         const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
-        const colorDefOnWay = 'rgb(' + 245 + ',' + 251 + ',' + 242 + ')';
+        const colorDefOnWay = 'rgba(' + 0 + ',' + 136 + ',' + 0 + ',' + 255 + ')';
         const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
-        const colorRet = 'rgb(' + 94 + ',' + 102 + ',' + 105 + ')';
+        const colorRet = 'rgb(' + 120 + ',' + 123 + ',' + 129 + ')';
+        const colorTransport = 'rgb(' + 30 + ',' + 30 + ',' + 30 + ')';
+        const colorBaseChange = 'rgb(' + 0 + ',' + 0 + ',' + 200 + ')';
         const atts = table.children
         if(atts.length < 2) return
         for(let i=2; i<atts.length-1; i++){
@@ -2231,7 +2269,7 @@
             if(atts[i].innerText.includes("wird überstellt auf")){
                 changeBGColor(atts[i], atts[i+1], colorTransfer)
             }
-            if(atts[i].innerText.includes("Eigene Verteidigungsflotte") && atts[i].innerText.includes("ist unterwegs zu Planet")){
+            if(atts[i].innerText.includes("Eigene Verteidigungsflotte") && (atts[i].innerText.includes("ist unterwegs zu Planet") || atts[i].innerText.includes("ist unterwegs zu deinem Planet"))){
                 changeBGColor(atts[i], atts[i+1], colorDefOnWay)
             }
             if(atts[i].innerText.includes("verteidigt Planet")){
@@ -2240,8 +2278,49 @@
             if(atts[i].innerText.includes("kehrt zurück zur Basis")){
                 changeBGColor(atts[i], atts[i+1], colorRet)
             }
+            if(atts[i].innerText.includes("transportiert Rohstoffe")){
+                changeBGColor(atts[i], atts[i+1], colorTransport)
+            }
+            if(atts[i].innerText.includes(" fliegt als neue Basis deinen")){
+                changeBGColor(atts[i], atts[i+1], colorBaseChange)
+            }
 
         }
+
+    }
+
+    function addObsLinkOverview(tr){
+        const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
+        const colorDefOnWay = 'rgba(' + 0 + ',' + 136 + ',' + 0 + ',' + 255 + ')';
+        const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
+        const colorRet = 'rgb(' + 120 + ',' + 123 + ',' + 129 + ')';
+        const colorTransport = 'rgb(' + 62 + ',' + 66 + ',' + 72 + ')';
+        if(tr.innerText.includes("Eigene Angriffsflotte")){
+            //setOwnAttObsLink(tr.children[0].children[0])
+        }
+        if(tr.innerText.includes("Angriffsflotte von")){
+            setEnemyAttObsLinkOverview(tr)
+        }
+        if(tr.innerText.includes("kehrt zurück zur Basis")){
+            //changeBGColor(atts[i])
+            //changeBGColor(atts[i+1])
+        }
+        if(tr.innerText.includes("wird überstellt auf")){
+            changeBGColorOverview(tr, colorTransfer)
+        }
+        if(tr.innerText.includes("Eigene Verteidigungsflotte") && tr.innerText.includes("ist unterwegs zu Planet")){
+            changeBGColorOverview(tr, colorDefOnWay)
+        }
+        if(tr.innerText.includes("verteidigt Planet")){
+            changeBGColorOverview(tr, colorDef)
+        }
+        if(tr.innerText.includes("kehrt zurück zur Basis")){
+            changeBGColorOverview(tr, colorRet)
+        }
+        if(tr.innerText.includes("transportiert Rohstoffe")){
+            changeBGColorOverview(tr, colorTransport)
+        }
+
 
     }
 
@@ -2264,6 +2343,27 @@
 
         });
     }
+
+    function setEnemyAttObsLinkOverview(element){
+        var html = element.innerHTML
+        const startCoords = html.indexOf("von")+4
+        const endCoords = html.indexOf(" greift")
+        const htmlPart1 = html.substring(0,startCoords)
+        const htmlPart2 = html.substring(endCoords,html.length)
+        const coords = html.substring(startCoords,endCoords)
+        const name = getObsTarget(coords)
+        if(name == null) return
+        var obsLink = getObsLink(coords)
+        const id = getRandomInt(1000)
+        var clickableCoords = '<a href="#" id= '+ id+ ' >'+coords+' ('+name+')</a>'
+        element.innerHTML = htmlPart1 + clickableCoords + htmlPart2
+        window[6].document.getElementById(id).addEventListener('click', function(){
+            let obsWindow = window.open(obsLink, 'obsWindow', 'dependent=yes,location=no,menubar=no,resizable=yes,scrollbars=yes,status=yes,toolbar=no')
+            obsWindow.focus();
+
+        });
+    }
+
     function changeBGColor(tr1,tr2,color){
         const td1 = tr1.children
         const td2 = tr2.children
@@ -2277,6 +2377,12 @@
             td2[i].classList.remove("second");
             //td1[i].classList.remove("first");
         }
+    }
+
+    function changeBGColorOverview(tr,color){
+        tr.style.backgroundColor = color
+        tr.classList.remove("second");
+        tr.classList.remove("first");
     }
 
     function setEnemyAttObsLink(element){
