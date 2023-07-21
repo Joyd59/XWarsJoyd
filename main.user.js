@@ -19,7 +19,7 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_143"
+    const configFile = "configfile_144"
 
     var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false});
 
@@ -2248,7 +2248,7 @@
     function addObsLink(table){
 
         const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
-        const colorDefOnWay = 'rgba(' + 0 + ',' + 136 + ',' + 0 + ',' + 255 + ')';
+        const colorDefOnWay = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
         const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
         const colorRet = 'rgb(' + 120 + ',' + 123 + ',' + 129 + ')';
         const colorTransport = 'rgb(' + 30 + ',' + 30 + ',' + 30 + ')';
@@ -2269,7 +2269,7 @@
             if(atts[i].innerText.includes("wird überstellt auf")){
                 changeBGColor(atts[i], atts[i+1], colorTransfer)
             }
-            if(atts[i].innerText.includes("Eigene Verteidigungsflotte") && (atts[i].innerText.includes("ist unterwegs zu Planet") || atts[i].innerText.includes("ist unterwegs zu deinem Planet"))){
+            if(atts[i].innerText.includes("Verteidigungsflotte") && (atts[i].innerText.includes("ist unterwegs zu Planet") || atts[i].innerText.includes("ist unterwegs zu deinem Planet"))){
                 changeBGColor(atts[i], atts[i+1], colorDefOnWay)
             }
             if(atts[i].innerText.includes("verteidigt Planet")){
