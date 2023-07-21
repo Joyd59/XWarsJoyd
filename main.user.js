@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.4.1
+// @version      1.4.2
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -19,7 +19,7 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_b4"
+    const configFile = "configfile_142"
 
     var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false});
 
@@ -451,6 +451,10 @@
             case "Flottenbewegungen":
                 if(debug)console.log("Alle Flottenbasen")
                 setTimeout(setAllObsLink,200)
+                break;
+            case "Befehl erteilen":
+                if(debug)console.log("Alle Flottenbasen")
+                setTimeout(fillOutLastCommand,200)
                 break;
         }
     }
@@ -2207,6 +2211,10 @@
     }
 
     function addObsLink(table){
+        const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
+        const colorDefOnWay = 'rgb(' + 245 + ',' + 251 + ',' + 242 + ')';
+        const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
+        const colorRet = 'rgb(' + 94 + ',' + 102 + ',' + 105 + ')';
         const atts = table.children
         if(atts.length < 2) return
         for(let i=2; i<atts.length-1; i++){
@@ -2216,6 +2224,23 @@
             if(atts[i].innerText.includes("Angriffsflotte von")){
                 setEnemyAttObsLink(atts[i].children[0].children[0])
             }
+            if(atts[i].innerText.includes("kehrt zurück zur Basis")){
+                //changeBGColor(atts[i])
+                //changeBGColor(atts[i+1])
+            }
+            if(atts[i].innerText.includes("wird überstellt auf")){
+                changeBGColor(atts[i], atts[i+1], colorTransfer)
+            }
+            if(atts[i].innerText.includes("Eigene Verteidigungsflotte") && atts[i].innerText.includes("ist unterwegs zu Planet")){
+                changeBGColor(atts[i], atts[i+1], colorDefOnWay)
+            }
+            if(atts[i].innerText.includes("verteidigt Planet")){
+                changeBGColor(atts[i], atts[i+1], colorDef)
+            }
+            if(atts[i].innerText.includes("kehrt zurück zur Basis")){
+                changeBGColor(atts[i], atts[i+1], colorRet)
+            }
+
         }
 
     }
@@ -2238,6 +2263,20 @@
             obsWindow.focus();
 
         });
+    }
+    function changeBGColor(tr1,tr2,color){
+        const td1 = tr1.children
+        const td2 = tr2.children
+        for(let i=0; i<td1.length; i++){
+            td1[i].style.backgroundColor = color
+            td1[i].classList.remove("second");
+            td1[i].classList.remove("first");
+        }
+        for(let i=0; i<td2.length; i++){
+            td2[i].style.backgroundColor = color
+            td2[i].classList.remove("second");
+            //td1[i].classList.remove("first");
+        }
     }
 
     function setEnemyAttObsLink(element){
@@ -2264,6 +2303,45 @@
         return Math.floor(Math.random() * max);
     }
 
+    var fillOutLastCommand_COUNTER = 0
+
+    function fillOutLastCommand(){
+        var txtFullLastCommand
+        fillOutLastCommand_COUNTER++
+        if(fillOutLastCommand_COUNTER>10){
+            fillOutLastCommand_COUNTER = 0
+            return
+        }
+        try{
+            txtFullLastCommand = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(2) > td").innerText
+            if(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > table:nth-child(2) > tbody > tr:nth-child(1) > td.second").innerText != "Basis verteidigen")return
+        }
+        catch{
+            setTimeout(fillOutLastCommand,200)
+            return
+        }
+        fillOutLastCommand_COUNTER = 0
+        var txtLastCommand = getLastCommand(txtFullLastCommand)
+        switch (txtLastCommand) {
+            case "Angriff":fillOutAttack(txtFullLastCommand);break;
+            case "Überstellung":break
+
+        }
+    }
+
+    function getLastCommand(string){
+        const start = string.indexOf("Letzte Operation ")+17
+        var stop = string.indexOf(" auf")
+        if(stop == -1) stop = string.indexOf(" nach")
+        return string.substring(start,stop)
+    }
+
+    function fillOutAttack(string){
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(2) > input[type=radio]:nth-child(1)").click()
+        const start = string.indexOf("auf ")+4
+        const stop = string.indexOf(" (")
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(3) > input[type=text]").value = string.substring(start,stop)
+    }
 
 
 
