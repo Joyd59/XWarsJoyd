@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.4.4
+// @version      1.4.5
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -19,7 +19,7 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_144"
+    const configFile = "configfile_143"
 
     var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false});
 
@@ -634,9 +634,62 @@
         elementBeforeButtons.after(all_save_buttons)
         window[6].document.getElementById("save_button").addEventListener("click", tradeToSave)
 
+        generateX()
         generateTradeToolPage()
         generateShipMarket()
 
+
+    }
+
+    function generateX(){
+        const parent_FeA = window[6].document.querySelector("#tf_res0").parentElement
+        const parent_KrA = window[6].document.querySelector("#tf_res1").parentElement
+        const parent_FbA = window[6].document.querySelector("#tf_res2").parentElement
+        const parent_OrA = window[6].document.querySelector("#tf_res3").parentElement
+        const parent_FrA = window[6].document.querySelector("#tf_res4").parentElement
+        const parent_AuA = window[6].document.querySelector("#tf_res5").parentElement
+        const parent_FeF = window[6].document.querySelector("#tt_res0").parentElement
+        const parent_KrF = window[6].document.querySelector("#tt_res1").parentElement
+        const parent_FbF = window[6].document.querySelector("#tt_res2").parentElement
+        const parent_OrF = window[6].document.querySelector("#tt_res3").parentElement
+        const parent_FrF = window[6].document.querySelector("#tt_res4").parentElement
+        const parent_AuF = window[6].document.querySelector("#tt_res5").parentElement
+        const x_FeA = parseHTML('&nbsp;&nbsp;<a id = "x_FeA" href="#">X</a>')
+        const x_KrA = parseHTML('&nbsp;&nbsp;<a id = "x_KrA" href="#">X</a>')
+        const x_FbA = parseHTML('&nbsp;&nbsp;<a id = "x_FbA" href="#">X</a>')
+        const x_OrA = parseHTML('&nbsp;&nbsp;<a id = "x_OrA" href="#">X</a>')
+        const x_FrA = parseHTML('&nbsp;&nbsp;<a id = "x_FrA" href="#">X</a>')
+        const x_AuA = parseHTML('&nbsp;&nbsp;<a id = "x_AuA" href="#">X</a>')
+        const x_FeF = parseHTML('&nbsp;&nbsp;<a id = "x_FeF" href="#">X</a>')
+        const x_KrF = parseHTML('&nbsp;&nbsp;<a id = "x_KrF" href="#">X</a>')
+        const x_FbF = parseHTML('&nbsp;&nbsp;<a id = "x_FbF" href="#">X</a>')
+        const x_OrF = parseHTML('&nbsp;&nbsp;<a id = "x_OrF" href="#">X</a>')
+        const x_FrF = parseHTML('&nbsp;&nbsp;<a id = "x_FrF" href="#">X</a>')
+        const x_AuF = parseHTML('&nbsp;&nbsp;<a id = "x_AuF" href="#">X</a>')
+        parent_FeA.appendChild(x_FeA)
+        parent_KrA.appendChild(x_KrA)
+        parent_FbA.appendChild(x_FbA)
+        parent_OrA.appendChild(x_OrA)
+        parent_FrA.appendChild(x_FrA)
+        parent_AuA.appendChild(x_AuA)
+        parent_FeF.appendChild(x_FeF)
+        parent_KrF.appendChild(x_KrF)
+        parent_FbF.appendChild(x_FbF)
+        parent_OrF.appendChild(x_OrF)
+        parent_FrF.appendChild(x_FrF)
+        parent_AuF.appendChild(x_AuF)
+        window[6].document.getElementById("x_FeA").onclick = function() {window[6].document.querySelector("#tf_res0").value = ""}
+        window[6].document.getElementById("x_KrA").onclick = function() {window[6].document.querySelector("#tf_res1").value = ""}
+        window[6].document.getElementById("x_FbA").onclick = function() {window[6].document.querySelector("#tf_res2").value = ""}
+        window[6].document.getElementById("x_OrA").onclick = function() {window[6].document.querySelector("#tf_res3").value = ""}
+        window[6].document.getElementById("x_FrA").onclick = function() {window[6].document.querySelector("#tf_res4").value = ""}
+        window[6].document.getElementById("x_AuA").onclick = function() {window[6].document.querySelector("#tf_res5").value = ""}
+        window[6].document.getElementById("x_FeF").onclick = function() {window[6].document.querySelector("#tt_res0").value = ""}
+        window[6].document.getElementById("x_KrF").onclick = function() {window[6].document.querySelector("#tt_res1").value = ""}
+        window[6].document.getElementById("x_FbF").onclick = function() {window[6].document.querySelector("#tt_res2").value = ""}
+        window[6].document.getElementById("x_OrF").onclick = function() {window[6].document.querySelector("#tt_res3").value = ""}
+        window[6].document.getElementById("x_FrF").onclick = function() {window[6].document.querySelector("#tt_res4").value = ""}
+        window[6].document.getElementById("x_AuF").onclick = function() {window[6].document.querySelector("#tt_res5").value = ""}
     }
 
     function resChecker(){
