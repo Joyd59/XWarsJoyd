@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.4.5
+// @version      1.4.6
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -450,13 +450,24 @@
                 setTimeout(setAllObsLink,200)
                 break;
             case "Flottenbewegungen":
-                if(debug)console.log("Alle Flottenbasen")
+                if(debug)console.log("Flottenbewegungen")
                 setTimeout(setAllObsLink,200)
                 break;
             case "Befehl erteilen":
-                if(debug)console.log("Alle Flottenbasen")
+                if(debug)console.log("efehl erteilen")
                 setTimeout(fillOutLastCommand,200)
                 break;
+            case "Raumdock":
+                if(debug)console.log("Raumdock")
+                setTimeout(generateSpaceDockTools,200)
+                break;
+            case "auflösen":
+                if(debug)console.log("auflösen")
+                setTimeout(generateSpaceDockTools,200)
+                break;
+
+
+
         }
     }
 
@@ -1797,7 +1808,7 @@
             updateShipTable()
         })
 
-        ship_select.value = 11
+        ship_select.value = 12
 
         var table = document.createElement("table")
         table.border="0"
@@ -2502,8 +2513,75 @@
         window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(3) > input[type=text]").value = string.substring(start,stop)
     }
 
+    //   ________________________________
+    //  |                                |
+    //  |           Raumdock             |
+    //  |________________________________|
 
 
+    var generateSpaceDockTools_COUNTER = 0
+
+    function generateSpaceDockTools(){
+        if(generateSpaceDockTools_COUNTER > 15){
+            generateSpaceDockTools_COUNTER = 0
+            return
+        }
+        generateSpaceDockTools_COUNTER++
+        try{
+            if(!window[6].document.querySelector("body > table > tbody").innerText.includes("Flotte gründen")){
+                setTimeout(generateSpaceDockTools,200)
+                return
+            }
+        }
+        catch{
+            setTimeout(generateSpaceDockTools,200)
+            return
+        }
+        generateSpaceDockTools_COUNTER = 0
+
+        const tbodys = window[6].document.getElementsByTagName("tbody")
+        const tr = tbodys[tbodys.length-2].children[0]
+        var td = document.createElement("td")
+        var allShip = parseHTML('&nbsp;&nbsp; [&nbsp;<a href="#">alle Schiffe</a>&nbsp;]')
+        td.appendChild(allShip)
+        tr.appendChild(td)
+
+        const inputs = window[6].document.querySelectorAll('input')
+
+        if(inputs.length<2)return
+
+        for( let i=0; i<inputs.length-1; i++){
+            inputs[i].type = "number"
+            inputs[i].style.width = '50px'
+            inputs[i].min = 0
+        }
+
+        const ships = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > form > table:nth-child(1) > tbody").children
+        if(ships.length < 3)return
+
+        var numberOfShips = new Array()
+        var id = 0
+        for( let i=3; i<ships.length-1; i++){
+            const tds = ships[i].children
+            if(tds.length > 6 && !tds[0].innerText.includes("Typ") && tds[tds.length-1].children.length != 0){
+                numberOfShips[id] = parseInt(ships[i].children[ships[i].children.length-2].innerText)
+                window[6].document.querySelectorAll('input')[id].max = numberOfShips[id]
+                ships[i].children[ships[i].children.length-2].innerHTML = '<a href="#" id=' + id + '>' + numberOfShips[id] + '</a>&nbsp;'
+                ships[i].children[ships[i].children.length-2].children[0].onclick = function (clickedElement){
+                    const id = clickedElement.srcElement.id
+                    const input = window[6].document.querySelectorAll('input')[id]
+                    const max = numberOfShips[id]
+                    input.value = max
+                }
+                id++
+            }
+        }
+        td.onclick = function (){
+            for( let i=0; i<inputs.length-1; i++){
+                inputs[i].value = numberOfShips[i]
+            }
+        }
+    }
 
 
     //   ________________________________
