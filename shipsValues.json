@@ -1,7 +1,7 @@
 {
   "symbol_true": "✅",
   "symbol_false": "❌",
-  "indexFavShip": "11",
+  "indexFavShip": "13",
   "ships": [
     {
       "name": "Hyp Aufklärer-Klasse",
@@ -19,6 +19,24 @@
       "fr": 59,
       "or": 101,
       "fz": 43,
+      "au": 0
+    },
+    {
+      "name": "Nuk Observer-Klasse",
+      "shipClass": "Drohne",
+      "att": 0,
+      "def": 0,
+      "drive": "NUK",
+      "drive_s": 145,
+      "freight": 0,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 59,
+      "kr": 257,
+      "fr": 400,
+      "or": 20,
+      "fz": 9,
       "au": 0
     },
     {
