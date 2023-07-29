@@ -1,6 +1,7 @@
 {
   "symbol_true": "✅",
   "symbol_false": "❌",
+  "indexFavShip": "11",
   "ships": [
     {
       "name": "Hyp Aufklärer-Klasse",
