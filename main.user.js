@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.5.0
+// @version      1.6.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -296,6 +296,7 @@
     }
 
 
+
     function menu_clicked(clickedElement){
         ResetIdleTime()
         setCurrentStorageCapa()
@@ -421,10 +422,27 @@
                 logTrade()
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "abbrechen":
-                if(debug)console.log("Annehmen + Log")
+            case "Annehmen":
+                if(debug)console.log("Annehmen")
                 setTimeout(hideSaveTrades,300)
                 break;
+            case "abbrechen":
+                if(debug)console.log("abbrechen")
+                setTimeout(hideSaveTrades,300)
+                break;
+            case "Ablehnen":
+                if(debug)console.log("Ablehnen")
+                setTimeout(hideSaveTrades,300)
+                break;
+            case "Bank":
+                if(debug)console.log("Bank")
+                setTimeout(generateBankePage,300)
+                break;
+            case "weiter":
+                if(debug)console.log("Bank")
+                setTimeout(generateBankePage,300)
+                break;
+
 
                 // Navigation/Spionage
             case "Galaxieansicht":
@@ -518,7 +536,7 @@
 
     function timerIncrement() {
         idleTime = idleTime + 1;
-        if(debug)console.log("IdleTime: " + idleTime)
+       // if(debug)console.log("IdleTime: " + idleTime)
         checkForMessages()
         if (idleTime > 150 + Math.floor(Math.random() * 20) ){ // about 3 minutes
             updateUebersicht();
@@ -571,11 +589,17 @@
     var hideSaveTrades_COUNTER = 0
 
     function hideSaveTrades(){
+        hideSaveTrades_COUNTER++
+        if(hideSaveTrades_COUNTER > 15){
+            hideSaveTrades_COUNTER = 0
+            return
+           }
         try {
-            var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(1) > td > b").innerText
-            }catch (error) {
-                if(hideSaveTrades_COUNTER > 30) return
-                hideSaveTrades_COUNTER ++
+             if(!window[6].document.querySelector("body").innerText.includes("Transaktionen für Planet")){
+                 setTimeout(hideSaveTrades,200)
+                 return
+             }
+            }catch{
                 setTimeout(hideSaveTrades,200)
                 return
             }
@@ -625,14 +649,20 @@
     var generateTradePage_COUNTER = 0
 
     function generateTradePage(){
+        generateTradePage_COUNTER++
+        if(generateTradePage_COUNTER>15){
+            generateTradePage_COUNTER = 0
+            return
+        }
         try {
-            generateTradePage_COUNTER++
-            var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > form > table > tbody > tr:nth-child(4)")
-            if (test == null){
-                if(generateTradePage_COUNTER < 10)setTimeout(generateTradePage,200)
+            if(!window[6].document.querySelector("body").innerText.includes("Handelsauftrag")){
+                setTimeout(generateTradePage,200)
                 return
             }
-        }catch (error) {
+        }
+        catch{
+            setTimeout(generateTradePage,200)
+            return
         }
         generateTradePage_COUNTER = 0
         if(debug)console.log("Save Button einblenden")
@@ -1702,6 +1732,7 @@
     var ships;
     var symbol_true
     var symbol_false
+    var indexFavShip
 
     getJSON("https://raw.githubusercontent.com/BenniBaerenstark/XWars-Tool/main/shipsValues.json",
             function(err, data) {
@@ -1711,6 +1742,7 @@
             ships = data.ships
             symbol_true = data.symbol_true
             symbol_false = data.symbol_false
+            indexFavShip = data.indexFavShip
         }
     });
 
@@ -1808,7 +1840,7 @@
             updateShipTable()
         })
 
-        ship_select.value = 12
+        ship_select.value = indexFavShip
 
         var table = document.createElement("table")
         table.border="0"
@@ -2581,6 +2613,258 @@
                 inputs[i].value = numberOfShips[i]
             }
         }
+    }
+
+    //   ________________________________
+    //  |                                |
+    //  |              Bank              |
+    //  |________________________________|
+
+    var generateBankePage_COUNTER = 0
+
+    function generateBankePage(){
+        generateBankePage_COUNTER++
+        if(generateBankePage_COUNTER >15){
+            generateBankePage_COUNTER = 0
+            return
+        }
+        try{
+            if(!window[6].document.querySelector("body").innerText.includes("Nächste Berechnung")){
+                setTimeout(generateBankePage,200)
+                return
+            }
+        }
+        catch{
+            setTimeout(generateBankePage,200)
+            return
+        }
+
+        if(!window[6].document.querySelector("body").innerText.includes("Neue Banktransaktionen für"))return
+
+        const electTransactionType = window[6].document.getElementsByName("transaction_type")[0]
+        electTransactionType.selectedIndex = 1
+        electTransactionType.onchange = function(){
+            window[6].document.getElementById('res0').value = ""
+            window[6].document.getElementById('res1').value = ""
+            window[6].document.getElementById('res2').value = ""
+            window[6].document.getElementById('res3').value = ""
+            window[6].document.getElementById('res4').value = ""
+            window[6].document.getElementById('res5').value = ""
+        }
+
+        var maxCapaElement = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td:nth-child(2)")
+        var maxCapaString = maxCapaElement.innerText
+        maxCapaElement.innerText = maxCapaString + "(" + parseInt(getMaxCapa()/(1+(getInterest()/100))).toLocaleString("de-DE")+ ")"
+
+
+
+        var feBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(5) > td:nth-child(1) > a")
+
+        feBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(0)
+            var availRess = getCurrentRes(0)
+            var ress = getAccountStatus(0)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res0').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res0').value = availRess
+                else window[6].document.getElementById('res0').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res0').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+        var krBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(6) > td:nth-child(1) > a")
+        krBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(1)
+            var availRess = getCurrentRes(1)
+            var ress = getAccountStatus(1)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res1').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res1').value = availRess
+                else window[6].document.getElementById('res1').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res1').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+        var fbBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(7) > td:nth-child(1) > a")
+        fbBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(2)
+            var availRess = getCurrentRes(2)
+            var ress = getAccountStatus(2)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res2').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res2').value = availRess
+                else window[6].document.getElementById('res2').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res2').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+        var orBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(8) > td:nth-child(1) > a")
+        orBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(3)
+            var availRess = getCurrentRes(3)
+            var ress = getAccountStatus(3)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res3').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res3').value = availRess
+                else window[6].document.getElementById('res3').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res3').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+        var frBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(9) > td:nth-child(1) > a")
+        frBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(4)
+            var availRess = getCurrentRes(4)
+            var ress = getAccountStatus(4)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res4').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res4').value = availRess
+                else window[6].document.getElementById('res4').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res4').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+        var AuBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(10) > td:nth-child(1) > a")
+        AuBtn.onclick = function(){
+            var freeCapa = getFreeCapacity(5)
+            var availRess = getCurrentRes(5)
+            var ress = getAccountStatus(5)
+            var maxCapaMinusInterest = getMaxCapaMinusInterest()
+            window[6].document.getElementById('res5').value = 0
+            if(isDeposit()){
+                if(freeCapa > availRess) window[6].document.getElementById('res5').value = availRess
+                else window[6].document.getElementById('res5').value = freeCapa
+            }
+            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res5').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+        }
+
+
+
+    }
+
+    function isDeposit(){
+        var select = window[6].document.getElementsByName("transaction_type")[0]
+        return select.selectedIndex == 1
+    }
+
+    function getMaxCapaMinusInterest(){
+        var interest = getInterest()
+        var maxCapa = getMaxCapa()
+        return maxCapa/(1+(interest/100))
+    }
+
+    function getFreeCapacity(ressNumber){
+        var trans = getAllTransactions()
+        var interest = getInterest()
+        var maxCapa = getMaxCapa()
+        var maxCapaMinusInterest = maxCapa/(1+(interest/100))
+        var sumTrans = getSumTrans(trans)
+
+        var freeCapacity =0
+        freeCapacity = parseInt(maxCapaMinusInterest-getAccountStatus(ressNumber)-sumTrans[ressNumber])
+        return freeCapacity
+    }
+
+    function getAllTransactions(){
+
+        const tbody = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody")
+        const trs = tbody.children
+        var transactions = new Array
+        var transaction = {date:null, deposits:new Array(0,0,0,0,0,0), debits:new Array(0,0,0,0,0,0)};
+
+        for(let i=8; i<trs.length; i++){
+            var tds = trs[i].children
+            for(let j=0; j<tds.length; j++){
+                var ressString = null
+                var ressValue = 0
+                var isDeposit = false
+                if(tds[j].innerText.includes("Transaktion") && j==0){
+                    if(i>8){
+                        transactions.push(transaction)
+                        transaction = {date:null, deposits:new Array(0,0,0,0,0,0), debits:new Array(0,0,0,0,0,0)};
+                    }
+                    var dateString = tds[j].innerText.replace("Transaktion ")
+                    transaction.date = getDate(dateString)
+                }
+                if((trs[i].children.length == 2 && j == 0)){
+                    ressString = tds[j].innerHTML.replaceAll("&nbsp;","")
+                    ressString = ressString.replaceAll(" ","")
+                    ressString = ressString.replaceAll("\n","")
+                    ressValue = parseInt(tds[j+1].innerText.replaceAll(".",""))
+                    isDeposit = tds[j+1].bgColor == "#006600"
+                }
+                if((trs[i].children.length == 3 && j == 1)){
+                    ressString = tds[j].innerHTML.replaceAll("&nbsp;","")
+                    ressString = ressString.replaceAll(" ","")
+                    ressString = ressString.replaceAll("\n","")
+                    ressValue = parseInt(tds[j+1].innerText.replaceAll(".",""))
+                    isDeposit = tds[j+1].bgColor == "#006600"
+                }
+                if(ressString != null && isDeposit){
+                    switch (ressString) {
+                        case "Roheisen":transaction.deposits[0] = ressValue;break;
+                        case "Kristalle":transaction.deposits[1] = ressValue;break;
+                        case "Frubin":transaction.deposits[2] = ressValue;break;
+                        case "Orizin":transaction.deposits[3] = ressValue;break;
+                        case "Frurozin":transaction.deposits[4] = ressValue;break;
+                        case "Gold":transaction.deposits[5] = ressValue;break;
+                    }
+                }
+                if(ressString != null && !isDeposit){
+                    switch (ressString) {
+                        case "Roheisen":transaction.debits[0] = ressValue;break;
+                        case "Kristalle":transaction.debits[1] = ressValue;break;
+                        case "Frubin":transaction.debits[2] = ressValue;break;
+                        case "Orizin":transaction.debits[3] = ressValue;break;
+                        case "Frurozin":transaction.debits[4] = ressValue;break;
+                        case "Gold":transaction.debits[5] = ressValue;break;
+                    }
+                }
+            }
+        }
+        transactions.push(transaction)
+        return transactions
+    }
+
+    function getInterest(){
+        var interestString = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(2) > td:nth-child(2)").innerText
+        let regex = /([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[Ee]([+-]?\d+))?/i
+        return parseFloat(interestString.match(regex)[0])
+    }
+
+    function getMaxCapa(){
+        var maxCapaElement = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td:nth-child(2)")
+        var maxCapaString = maxCapaElement.innerText
+        var maxCapa = parseInt(maxCapaString.replaceAll(".",""))
+        //maxCapaElement.innerText = maxCapaString + "(" + parseInt(maxCapa/(1+(getInterest()/100))).toLocaleString("de-DE")+ ")"
+        return maxCapa
+    }
+
+    function getSumTrans(trans){
+        var sum = Array(0,0,0,0,0,0)
+        for(let i=0;i<trans.length;i++){
+            for(let j=0;j<6;j++){
+                sum[j] += trans[i].deposits[j]
+                //sum[j] -= trans[i].debits[j]
+            }
+        }
+        return sum
+    }
+
+    function getAccountStatus(ressNumber){
+        var fe = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(3)").innerText.replaceAll(".",""))
+        var kr = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(3) > td:nth-child(2)").innerText.replaceAll(".",""))
+        var fb = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(4) > td:nth-child(2)").innerText.replaceAll(".",""))
+        var or = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(5) > td:nth-child(2)").innerText.replaceAll(".",""))
+        var fr = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(6) > td:nth-child(2)").innerText.replaceAll(".",""))
+        var au = parseInt(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(5) > tbody > tr:nth-child(7) > td:nth-child(2)").innerText.replaceAll(".",""))
+        var ress = new Array(fe,kr,fb,or,fr,au)
+        return ress[ressNumber]
     }
 
 
