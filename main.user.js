@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.6.0
+// @version      1.7.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @match        *original.xwars.net/?id*
+// @require      sweetalert2.all.min.js
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
@@ -19,9 +20,9 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_150"
+    const configFile = "configfile_170"
 
-    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false});
+    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
 
     function addConfigButton(){
         try{
@@ -63,7 +64,7 @@
         const table = document.createElement("table")
         table.border="0"
         table.cellSpacing="1"
-        table.cellPadding="4"
+        table.cellPadding="2"
 
         var tr = document.createElement("tr")
         var td = document.createElement("td")
@@ -151,7 +152,7 @@
         tr.appendChild(td)
         table.appendChild(tr)
 
-        // Options BuildTool
+        // Options 
         table.appendChild(generateOnOFF_option("Gebäudekosten", "buildTool"))
         table.appendChild(generateOnOFF_option("Schiffsmarkt", "shipTool"))
         const user = getUserName()
@@ -174,6 +175,125 @@
             if(saveFile.notification_enabled)window[6].document.getElementById("off_notification").onclick = saveOnOFF_option
         }
         catch{}
+
+        //  Abstand
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.appendChild(parseHTML("<br>"))
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        // Tabellentitel eigene Koordinaten eintragen
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.style.textAlign = "center"
+        td.className = "first"
+        td.colSpan = "2"
+        td.appendChild(parseHTML('&nbsp;<b>Handelskoordinaten Koordinaten eintragen</b>&nbsp;'))
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        // Beschreibung TradeCoords
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.className = "second"
+        td.appendChild(parseHTML('&nbsp;<a>Koordinaten:</a>&nbsp;'))
+        tr.appendChild(td)
+
+        // Input SaveCoords
+        var input_tradeCoord = document.createElement("INPUT");
+        input_tradeCoord.setAttribute("style", "width: 80px;");
+        input_tradeCoord.id = "input_tradeCoords"
+        td.appendChild(input_tradeCoord)
+        tr.appendChild(td)
+
+        // Beschreibung TradeCoords
+        td = document.createElement("td")
+        td.className = "second"
+        td.appendChild(parseHTML('&nbsp;<a>Beschriftung:</a>&nbsp;'))
+        tr.appendChild(td)
+
+        // Input SaveCoords
+        var input_tradeCoordName = document.createElement("INPUT");
+        input_tradeCoordName.setAttribute("style", "width: 190px;");
+        input_tradeCoordName.id = "input_tradeCoordName"
+        td.appendChild(input_tradeCoordName)
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        // Speicherbtn TradeCoords
+        tr = document.createElement("tr")
+        td = document.createElement("td")
+        td.className = "first"
+        const save_button_tradeCoord = parseHTML('[&nbsp;<a href="#" id="saveBtn_tradeCoord">speichern</a>&nbsp;]')
+        td.appendChild(save_button_tradeCoord)
+        td.colSpan = "3"
+        td.align = "center"
+        tr.appendChild(td)
+        table.appendChild(tr)
+
+        window[6].document.getElementById("saveBtn_tradeCoord").onclick = saveKoords
+
+
+        // gespeicherte Einträge anzeigen
+        var tr_table = document.createElement("tr")
+        var td_table = document.createElement("td")
+        td_table.className = "second"
+        td_table.colSpan = "3"
+        td_table.align = "left"
+        const table_tradeCoords = document.createElement("table")
+        var tbody = document.createElement("tbody")
+        tbody.style.borderColor = "red"
+        tbody.border="1"
+        for(let i=0; i<saveFile.customCoords.length;i++){
+            tr = document.createElement("tr")
+            var td_coord = document.createElement("td")
+            td_coord.align = "center"
+            td_coord.className = "fifth"
+            td_coord.appendChild(parseHTML('&nbsp;<a>' + saveFile.customCoords[i] + '</a>&nbsp;'))
+            tr.appendChild(td_coord)
+            var td_name = document.createElement("td")
+            td_name.align = "left"
+            td_name.className = "fifth"
+            td_name.style.width = "80%"
+            td_name.appendChild(parseHTML('&nbsp;<a>' + saveFile.customCoordsName[i] + '</a>&nbsp;'))
+            tr.appendChild(td_name)
+            var td_btn = document.createElement("td")
+            td_btn.align = "right"
+            td_btn.className = "second"
+            td_btn.appendChild(parseHTML('[&nbsp;<a href="#" id="deleteKoords_' + i + '">löschen</a>&nbsp;]'))
+            td_btn.onclick = deleteKoords
+            tr.appendChild(td_btn)
+            tbody.appendChild(tr)
+        }
+        td_table.appendChild(tbody)
+        tr_table.appendChild(td_table)
+        table.appendChild(tr_table)
+    }
+
+    function deleteKoords(element){
+        var id = parseInt(element.srcElement.id.match(/\d+/)[0])
+        saveFile.customCoords.splice(id, 1)
+        saveFile.customCoordsName.splice(id, 1)
+        saveConfig()
+        prepareConfigPage()
+    }
+
+    function saveKoords(){
+        var coords = window[6].document.getElementById("input_tradeCoords").value
+        var name = window[6].document.getElementById("input_tradeCoordName").value
+        if(coords == "") return
+        var regex = /\d{1,2}[x]\d{1,3}[x]\d{1,2}/g
+        if(!regex.test(coords)){
+            alert("Koordinaten ungültig!")
+            return
+        }
+
+        if(name == "") name = coords
+        saveFile.customCoords.push(coords)
+        saveFile.customCoordsName.push(name)
+        saveConfig()
+        prepareConfigPage()
     }
 
     function generateOnOFF_option(title, tag){
@@ -675,10 +795,41 @@
         elementBeforeButtons.after(all_save_buttons)
         window[6].document.getElementById("save_button").addEventListener("click", tradeToSave)
 
+        generateTradeCoords()
         generateX()
         generateTradeToolPage()
         generateShipMarket()
 
+
+
+    }
+
+    function generateTradeCoords(){
+        var select = window[6].document.getElementsByName("changeTarget")[0]
+        if(select == null)return
+        var selectOptions = new Array()
+        for (let i=1;i<select.children.length;i++){
+            selectOptions[i] = select.children[i].cloneNode(true)
+        }
+        select.innerHTML = ""
+        var selectOptionDefault = parseHTML ('<option selected disabled hidden>Planet wählen</option>')
+        select.appendChild(selectOptionDefault)
+        var optionGroup_default = document.createElement('OPTGROUP')
+        optionGroup_default.label = "Eigene Planeten"
+        var optionGroup_custom = document.createElement('OPTGROUP')
+        optionGroup_custom.label = "Gespeicherte Planeten"
+        for(let i=1;i<selectOptions.length;i++){
+            optionGroup_default.appendChild(selectOptions[i])
+        }
+        select.appendChild(optionGroup_default)
+        if(saveFile.customCoords.length < 1) return
+        for(let i=0;i<saveFile.customCoords.length;i++){
+            var customOption = document.createElement('OPTION')
+            customOption.value = saveFile.customCoords[i]
+             customOption.innerText = saveFile.customCoordsName[i]
+            optionGroup_custom.appendChild(customOption)
+        }
+        select.appendChild(optionGroup_custom)
 
     }
 
@@ -780,7 +931,6 @@
     function addLogButton(){
         if(!saveFile.tradeLogTool_enabled)return
         try {
-            if(window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText.match(/\b(\w+)\b/g) != "Handel") return
             addLogButton_COUNTER++
             var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2)")
             if (test == null){
@@ -790,6 +940,7 @@
         }catch (error) {
         }
         addLogButton_COUNTER = 0
+        if(window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText.match(/\b(\w+)\b/g) != "Handel") return
         const user = window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
         
         if(debug)console.log("Handellog Button hinzufügen")
@@ -2667,10 +2818,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res0').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res0').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res0').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res0').value = availRess
                 else window[6].document.getElementById('res0').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res0').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res0').value = (freeCapa*-1)
         }
 
         var krBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(6) > td:nth-child(1) > a")
@@ -2681,10 +2833,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res1').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res1').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res1').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res1').value = availRess
                 else window[6].document.getElementById('res1').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res1').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res1').value = (freeCapa*-1)
         }
 
         var fbBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(7) > td:nth-child(1) > a")
@@ -2695,10 +2848,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res2').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res2').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res2').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res2').value = availRess
                 else window[6].document.getElementById('res2').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res2').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res2').value = (freeCapa*-1)
         }
 
         var orBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(8) > td:nth-child(1) > a")
@@ -2709,10 +2863,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res3').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res3').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res3').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res3').value = availRess
                 else window[6].document.getElementById('res3').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res3').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res3').value = (freeCapa*-1)
         }
 
         var frBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(9) > td:nth-child(1) > a")
@@ -2723,10 +2878,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res4').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res4').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res4').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res4').value = availRess
                 else window[6].document.getElementById('res4').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res4').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res4').value = (freeCapa*-1)
         }
 
         var AuBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(10) > td:nth-child(1) > a")
@@ -2737,10 +2893,11 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res5').value = 0
             if(isDeposit()){
-                if(freeCapa > availRess) window[6].document.getElementById('res5').value = availRess
+                if(freeCapa < 0) window[6].document.getElementById('res5').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                else if(freeCapa > availRess) window[6].document.getElementById('res5').value = availRess
                 else window[6].document.getElementById('res5').value = freeCapa
             }
-            else if(ress>maxCapaMinusInterest)window[6].document.getElementById('res5').value = parseInt(Math.ceil(ress-maxCapaMinusInterest))
+            else if(freeCapa<0) window[6].document.getElementById('res5').value = (freeCapa*-1)
         }
 
 
@@ -2755,7 +2912,7 @@
     function getMaxCapaMinusInterest(){
         var interest = getInterest()
         var maxCapa = getMaxCapa()
-        return maxCapa/(1+(interest/100))
+        return parseInt(Math.floor(maxCapa/(1+(interest/100))))
     }
 
     function getFreeCapacity(ressNumber){
