@@ -364,6 +364,24 @@
       "au": 4040
     },
     {
+      "name": "SOE Venator II-Klasse",
+      "shipClass": "Schwer",
+      "att": 6090,
+      "def": 3270,
+      "drive": "NUK",
+      "drive_s": 132,
+      "freight": 0,
+      "lkom": true,
+      "tt": true,
+      "carrier": false,
+      "fe": 53560,
+      "kr": 4200,
+      "fr": 50520,
+      "or": 16680,
+      "fz": 8520,
+      "au": 4040
+    },
+    {
       "name": "SOE Quasarfeuer-I-Klasse",
       "shipClass": "Schwer",
       "att": 342,
