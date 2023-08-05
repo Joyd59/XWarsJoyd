@@ -1,8 +1,39 @@
 {
-  "soe_tool_settings": {
-    "choosePlanet": "Select planet",
-    "coordsSaveTrade": "Coordinates safety trade",
-    "titel": "Settings SOE Tool",
-    "tradeOptionTitel": "Settings for trade"
+  "langString": {
+    "menu": {
+      "account": "Account",
+      "alliance": "Alliance",
+      "construction": "Construction",
+      "defense": "Defense",
+      "fleets": "Fleets",
+      "highscore": "Highscore",
+      "messages": "Messages",
+      "overview": "Overview",
+      "planets": "Planets",
+      "production": "Production",
+      "research": "Research",
+      "resources": "Resources",
+      "techs": "Techs",
+      "trade": "Trade"
+    },
+    "soe_tool_settings": {
+      "buildingCost": "Show build cost",
+      "choosePlanet": "Select planet",
+      "coordinates": "coordinates",
+      "coordsInvalid": "Coords invalid",
+      "coordsSaveTrade": "Coordinates safety trade",
+      "delete": "delete",
+      "description": "Description",
+      "enterTradeCoordinates": "enter trade coordinates",
+      "eventNotification": "Event notification",
+      "functionsOnOff": "Settings on/off",
+      "off": "off",
+      "on": "on",
+      "save": "save",
+      "shipMarket": "Show ship market",
+      "titel": "Settings SOE Tool",
+      "tradeLog": "Trade Log",
+      "tradeOptionTitel": "Settings for trade"
+    }
   }
 }
