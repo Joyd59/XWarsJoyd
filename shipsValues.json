@@ -274,13 +274,13 @@
       "au": 120
     },
     {
-      "name": "SOE BFF-1-Klasse",
+      "name": "SOE BFF-2-Klasse",
       "shipClass": "Schwer",
-      "att": 726,
-      "def": 2124,
+      "att": 981,
+      "def": 3421,
       "drive": "HYP",
-      "drive_s": 110,
-      "freight": 280000,
+      "drive_s": 117,
+      "freight": 412000,
       "lkom": true,
       "tt": false,
       "carrier": false,
@@ -343,24 +343,6 @@
       "fr": 26440,
       "or": 7560,
       "fz": 3600,
-      "au": 4040
-    },
-    {
-      "name": "SOE Venator-Klasse",
-      "shipClass": "Schwer",
-      "att": 3312,
-      "def": 1912,
-      "drive": "NUK",
-      "drive_s": 142,
-      "freight": 140,
-      "lkom": true,
-      "tt": true,
-      "carrier": false,
-      "fe": 33240,
-      "kr": 16200,
-      "fr": 25344,
-      "or": 13080,
-      "fz": 6520,
       "au": 4040
     },
     {
