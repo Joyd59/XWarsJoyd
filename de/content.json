@@ -1,4 +1,20 @@
 {
   "soe_tool_settings": {
+    "choosePlanet": "Planet auswählen",
+    "coordsSaveTrade": "Koordinaten Savehandel",
+    "titel": "Einstellungen SOE Tool",
+    "tradeOptionTitel": "Einstellungen für Handel"
+    "buildingCost": "Gebäudekosten",
+    "coordinates": "Koordinaten",
+    "delete": "löschen",
+    "description": "Beschriftung",
+    "enterTradeCoordinates": "Handelskoordinaten eintragen",
+    "eventNotification": "Ereignis Benachrichtigung",
+    "functionsOnOff": "Funktionen ein/ausschalten",
+    "off": "aus",
+    "on": "ein",
+    "save": "speichern",
+    "shipMarket": "Schiffsmarkt",
+    "tradeLog": "Handel Log"
   }
 }
