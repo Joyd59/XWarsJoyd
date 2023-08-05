@@ -1,9 +1,15 @@
 {
   "langString": {
+    "menu": {
+      "construction": "Konstruktion",
+      "overview": "Übersicht",
+      "research": "Forschung"
+    },
     "soe_tool_settings": {
       "buildingCost": "Gebäudekosten",
       "choosePlanet": "Planet auswählen",
       "coordinates": "Koordinaten",
+      "coordsInvalid": "Koordinaten ungültig",
       "coordsSaveTrade": "Koordinaten Savehandel",
       "delete": "löschen",
       "description": "Beschriftung",
