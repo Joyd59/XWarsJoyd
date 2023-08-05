@@ -1,20 +1,22 @@
 {
-  "soe_tool_settings": {
-    "choosePlanet": "Planet auswählen",
-    "coordsSaveTrade": "Koordinaten Savehandel",
-    "titel": "Einstellungen SOE Tool",
-    "tradeOptionTitel": "Einstellungen für Handel",
-    "buildingCost": "Gebäudekosten",
-    "coordinates": "Koordinaten",
-    "delete": "löschen",
-    "description": "Beschriftung",
-    "enterTradeCoordinates": "Handelskoordinaten eintragen",
-    "eventNotification": "Ereignis Benachrichtigung",
-    "functionsOnOff": "Funktionen ein/ausschalten",
-    "off": "aus",
-    "on": "ein",
-    "save": "speichern",
-    "shipMarket": "Schiffsmarkt",
-    "tradeLog": "Handel Log"
+  "langString": {
+    "soe_tool_settings": {
+      "buildingCost": "Gebäudekosten",
+      "choosePlanet": "Planet auswählen",
+      "coordinates": "Koordinaten",
+      "coordsSaveTrade": "Koordinaten Savehandel",
+      "delete": "löschen",
+      "description": "Beschriftung",
+      "enterTradeCoordinates": "Handelskoordinaten eintragen",
+      "eventNotification": "Ereignis Benachrichtigung",
+      "functionsOnOff": "Funktionen ein/ausschalten",
+      "off": "aus",
+      "on": "ein",
+      "save": "speichern",
+      "shipMarket": "Schiffsmarkt",
+      "titel": "Einstellungen SOE Tool",
+      "tradeLog": "Handel Log",
+      "tradeOptionTitel": "Einstellungen für Handel"
+    }
   }
 }
