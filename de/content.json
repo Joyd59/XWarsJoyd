@@ -1,9 +1,20 @@
 {
   "langString": {
     "menu": {
+      "account": "Account",
+      "alliance": "Allianz",
       "construction": "Konstruktion",
+      "defense": "Verteidigung",
+      "fleets": "Flotten",
+      "highscore": "Highscore",
+      "messages": "Nachrichten",
       "overview": "Übersicht",
-      "research": "Forschung"
+      "planets": "Planeten",
+      "production": "Produktion",
+      "research": "Forschung",
+      "resources": "Rohstoffe",
+      "techs": "Technik",
+      "trade": "Handel"
     },
     "soe_tool_settings": {
       "buildingCost": "Gebäudekosten",
