@@ -1,6 +1,7 @@
 {
   "langString": {
     "constructions": {
+      "building": "Building",
       "constructionCenter": "Construction Center",
       "counterEspionageStation": "Counter-Espionage Statio",
       "crystalDepot": "Crystal Depot",
@@ -66,6 +67,10 @@
       "tradeToSave": "--> set up save trade",
       "updateUebersicht": "--> Update Overview"
     },
+    "fleets": {
+      "returnsToBase": "returns to base",
+      "transportingResources": "transporting resources"
+    },
     "main": {
       "allFleetBases": "All fleet bases",
       "disband": "Disband",
@@ -73,9 +78,12 @@
       "galaxyView": "Galaxy view",
       "orders": "Orders",
       "planetObservation": "Planet observation",
+      "planetOverview": "Summary",
       "resources": "Resources",
       "searchPlanet": "Search planet",
-      "spaceDock": "Space dock"
+      "shortFleet": "fleet",
+      "spaceDock": "Space dock",
+      "totalPoints": "Total Points"
     },
     "menu": {
       "account": "Account",
@@ -109,6 +117,11 @@
       "kris": "Crystals",
       "ori": "Orizin"
     },
+    "resources": {
+      "TotalPerDay": "Total per day",
+      "TotalPerHour": "Total per hour",
+      "resourcesProduction": "Resources production"
+    },
     "soe_tool_settings": {
       "buildingCost": "Show build cost",
       "choosePlanet": "Select planet",
@@ -132,23 +145,39 @@
       "TransactionsForPlanet": "Transactions for planet",
       "accept": "Accept",
       "acceptPlusLog": "Accept + Log",
+      "attDef": "Att / Def",
       "bank": "Bank",
       "cancel": "Cancel",
+      "carrier": "Carrier",
       "choosePlanet": "Choose planet",
+      "class": "Class",
       "createTradingOffer": "Create trading offer",
       "credit": "Credit",
+      "drive": "Drive",
+      "end": "ENDS",
+      "freight": "Freight",
+      "heavyShips": "Heavy ships",
+      "lKom": "L-Kom",
+      "lightShips": "Light ships",
+      "mediumShips": "Medium ships",
+      "missiles": "Missiles",
       "ownPlanets": "Own planets",
+      "place": "place",
       "proceed": "proceed",
       "refuse": "Refuse",
+      "request": "request",
+      "requestPlus": "request +",
       "save": "save",
       "savedPlanets": "Stored planets",
       "show": "Show",
       "startInquiry": "Check",
+      "tacticalWeapons": "Tactical weapons",
       "totalResInRunningTrades": "Total resources in incoming trades",
       "totalResInSaveTrades": "Total resources in save trades",
       "tradingHistory": "Trading history",
       "tradingOffer": "Trading offer",
-      "transactions": "Transactions"
+      "transactions": "Transactions",
+      "tt": "TT"
     }
   }
 }
