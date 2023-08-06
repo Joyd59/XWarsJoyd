@@ -28,32 +28,22 @@
       "updateUebersicht": "--> Update Overview"
     },
     "main": {
-      "accept": "Accept",
-      "acceptPlusLog": "Accept + Log",
       "allFleetBases": "All fleet bases",
-      "bank": "Bank",
-      "cancel": "Cancel",
-      "createTradingOffer": "Create trading offer",
       "disband": "Disband",
       "fleetMovements": "Fleet movements",
       "galaxyView": "Galaxy view",
       "orders": "Orders",
       "planetObservation": "Planet observation",
-      "proceed": "proceed",
-      "refuse": "Refuse",
       "resources": "Resources",
       "searchPlanet": "Search planet",
-      "show": "Show",
-      "spaceDock": "Space dock",
-      "startInquiry": "Check",
-      "tradingHistory": "Trading history",
-      "transactions": "Transactions"
+      "spaceDock": "Space dock"
     },
     "menu": {
       "account": "Account",
       "alliance": "Alliance",
       "construction": "Construction",
       "defense": "Defense",
+      "fleetBase": "Fleet base",
       "fleets": "Fleets",
       "highscore": "Highscore",
       "messages": "Messages",
@@ -66,6 +56,19 @@
       "techs": "Techs",
       "trade": "Trade",
       "tradeInGalaxyOverview": "Trade in Galaxy view"
+    },
+    "msg": {
+      "event": "There is a new event.",
+      "events": "new events.",
+      "message": "message"
+    },
+    "res": {
+      "fe": "Pig-Iron",
+      "frub": "Frubin",
+      "fruro": "Frurozin",
+      "gold": "Gold",
+      "kris": "Crystals",
+      "ori": "Orizin"
     },
     "soe_tool_settings": {
       "buildingCost": "Show build cost",
@@ -87,8 +90,26 @@
       "tradeOptionTitel": "Settings for trade"
     },
     "trade": {
+      "TransactionsForPlanet": "Transactions for planet",
+      "accept": "Accept",
+      "acceptPlusLog": "Accept + Log",
+      "bank": "Bank",
+      "cancel": "Cancel",
+      "choosePlanet": "Choose planet",
+      "createTradingOffer": "Create trading offer",
+      "credit": "Credit",
+      "ownPlanets": "Own planets",
+      "proceed": "proceed",
+      "refuse": "Refuse",
       "save": "save",
-      "tradingOffer": "Trading offer"
+      "savedPlanets": "Stored planets",
+      "show": "Show",
+      "startInquiry": "Check",
+      "totalResInRunningTrades": "Total resources in incoming trades",
+      "totalResInSaveTrades": "Total resources in save trades",
+      "tradingHistory": "Trading history",
+      "tradingOffer": "Trading offer",
+      "transactions": "Transactions"
     }
   }
 }
