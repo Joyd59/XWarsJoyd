@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.7.0
+// @version      1.7.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -3398,7 +3398,7 @@
 
     function ress_FUL(lvl){
         var res = new Array()
-        res[RES_FE] = Math.round(Math.pow((parseInt(lvl)+1)*350/20, 2)+350)
+        res[RES_FE] = Math.round(Math.pow((parseInt(lvl)+1)*400/20, 2)+400)
         res[RES_KR] = 0
         res[RES_FR] = Math.round(Math.pow((parseInt(lvl)+1)*350/20, 2)+350)
         res[RES_OR] = 0
