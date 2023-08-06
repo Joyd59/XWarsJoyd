@@ -28,32 +28,22 @@
       "updateUebersicht": "--> Update Übersicht"
     },
     "main": {
-      "accept": "Annehmen",
-      "acceptPlusLog": "Annehmen + Log",
       "allFleetBases": "Alle Flottenbasen",
-      "bank": "Bank",
-      "cancel": "abbrechen",
-      "createTradingOffer": "Handelsangebot stellen",
       "disband": "auflösen",
       "fleetMovements": "Flottenbewegungen",
       "galaxyView": "Galaxieansicht",
       "orders": "Befehl erteilen",
       "planetObservation": "Planeten Observation",
-      "proceed": "weiter",
-      "refuse": "Ablehnen",
       "resources": "Rohstoffe",
       "searchPlanet": "Planeten suchen",
-      "show": "anzeigen",
-      "spaceDock": "Raumdock",
-      "startInquiry": "Anfrage starten",
-      "tradingHistory": "Historie",
-      "transactions": "Transaktionen"
+      "spaceDock": "Raumdock"
     },
     "menu": {
       "account": "Account",
       "alliance": "Allianz",
       "construction": "Konstruktion",
       "defense": "Verteidigung",
+      "fleetBase": "Flottenbasis",
       "fleets": "Flotten",
       "highscore": "Highscore",
       "messages": "Nachrichten",
@@ -66,6 +56,11 @@
       "techs": "Technik",
       "trade": "Handel",
       "tradeInGalaxyOverview": "Handel in Galaxieübersicht"
+    },
+    "msg": {
+      "event": "Es liegt ein neues Ereignis vor.",
+      "events": "neue Ereignisse vor.",
+      "message": "Nachricht"
     },
     "soe_tool_settings": {
       "buildingCost": "Gebäudekosten",
@@ -87,8 +82,24 @@
       "tradeOptionTitel": "Einstellungen für Handel"
     },
     "trade": {
+      "TransactionsForPlanet": "Transaktionen für Planet",
+      "accept": "Annehmen",
+      "acceptPlusLog": "Annehmen + Log",
+      "bank": "Bank",
+      "cancel": "abbrechen",
+      "choosePlanet": "Planet wählen",
+      "createTradingOffer": "Handelsangebot stellen",
+      "credit": "Kredit",
+      "ownPlanets": "Eigene Planeten",
+      "proceed": "weiter",
+      "refuse": "Ablehnen",
       "save": "sichern",
-      "tradingOffer": "Handelsauftrag"
+      "savedPlanets": "Gespeicherte Planeten",
+      "show": "anzeigen",
+      "startInquiry": "Anfrage starten",
+      "tradingHistory": "Historie",
+      "tradingOffer": "Handelsauftrag",
+      "transactions": "Transaktionen"
     }
   }
 }
