@@ -57,7 +57,7 @@
       "fleets": "Flotten",
       "highscore": "Highscore",
       "messages": "Nachrichten",
-      "navigationEspionage": "\"Navigation/Spionage\"",
+      "navigationEspionage": "Navigation/Spionage",
       "overview": "Übersicht",
       "planets": "Planeten",
       "production": "Produktion",
@@ -85,6 +85,10 @@
       "titel": "Einstellungen SOE Tool",
       "tradeLog": "Handel Log",
       "tradeOptionTitel": "Einstellungen für Handel"
+    },
+    "trade": {
+      "save": "sichern",
+      "tradingOffer": "Handelsauftrag"
     }
   }
 }
