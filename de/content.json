@@ -62,6 +62,14 @@
       "events": "neue Ereignisse vor.",
       "message": "Nachricht"
     },
+    "res": {
+      "fe": "Roheisen",
+      "frub": "Frubin",
+      "fruro": "Frurozin",
+      "gold": "Gold",
+      "kris": "Kristalle",
+      "ori": "Orizin"
+    },
     "soe_tool_settings": {
       "buildingCost": "Gebäudekosten",
       "choosePlanet": "Planet auswählen",
@@ -97,6 +105,8 @@
       "savedPlanets": "Gespeicherte Planeten",
       "show": "anzeigen",
       "startInquiry": "Anfrage starten",
+      "totalResInRunningTrades": "Total Ressourcen in eingehenden Handel",
+      "totalResInSaveTrades": "Total Ressourcen in Savehandel",
       "tradingHistory": "Historie",
       "tradingOffer": "Handelsauftrag",
       "transactions": "Transaktionen"
