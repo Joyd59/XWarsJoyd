@@ -1,12 +1,29 @@
 {
   "langString": {
     "main": {
+      "accept": "Annehmen",
+      "acceptPlusLog": "Annehmen + Log",
+      "allFleetBases": "Alle Flottenbasen",
+      "bank": "Bank",
+      "cancel": "abbrechen",
       "createTradingOffer": "Handelsangebot stellen",
+      "disband": "auflösen",
+      "fleetMovements": "Flottenbewegungen",
+      "galaxyView": "Galaxieansicht",
+      "orders": "Befehl erteilen",
+      "planetObservation": "Planeten Observation",
+      "proceed": "weiter",
+      "refuse": "Ablehnen",
+      "resources": "Rohstoffe",
+      "searchPlanet": "Planeten suchen",
+      "show": "anzeigen",
+      "spaceDock": "Raumdock",
       "startInquiry": "Anfrage starten",
       "tradingHistory": "Historie",
       "transactions": "Transaktionen"
     },
     "menu": {
+      "PlanetChange": "Planentenwechsel",
       "account": "Account",
       "alliance": "Allianz",
       "construction": "Konstruktion",
@@ -14,13 +31,15 @@
       "fleets": "Flotten",
       "highscore": "Highscore",
       "messages": "Nachrichten",
+      "navigationEspionage": "\"Navigation/Spionage\"",
       "overview": "Übersicht",
       "planets": "Planeten",
       "production": "Produktion",
       "research": "Forschung",
       "resources": "Rohstoffe",
       "techs": "Technik",
-      "trade": "Handel"
+      "trade": "Handel",
+      "tradeInGalaxyOverview": "Handel in Galaxieübersicht"
     },
     "soe_tool_settings": {
       "buildingCost": "Gebäudekosten",
