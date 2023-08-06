@@ -1,5 +1,32 @@
 {
   "langString": {
+    "debug": {
+      "ResetIdleTime": "--> Reset IdleTime",
+      "addConfigButton": "--> SOE Tool Einstellungen Menüeintrag einfügen",
+      "addLogButton": "--> füge Log Button hinzu",
+      "changeOptionEnabled": "--> Option in Savefile toggeln",
+      "checkForMessages": "--> auf neue Nachrichten prüfen",
+      "countRunningTrades": "--> summiere eingehende Handel",
+      "countSaveRes": "--> Savehandel summieren",
+      "deleteKoords": "--> gespeicherte Koordinate löschen",
+      "generateConfigPage": "--> SOE Tool Einstellungsseite generieren",
+      "generateOnOFF_option": "--> generiere Ein/Aus Option",
+      "generateRunningTradeResTable": "--> generiere eingehende Handel Tabelle",
+      "generateSaveResTable": "--> generiere Savehandel Tabelle",
+      "generateTradeCoords": "--> generiere Handelskoordinaten",
+      "generateTradePage": "--> erstelle Handelsseite",
+      "generateX": "--> generiere X Symbol",
+      "getOptionEnabled": "--> gespeicherter Wert für Option abrufen",
+      "hideSaveTrades": "--> Savehandel verstecken",
+      "logTrade": "--> trage Handel in Datenbank ein",
+      "planetChange": "--> Planentenwechsel",
+      "prepareConfigPage": "--> SOE Tool Einstellungsseite vorbereiten",
+      "saveConfig": "--> Savefile speichern",
+      "saveKoords": "--> Koordinate speichern",
+      "saveOnOFF_option": "--> Eventhandler Option",
+      "tradeToSave": "--> erstelle Savehandel",
+      "updateUebersicht": "--> Update Übersicht"
+    },
     "main": {
       "accept": "Annehmen",
       "acceptPlusLog": "Annehmen + Log",
@@ -23,7 +50,6 @@
       "transactions": "Transaktionen"
     },
     "menu": {
-      "PlanetChange": "Planentenwechsel",
       "account": "Account",
       "alliance": "Allianz",
       "construction": "Konstruktion",
