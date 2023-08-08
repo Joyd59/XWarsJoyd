@@ -68,11 +68,27 @@
       "updateUebersicht": "--> Update Overview"
     },
     "fleets": {
+      "allShips": "all ships",
+      "at": " to",
       "attackFrom": "attack fleet from",
       "attackStringAfterCords": "",
       "attackStringBevorCords": "planet",
+      "attackedStringAfterCords": " attacks",
+      "attackedStringBevorCords": "from",
+      "commandAttack": "Attack",
+      "commandTransfer": "Transfer",
+      "createFleet": "Create fleet",
+      "defFleet": "defence fleet",
+      "isDefending": "defends planet",
+      "isOnTheWay": "on route to planet",
+      "isOnTheWayToYourPlanet": "on route to your planet",
+      "lastOperation": "Last order ",
+      "newHomeBase": "on route to its new homebase",
+      "on": " on",
       "ownAttack": "own",
       "returnsToBase": "returns to base",
+      "transfer": "is being transfered to",
+      "transport": "transporting resources",
       "transportingResources": "transporting resources"
     },
     "main": {
@@ -165,6 +181,9 @@
       "lightShips": "Light ships",
       "mediumShips": "Medium ships",
       "missiles": "Missiles",
+      "newBankTransactionFor": "New bank transaction for",
+      "nextCalculation": "next calculation",
+      "overbooked": "overbooked",
       "ownPlanets": "Own planets",
       "place": "place",
       "proceed": "proceed",
@@ -180,6 +199,7 @@
       "totalResInSaveTrades": "Total resources in save trades",
       "tradingHistory": "Trading history",
       "tradingOffer": "Trading offer",
+      "transaction": "Transaction",
       "transactions": "Transactions",
       "tt": "TT"
     }
