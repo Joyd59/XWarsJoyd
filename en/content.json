@@ -71,7 +71,7 @@
       "attackFrom": "attack fleet from",
       "attackStringAfterCords": "",
       "attackStringBevorCords": "planet",
-      "ownAttack": "Eigene Angriffsflotte",
+      "ownAttack": "own",
       "returnsToBase": "returns to base",
       "transportingResources": "transporting resources"
     },
