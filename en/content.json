@@ -68,6 +68,9 @@
       "updateUebersicht": "--> Update Overview"
     },
     "fleets": {
+      "attackAfterCords": " attacks",
+      "attackFrom": "attack fleet from",
+      "attackStringBevorCords": "from",
       "returnsToBase": "returns to base",
       "transportingResources": "transporting resources"
     },
@@ -78,7 +81,7 @@
       "galaxyView": "Galaxy view",
       "orders": "Orders",
       "planetObservation": "Planet observation",
-      "planetOverview": "Summary",
+      "planetOverview": "Planet Overview",
       "resources": "Resources",
       "searchPlanet": "Search planet",
       "shortFleet": "fleet",
