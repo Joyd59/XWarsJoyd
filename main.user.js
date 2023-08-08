@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.7.1
+// @version      1.8.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -23,8 +23,26 @@
     const configFile = "configfile_170"
 
     var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
+    var userLang = navigator.language || navigator.userLanguage
+    var langFile = null
+
+    if(userLang.includes("de")||userLang.includes("DE")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/de/content.json"
+    if(userLang.includes("en")||userLang.includes("EN")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/en/content.json"
+    if(userLang.includes("fr")||userLang.includes("FR")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/fr/content.json"
+
+    getJSON(langFile,
+            function(err, data) {
+        if (err !== null) {
+            console.log('Something went wrong: ' + err);
+        } else {
+            langString = data.langString
+            initDB()
+        }
+    });
+
 
     function addConfigButton(){
+        if(debug)console.log(langString.debug.addConfigButton)
         try{
             window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(35)").innerText
         }
@@ -32,6 +50,7 @@
             setTimeout(addConfigButton,200)
             return
         }
+        if(window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(35)").innerText.includes("SOE Tool")) return
 
         const parent = window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)")
         const btn = parseHTML('<a id="config_button" href="#">SOE Tool</a>')
@@ -39,9 +58,8 @@
         window[5].document.getElementById("config_button").addEventListener("click", prepareConfigPage)
     }
 
-    setTimeout(addConfigButton,1000)
-
     function prepareConfigPage(){
+        if(debug)console.log(langString.debug.prepareConfigPage)
 
         try{
             window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText = "SOE Tool"
@@ -57,8 +75,8 @@
 
     }
 
-
     function generateConfigPage(){
+        if(debug)console.log(langString.debug.generateConfigPage)
         const parent = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2)")
 
         const table = document.createElement("table")
@@ -76,7 +94,7 @@
         // Überschrift SOE Tool
         tr = document.createElement("tr")
         td = document.createElement("td")
-        td.appendChild(parseHTML("<h1>Einstellungen SOE Tool</h1>"))
+        td.appendChild(parseHTML("<h1>" + langString.soe_tool_settings.titel + "</h1>"))
         td.colSpan = "3"
         tr.appendChild(td)
         tr.appendChild(td)
@@ -88,7 +106,7 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "3"
-        td.appendChild(parseHTML('&nbsp;<b>Einstellungen für Handel</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.tradeOptionTitel + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
@@ -96,7 +114,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>Koordinaten Savehandel:</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.coordsSaveTrade + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -113,11 +131,11 @@
         select.name = "sel_saveCoords"
         select.onchange = null
         var option = document.createElement("option");
-        option.text = "Planet auswählen";
+        option.text = langString.soe_tool_settings.choosePlanet
         select.add(option,0)
         select.selectedIndex = 0
         select.addEventListener ("change", function () {
-            if(select.options[select.selectedIndex].text != "Planet auswählen") window[6].document.getElementsByName("input_saveCoords")[0].value = select.options[select.selectedIndex].text
+            if(select.options[select.selectedIndex].text != langString.soe_tool_settings.choosePlanet) window[6].document.getElementsByName("input_saveCoords")[0].value = select.options[select.selectedIndex].text
         })
         td.className = "second"
         td.appendChild(select)
@@ -128,7 +146,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "first"
-        const save_button = parseHTML('[&nbsp;<a href="#" name="saveBtn">speichern</a>&nbsp;]')
+        const save_button = parseHTML('[&nbsp;<a href="#" name="saveBtn">' + langString.soe_tool_settings.save + '</a>&nbsp;]')
         td.appendChild(save_button)
         td.colSpan = "3"
         td.align = "center"
@@ -148,16 +166,16 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "2"
-        td.appendChild(parseHTML('&nbsp;<b>Funktionen ein/ausschalten</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.functionsOnOff + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
         // Options 
-        table.appendChild(generateOnOFF_option("Gebäudekosten", "buildTool"))
-        table.appendChild(generateOnOFF_option("Schiffsmarkt", "shipTool"))
+        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.buildingCost, "buildTool"))
+        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.shipMarket, "shipTool"))
         const user = getUserName()
-        if((user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus" || user == "Macallen"))table.appendChild(generateOnOFF_option("Handel Log", "tradeLogTool"))
-        if((user == "DarthRevan")) table.appendChild(generateOnOFF_option("Ereignis Benachrichtigung", "notification"))
+        if((user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus" || user == "Macallen"))table.appendChild(generateOnOFF_option(langString.soe_tool_settings.tradeLog, "tradeLogTool"))
+        if((user == "DarthRevan")) table.appendChild(generateOnOFF_option(langString.soe_tool_settings.eventNotification, "notification"))
 
         parent.setAttribute("align", "center");
         parent.appendChild(table)
@@ -189,7 +207,7 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "2"
-        td.appendChild(parseHTML('&nbsp;<b>Handelskoordinaten Koordinaten eintragen</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.enterTradeCoordinates + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
@@ -197,7 +215,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>Koordinaten:</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.coordinates + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -210,7 +228,7 @@
         // Beschreibung TradeCoords
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>Beschriftung:</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.description + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -225,7 +243,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "first"
-        const save_button_tradeCoord = parseHTML('[&nbsp;<a href="#" id="saveBtn_tradeCoord">speichern</a>&nbsp;]')
+        const save_button_tradeCoord = parseHTML('[&nbsp;<a href="#" id="saveBtn_tradeCoord">' + langString.soe_tool_settings.save + '</a>&nbsp;]')
         td.appendChild(save_button_tradeCoord)
         td.colSpan = "3"
         td.align = "center"
@@ -261,7 +279,7 @@
             var td_btn = document.createElement("td")
             td_btn.align = "right"
             td_btn.className = "second"
-            td_btn.appendChild(parseHTML('[&nbsp;<a href="#" id="deleteKoords_' + i + '">löschen</a>&nbsp;]'))
+            td_btn.appendChild(parseHTML('[&nbsp;<a href="#" id="deleteKoords_' + i + '">' + langString.soe_tool_settings.delete + '</a>&nbsp;]'))
             td_btn.onclick = deleteKoords
             tr.appendChild(td_btn)
             tbody.appendChild(tr)
@@ -272,6 +290,7 @@
     }
 
     function deleteKoords(element){
+        if(debug)console.log(langString.debug.deleteKoords)
         var id = parseInt(element.srcElement.id.match(/\d+/)[0])
         saveFile.customCoords.splice(id, 1)
         saveFile.customCoordsName.splice(id, 1)
@@ -280,12 +299,13 @@
     }
 
     function saveKoords(){
+        if(debug)console.log(langString.debug.saveKoords)
         var coords = window[6].document.getElementById("input_tradeCoords").value
         var name = window[6].document.getElementById("input_tradeCoordName").value
         if(coords == "") return
         var regex = /\d{1,2}[x]\d{1,3}[x]\d{1,2}/g
         if(!regex.test(coords)){
-            alert("Koordinaten ungültig!")
+            alert(langString.soe_tool_settings.coordsInvalid + "!")
             return
         }
 
@@ -297,6 +317,7 @@
     }
 
     function generateOnOFF_option(title, tag){
+        if(debug)console.log(langString.debug.generateOnOFF_option)
         var tr = document.createElement("tr")
         var td = document.createElement("td")
         td.className = "second"
@@ -308,21 +329,22 @@
         td = document.createElement("td")
         td.id = tag + "_Btns"
         td.className = "second"
-        var on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">ein</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-        if(getOptionEnabled(tag))on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>ein</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
+        var on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.soe_tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+        if(getOptionEnabled(tag))on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.soe_tool_settings.on + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
         td.appendChild(on)
         td.align = "left"
         tr.appendChild(td)
 
         // Ausbtn
-        var off = parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>aus</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
-        if(getOptionEnabled(tag))off = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">aus</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+        var off = parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.soe_tool_settings.off + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
+        if(getOptionEnabled(tag))off = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.soe_tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
         td.appendChild(off)
         tr.appendChild(td)
         return tr
     }
 
     function getOptionEnabled(tag){
+        if(debug)console.log(langString.debug.getOptionEnabled)
         switch(tag) {
             case "buildTool": return saveFile.buildTool_enabled
             case "shipTool": return saveFile.shipTool_enabled
@@ -332,6 +354,7 @@
     }
 
     function changeOptionEnabled(tag){
+        if(debug)console.log(langString.debug.changeOptionEnabled)
         switch(tag) {
             case "buildTool": saveFile.buildTool_enabled = !saveFile.buildTool_enabled;break;
             case "shipTool": saveFile.shipTool_enabled = !saveFile.shipTool_enabled;break;
@@ -342,48 +365,31 @@
     }
 
     function saveConfig(){
+        if(debug)console.log(langString.debug.saveConfig)
         saveFile.saveCoords = window[6].document.getElementsByName("input_saveCoords")[0].value
         //saveFile.index_saveCoords = window[6].document.getElementsByName("sel_saveCoords")[0].selectedIndex
         GM_setValue(configFile, saveFile);
     }
 
     function saveOnOFF_option(element){
+        if(debug)console.log(langString.debug.saveOnOFF_option)
         const tag = element.srcElement.name
         changeOptionEnabled(tag)
         var tb = window[6].document.querySelector("#" + tag + "_Btns")
         tb.innerHTML = ""
 
         if(!getOptionEnabled(tag)){
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">ein</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
+            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.soe_tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
             tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>aus</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
             window[6].document.getElementById("on_" + tag).onclick = saveOnOFF_option
         }
         else{
             tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>ein</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">aus</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
+            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.soe_tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
             window[6].document.getElementById("off_"+ tag).onclick = saveOnOFF_option
         }
     }
 
-     function shipTool_options(){
-        console.log("shipTool_options")
-        saveFile.shipTool_enabled = !saveFile.buildTool_enabled
-        GM_setValue(configFile, saveFile);
-        var tb = window[6].document.getElementById("ShipTool_Btns")
-        tb.innerHTML = ""
-
-        if(!saveFile.shipTool_enabled){
-
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name="on_shipTool">ein</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>aus</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
-            window[6].document.getElementsByName("on_shipTool")[0].onclick = shipTool_options
-        }
-        else{
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>ein</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name="off_shipTool">aus</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
-            window[6].document.getElementsByName("off_shipTool")[0].onclick = shipTool_options
-        }
-    }
 
     //--------------------------------------------------
 
@@ -395,6 +401,7 @@
     setInterval(function () {runWhenReady(setClickListener)}, 1000);
     if(saveFile.notification_enabled)setInterval(timerIncrement, 1000)
     setTimeout(setAllObsLinkOverview,300)
+    setTimeout(addConfigButton,1000)
 
     //--------------------------------------------------
 
@@ -415,72 +422,61 @@
         tryNow();
     }
 
-
-
     function menu_clicked(clickedElement){
         ResetIdleTime()
         setCurrentStorageCapa()
         var elementText = clickedElement.srcElement.innerText
         if(clickedElement.srcElement.localName == "select" && clickedElement.button == -1){
-            if(debug)console.log("Planentenwechsel")
+            if(debug)console.log(langString.debug.planetChange)
             planetChange()
         }
         switch(elementText){
-            case "Übersicht":
-                if(debug)console.log("Übersicht")
+            case langString.menu.overview:
+                if(debug)console.log('%c'+langString.menu.overview,'color: aqua')
                 setTimeout(setAllObsLinkOverview,300)
                 break;
-            case "Konstruktion":
-                if(debug)console.log("Konstruktion")
+            case langString.menu.construction:
+                if(debug)console.log('%c'+langString.menu.construction,'color: aqua')
                 setTimeout(getBuildLvl,500)
                 break;
-            case "Forschung":
-                if(debug)console.log("Forschung")
+            case langString.menu.research:
+                if(debug)console.log('%c'+langString.menu.research,'color: aqua')
                 break;
-            case "Verteidigung":
-                if(debug)console.log("Verteidigung")
+            case langString.menu.defense:
+                if(debug)console.log('%c'+langString.menu.defense,'color: aqua')
                 break;
-            case "Produktion":
-                if(debug)console.log("Produktion")
+            case langString.menu.production:
+                if(debug)console.log('%c'+langString.menu.production,'color: aqua')
                 break;
-            case "Flotten":
-                if(debug)console.log("Flotten")
+            case langString.menu.fleets:
+                if(debug)console.log('%c'+langString.menu.fleets,'color: aqua')
                 setTimeout(setAllObsLink,200)
                 break;
-            case "Handel":
-                if(debug)console.log("Handel")
+            case langString.menu.trade:
+                if(debug)console.log('%c'+langString.menu.trade,'color: aqua')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "Rohstoffe":
-                if(debug)console.log("Rohstoffe")
+            case langString.menu.resources:
+                if(debug)console.log('%c'+langString.menu.resources,'color: aqua')
                 setTimeout(generateRPH,200)
                 break;
-            case "Planeten":
-                if(debug)console.log("Planeten")
+            case langString.menu.planets:
+                if(debug)console.log('%c'+langString.menu.planets,'color: aqua')
                 break;
-            case "Technik":
-                if(debug)console.log("Technik")
+            case langString.menu.techs:
+                if(debug)console.log('%c'+langString.menu.techs,'color: aqua')
                 break;
-            case "Highscore":
-                if(debug)console.log("Highscore")
+            case langString.menu.highscore:
+                if(debug)console.log('%c'+langString.menu.highscore,'color: aqua')
                 break;
-            case "Allianz":
-                if(debug)console.log("Allianz")
+            case langString.menu.alliance:
+                if(debug)console.log('%c'+langString.menu.alliance,'color: aqua')
                 break;
-            case "Nachrichten":
-                if(debug)console.log("Nachrichten")
+            case langString.menu.messages:
+                if(debug)console.log('%c'+langString.menu.messages,'color: aqua')
                 break;
-            case "Account":
-                if(debug)console.log("Account")
-                break;
-            case "Discord":
-                if(debug)console.log("Discord")
-                break;
-            case "Discussions":
-                if(debug)console.log("Discussions")
-                break;
-            case "Logout":
-                if(debug)console.log("Logout")
+            case langString.menu.account:
+                if(debug)console.log('%c'+langString.menu.account,'color: aqua')
                 break;
         }
 
@@ -491,116 +487,116 @@
         ResetIdleTime(clickedElement)
         setCurrentStorageCapa()
 
-        if(clickedElement.srcElement.title == "Handel"){
-            if(debug)console.log("Handel mit Koords")
+        if(clickedElement.srcElement.title == langString.menu.trade){
+            if(debug)console.log('%c'+langString.menu.tradeInGalaxyOverview,'color: lime')
             generateTradePage()
         }
 
         if(clickedElement.srcElement.title == "Galaxy" && clickedElement.srcElement.target == "inhalt"){
-            if(debug)console.log("Navigation/Spionage")
+            if(debug)console.log('%c'+langString.menu.navigationEspionage,'color: lime')
         }
 
         if(clickedElement.srcElement.innerText.split("x").length == 3 && clickedElement.srcElement.localName == "b"){
             if(clickedElement.srcElement.innerText.includes(":")) return
-            if(debug)console.log("Planentenwechsel")
+            if(debug)console.log('%c'+langString.debug.planetChange,'color: lime')
             planetChange()
             
         }
 
-        if(clickedElement.srcElement.innerText.includes("Flottenbasis")){
-            if(debug)console.log("Flottenbasis")
+        if(clickedElement.srcElement.innerText.includes(langString.menu.fleetBase)){
+            if(debug)console.log('%c'+langString.menu.fleetBase,'color: lime')
             setTimeout(setAllObsLink,200)
         }
 
         var elementText = clickedElement.srcElement.innerText
         switch(elementText){
                 // Handel
-            case "Transaktionen":
-                if(debug)console.log("Transaktionen")
+            case langString.trade.transactions:
+                if(debug)console.log('%c'+langString.trade.transactions,'color: lime')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "Historie":
-                if(debug)console.log("Historie")
+            case langString.trade.tradingHistory:
+                if(debug)console.log('%c'+langString.trade.tradingHistory,'color: lime')
                 break;
-            case "Handelsangebot stellen":
-                if(debug)console.log("Handelsangebot stellen")
+            case langString.trade.createTradingOffer:
+                if(debug)console.log('%c'+langString.trade.createTradingOffer,'color: lime')
                 setTimeout(generateTradePage,300)
                 break;
-            case "Kredit":
-                if(debug)console.log("Kredit")
+            case langString.trade.credit:
+                if(debug)console.log('%c'+langString.trade.credit,'color: lime')
                 break;
-            case "Anfrage starten":
-                if(debug)console.log("Anfrage starten")
+            case langString.trade.startInquiry:
+                if(debug)console.log('%c'+langString.trade.startInquiry,'color: lime')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "anzeigen":
-                if(debug)console.log("anzeigen")
+            case langString.trade.show:
+                if(debug)console.log('%c'+langString.trade.show,'color: lime')
                 setTimeout(addLogButton,300)
                 break;
-            case "Annehmen + Log":
-                if(debug)console.log("Annehmen + Log")
+            case langString.trade.acceptPlusLog:
+                if(debug)console.log('%c'+langString.trade.acceptPlusLog,'color: lime')
                 logTrade()
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "Annehmen":
-                if(debug)console.log("Annehmen")
+            case langString.trade.accept:
+                if(debug)console.log('%c'+langString.trade.accept,'color: lime')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "abbrechen":
-                if(debug)console.log("abbrechen")
+            case langString.trade.cancel:
+                if(debug)console.log('%c'+langString.trade.cancel,'color: lime')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "Ablehnen":
-                if(debug)console.log("Ablehnen")
+            case langString.trade.refuse:
+                if(debug)console.log('%c'+langString.trade.refuse,'color: lime')
                 setTimeout(hideSaveTrades,300)
                 break;
-            case "Bank":
-                if(debug)console.log("Bank")
+            case langString.trade.bank:
+                if(debug)console.log('%c'+langString.trade.bank,'color: lime')
                 setTimeout(generateBankePage,300)
                 break;
-            case "weiter":
-                if(debug)console.log("Bank")
+            case langString.trade.proceed:
+                if(debug)console.log('%c'+langString.trade.proceed,'color: lime')
                 setTimeout(generateBankePage,300)
                 break;
 
 
                 // Navigation/Spionage
-            case "Galaxieansicht":
-                if(debug)console.log("Galaxieansicht")
+            case langString.main.galaxyView:
+                if(debug)console.log('%c'+langString.main.galaxyView,'color: lime')
                 break;
-            case "Planeten suchen":
-                if(debug)console.log("Planeten suchen")
+            case langString.main.searchPlanet:
+                if(debug)console.log('%c'+langString.main.searchPlanet,'color: lime')
                 break;
-            case "Planeten Observation":
-                if(debug)console.log("Planeten Observation")
+            case langString.main.planetObservation:
+                if(debug)console.log('%c'+langString.main.planetObservation,'color: lime')
                 setTimeout(getallObservers,300)
                 break;
 
                 // Rohstoffe
-            case "Rohstoffe":
-                if(debug)console.log("Rohstoffe")
+            case langString.main.resources:
+                if(debug)console.log('%c'+langString.main.resources,'color: lime')
                 setTimeout(generateRPH,500)
                 break;
 
                 // Flotten
-            case "Alle Flottenbasen":
-                if(debug)console.log("Alle Flottenbasen")
+            case langString.main.allFleetBases:
+                if(debug)console.log('%c'+langString.main.allFleetBases,'color: lime')
                 setTimeout(setAllObsLink,200)
                 break;
-            case "Flottenbewegungen":
-                if(debug)console.log("Flottenbewegungen")
+            case langString.main.fleetMovements:
+                if(debug)console.log('%c'+langString.main.fleetMovements,'color: lime')
                 setTimeout(setAllObsLink,200)
                 break;
-            case "Befehl erteilen":
-                if(debug)console.log("efehl erteilen")
+            case langString.main.orders:
+                if(debug)console.log('%c'+langString.main.orders,'color: lime')
                 setTimeout(fillOutLastCommand,200)
                 break;
-            case "Raumdock":
-                if(debug)console.log("Raumdock")
+            case langString.main.spaceDock:
+                if(debug)console.log('%c'+langString.main.spaceDock,'color: lime')
                 setTimeout(generateSpaceDockTools,200)
                 break;
-            case "auflösen":
-                if(debug)console.log("auflösen")
+            case langString.main.disband:
+                if(debug)console.log('%c'+langString.main.disband,'color: lime')
                 setTimeout(generateSpaceDockTools,200)
                 break;
 
@@ -622,16 +618,10 @@
         window[8].onclick = main_clicked
     }
 
-
-
-
-
     //   _____________________________
     //  |                             |
     //  |        Notification         |
     //  |_____________________________|
-
-
 
     /////---------------------------
 
@@ -644,12 +634,13 @@
     var bellTimeout = false
 
     function ResetIdleTime(){
+       //if(debug)console.log(langString.debug.ResetIdleTime)
         idleTime = 0
     }
 
     function updateUebersicht(){
+        if(debug)console.log(langString.debug.updateUebersicht)
         idleTime = 0
-        if(debug)console.log("Update")
         window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(3)").click()
 
     }
@@ -664,16 +655,17 @@
     }
 
     function checkForMessages(){
+        //if(debug)console.log(langString.debug.checkForMessages)
         if(!saveFile.notification_enabled)return
         var nachricht = false
         for (const a of window[6].document.querySelectorAll("a")) {
-            if (a.textContent.includes("Nachricht")) {
+            if (a.textContent.includes(langString.msg.message)) {
                 nachricht = true
             }
         }
         var ereignis = false
         for (const a of window[6].document.querySelectorAll("a")) {
-            if (a.textContent.includes("Es liegt ein neues Ereignis vor.") || a.textContent.includes("neue Ereignisse vor.")) {
+            if (a.textContent.includes(langString.msg.event) || a.textContent.includes(langString.msg.events)) {
                 ereignis = true
             }
         }
@@ -694,12 +686,10 @@
     function playBell(){
         bell.play()
     }
+
     function playBell2(){
         bell2.play()
     }
-
-
-
 
     //   _____________________________
     //  |                             |
@@ -709,13 +699,14 @@
     var hideSaveTrades_COUNTER = 0
 
     function hideSaveTrades(){
+        if(debug)console.log(langString.debug.hideSaveTrades)
         hideSaveTrades_COUNTER++
         if(hideSaveTrades_COUNTER > 15){
             hideSaveTrades_COUNTER = 0
             return
            }
         try {
-             if(!window[6].document.querySelector("body").innerText.includes("Transaktionen für Planet")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.trade.TransactionsForPlanet)){
                  setTimeout(hideSaveTrades,200)
                  return
              }
@@ -727,12 +718,11 @@
         hideSaveTrades_COUNTER = 0
         try {
 
-            if(debug)console.log("Savehandel ausblenden")
             var tradesTable = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table")
             var tradesRows = tradesTable.getElementsByTagName("tr");
             var i = 1
             for (i in tradesRows) {
-                if(tradesRows[i].innerHTML.includes("#SAVE#") && !tradesRows[i-1].innerHTML.includes("abbrechen")){
+                if(tradesRows[i].innerHTML.includes("#SAVE#") && !tradesRows[i-1].innerHTML.includes(langString.trade.cancel)){
                     tradesRows[i].setAttribute("hidden", "hidden")
                     tradesRows[i-1].setAttribute("hidden", "hidden")
                 }
@@ -743,39 +733,17 @@
 
     }
 
-
-    function checkRes(indexRes){
-        try {
-            //console.log("checkRes")
-            var tradeCost = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > form > table > tbody > tr:nth-child(2) > td:nth-child(3)").innerText.match(/\d/g)
-            if (tradeCost.length > 0) tradeCost = tradeCost.join(".")
-            var resAvail = [0,0,0,0,0,0]
-            resAvail[0] = window[4].document.getElementById("res0").innerText.replace('.', '');
-            resAvail[1] = window[4].document.getElementById("res1").innerText.replace('.', '');
-            resAvail[2] = window[4].document.getElementById("res2").innerText.replace('.', '');
-            resAvail[3] = window[4].document.getElementById("res3").innerText.replace('.', '');
-            resAvail[4] = window[4].document.getElementById("res4").innerText.replace('.', '');
-            resAvail[5] = window[4].document.getElementById("res5").innerText.replace('.', '');
-            var elementName = "tf_res["+indexRes+"]"
-            var resInput = window[6].document.getElementsByName(elementName)[0].value
-            //console.log(resInput)
-            //console.log(resAvail[indexRes])
-            if ( resInput > Math.floor((resAvail[indexRes]*((100-tradeCost)/100))/10)*10) window[6].document.getElementsByName(elementName)[0].value = Math.floor((resAvail[indexRes]*((100-tradeCost)/100))/10)*10
-        }catch (error) {
-        }
-    }
-
-
     var generateTradePage_COUNTER = 0
 
     function generateTradePage(){
+        if(debug)console.log(langString.debug.generateTradePage)
         generateTradePage_COUNTER++
         if(generateTradePage_COUNTER>15){
             generateTradePage_COUNTER = 0
             return
         }
         try {
-            if(!window[6].document.querySelector("body").innerText.includes("Handelsauftrag")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.trade.tradingOffer)){
                 setTimeout(generateTradePage,200)
                 return
             }
@@ -785,13 +753,12 @@
             return
         }
         generateTradePage_COUNTER = 0
-        if(debug)console.log("Save Button einblenden")
 
         const now = new Date();
         window[6].document.getElementsByName("trade_comment")[0].value = ("0" + now.getHours() ).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2)
 
         var elementBeforeButtons = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > form > table > tbody > tr:nth-child(4)")
-        var all_save_buttons = parseHTML('<tr><td bgcolor="" class="first" colspan="4" align="center">[ <a id="save_button" href="#">sichern</a> ]</td></tr>')
+        var all_save_buttons = parseHTML('<tr><td bgcolor="" class="first" colspan="4" align="center">[ <a id="save_button" href="#">' + langString.trade.save + '</a> ]</td></tr>')
         elementBeforeButtons.after(all_save_buttons)
         window[6].document.getElementById("save_button").addEventListener("click", tradeToSave)
 
@@ -805,6 +772,7 @@
     }
 
     function generateTradeCoords(){
+        if(debug)console.log(langString.debug.generateTradeCoords)
         var select = window[6].document.getElementsByName("changeTarget")[0]
         if(select == null)return
         var selectOptions = new Array()
@@ -812,12 +780,12 @@
             selectOptions[i] = select.children[i].cloneNode(true)
         }
         select.innerHTML = ""
-        var selectOptionDefault = parseHTML ('<option selected disabled hidden>Planet wählen</option>')
+        var selectOptionDefault = parseHTML ('<option selected disabled hidden>' + langString.trade.choosePlanet + '</option>')
         select.appendChild(selectOptionDefault)
         var optionGroup_default = document.createElement('OPTGROUP')
-        optionGroup_default.label = "Eigene Planeten"
+        optionGroup_default.label = langString.trade.ownPlanets
         var optionGroup_custom = document.createElement('OPTGROUP')
-        optionGroup_custom.label = "Gespeicherte Planeten"
+        optionGroup_custom.label = langString.trade.savedPlanets
         for(let i=1;i<selectOptions.length;i++){
             optionGroup_default.appendChild(selectOptions[i])
         }
@@ -834,6 +802,7 @@
     }
 
     function generateX(){
+        if(debug)console.log(langString.debug.generateX)
         const parent_FeA = window[6].document.querySelector("#tf_res0").parentElement
         const parent_KrA = window[6].document.querySelector("#tf_res1").parentElement
         const parent_FbA = window[6].document.querySelector("#tf_res2").parentElement
@@ -884,26 +853,14 @@
         window[6].document.getElementById("x_AuF").onclick = function() {window[6].document.querySelector("#tt_res5").value = ""}
     }
 
-    function resChecker(){
-        try {
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(0)
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(1)
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(2)
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(3)
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(4)
-            window[6].document.getElementsByName("tf_res[0]")[0].oninput = checkRes(5)
-            setTimeout(resChecker, 500);
-        }catch (error) {
-        }
-    }
-
     function tradeToSave(){
+        if(debug)console.log(langString.debug.tradeToSave)
         const heute = new Date();
         var h = (heute.getHours()+8)%24+""
         var m = heute.getMinutes()+""
         window[6].document.getElementsByName("tt_res[0]")[0].value = ""
         window[6].document.getElementsByName("tt_res[5]")[0].value = 99999999
-        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
+        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + langString.trade.end + " " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
         if(saveFile.saveCoords ==""){
             var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
             var save_planetNR = 0
@@ -912,7 +869,6 @@
         }
         else window[6].document.getElementsByName("target")[0].value = saveFile.saveCoords
     }
-
 
     function parseHTML(html) {
         var t = document.createElement('template');
@@ -930,6 +886,7 @@
 
     function addLogButton(){
         if(!saveFile.tradeLogTool_enabled)return
+        if(debug)console.log(langString.debug.addLogButton)
         try {
             addLogButton_COUNTER++
             var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2)")
@@ -940,28 +897,34 @@
         }catch (error) {
         }
         addLogButton_COUNTER = 0
-        if(window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText.match(/\b(\w+)\b/g) != "Handel") return
+        if(window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText.match(/\b(\w+)\b/g) != langString.menu.trade) return
         const user = window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
         
         if(debug)console.log("Handellog Button hinzufügen")
         const trader = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2)").innerText
         if(trader.includes(user)) return
-        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(9) > td").innerHTML += '[  <a href="#" id="logTrade">Annehmen + Log</a>  ]'
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(9) > td").innerHTML += '[  <a href="#" id="logTrade">' + langString.trade.acceptPlusLog + '</a>  ]'
     }
 
     function logTrade(){
-        if(debug)console.log("Log Trade")
+        if(debug)console.log(langString.debug.logTrade)
 
         var date = new Date();
         window[6].onclick = ""
         var resString = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(6) > td:nth-child(2)").innerText
         var ress = [0,0,0,0,0,0]
-        if(resString.includes("Roheisen")) ress[0] = resString.match(/([\d.]+) *Roheisen/)[1];
-        if(resString.includes("Kristalle")) ress[1] = resString.match(/([\d.]+) *Kristalle/)[1];
-        if(resString.includes("Frubin")) ress[2] = resString.match(/([\d.]+) *Frubin/)[1];
-        if(resString.includes("Orizin")) ress[3] = resString.match(/([\d.]+) *Orizin/)[1];
-        if(resString.includes("Frurozin")) ress[4] = resString.match(/([\d.]+) *Frurozin/)[1];
-        if(resString.includes("Gold")) ress[5] = resString.match(/([\d.]+) *Gold/)[1];
+        const expression_FE = new RegExp("([\\d.]+) *" + langString.res.fe)
+        const expression_KR = new RegExp("([\\d.]+) *" + langString.res.kris)
+        const expression_FB = new RegExp("([\\d.]+) *" + langString.res.frub)
+        const expression_OR = new RegExp("([\\d.]+) *" + langString.res.ori)
+        const expression_FR = new RegExp("([\\d.]+) *" + langString.res.fruro)
+        const expression_AU = new RegExp("([\\d.]+) *" + langString.res.gold)
+        if(resString.includes(langString.res.fe)) ress[0] = resString.match(expression_FE)[1]
+        if(resString.includes(langString.res.kris)) ress[1] = resString.match(expression_KR)[1]
+        if(resString.includes(langString.res.frub)) ress[2] = resString.match(expression_FB)[1]
+        if(resString.includes(langString.res.ori)) ress[3] = resString.match(expression_OR)[1]
+        if(resString.includes(langString.res.fruro)) ress[4] = resString.match(expression_FR)[1]
+        if(resString.includes(langString.res.gold)) ress[5] = resString.match(expression_AU)[1]
 
         fetch('https://sheetdb.io/api/v1/2vz28vdzqhslv?sheet=Datenbank', {
             method: 'POST',
@@ -995,7 +958,6 @@
         //window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > div > a:nth-child(1)").click()
     }
 
-
     //   _____________________________
     //  |                             |
     //  |     Save Trade Overview     |
@@ -1004,12 +966,13 @@
     var countSaveRes_COUNTER = 0
 
     function countSaveRes(){
-        const expression_FE = /Roheisen: (\d+)/i;
-        const expression_KR = /Kristalle: (\d+)/i;
-        const expression_FB = /Frubin: (\d+)/i;
-        const expression_OR = /Orizin: (\d+)/i;
-        const expression_FR = /Frurozin: (\d+)/i;
-        const expression_AU = /Gold: (\d+)/i;
+        if(debug)console.log(langString.debug.countSaveRes)
+        const expression_FE = new RegExp(langString.res.fe + ": (\\d+)","i")
+        const expression_KR = new RegExp(langString.res.kris + ": (\\d+)","i")
+        const expression_FB = new RegExp(langString.res.frub + ": (\\d+)","i")
+        const expression_OR = new RegExp(langString.res.ori + ": (\\d+)","i")
+        const expression_FR = new RegExp(langString.res.fruro + ": (\\d+)","i")
+        const expression_AU = new RegExp(langString.res.gold + ": (\\d+)","i")
         try {
             countSaveRes_COUNTER ++
             var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2)")
@@ -1022,14 +985,13 @@
         var ress = [0,0,0,0,0,0]
         try {
             countSaveRes_COUNTER = 0
-            if(debug)console.log("SaveRes Zähler")
             var tradesTable = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table")
             var tradesRows = tradesTable.getElementsByTagName("tr");
             var i = 1
             var resString = ""
             
             for (i in tradesRows) {
-                if(tradesRows[i].innerHTML.includes("#SAVE#") && tradesRows[i-1].innerHTML.includes("abbrechen")){
+                if(tradesRows[i].innerHTML.includes("#SAVE#") && tradesRows[i-1].innerHTML.includes(langString.trade.cancel)){
                     resString = tradesRows[i-1].cells[1].innerText
                     ress[0] += findNumber(resString, expression_FE)
                     ress[1] += findNumber(resString, expression_KR)
@@ -1051,6 +1013,7 @@
     }
 
     function generateSaveResTable(ress){
+        if(debug)console.log(langString.debug.generateSaveResTable)
         const tbl = document.createElement('table');
         tbl.border="0"
         tbl.cellSpacing="1"
@@ -1058,7 +1021,7 @@
         const titelTr = tbl.insertRow();
         const titelTd = titelTr.insertCell();
         const titel = document.createElement("b")
-        titel.innerText = "Total Ressourcen in Savehandel"
+        titel.innerText = langString.trade.totalResInSaveTrades
         titelTd.className="first"
         titelTd.colSpan = "6"
         titelTd.style.textAlign = "center"
@@ -1074,17 +1037,17 @@
                     td.style.textAlign = "right"
                     switch(j) {
                         case 0:
-                            content = parseHTML('&nbsp;<b>Roheisen</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.fe + '</b>&nbsp;'); break;
                         case 1:
-                            content = parseHTML('&nbsp;<b>Kristalle</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.kris + '</b>&nbsp;'); break;
                         case 2:
-                            content = parseHTML('&nbsp;<b>Frubin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.frub + '</b>&nbsp;'); break;
                         case 3:
-                            content = parseHTML('&nbsp;<b>Orizin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.ori + '</b>&nbsp;'); break;
                         case 4:
-                            content = parseHTML('&nbsp;<b>Frurozin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.fruro + '</b>&nbsp;'); break;
                         case 5:
-                            content = parseHTML('&nbsp;<b>Gold</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.gold + '</b>&nbsp;'); break;
                     }
                 }
                 if (i==1){
@@ -1113,13 +1076,13 @@
         return 0;
     }
 
-
     //   ________________________________
     //  |                                |
     //  |     Running Trade Overview     |
     //  |________________________________|
 
     function generateRunningTradeResTable(ress){
+        if(debug)console.log(langString.debug.generateRunningTradeResTable)
         const tbl = document.createElement('table');
         tbl.border="0"
         tbl.cellSpacing="1"
@@ -1127,7 +1090,7 @@
         const titelTr = tbl.insertRow();
         const titelTd = titelTr.insertCell();
         const titel = document.createElement("b")
-        titel.innerText = "Total Ressourcen in eingehenden Handel"
+        titel.innerText = langString.trade.totalResInRunningTrades
         titelTd.className="first"
         titelTd.colSpan = "6"
         titelTd.style.textAlign = "center"
@@ -1143,17 +1106,17 @@
                     td.style.textAlign = "right"
                     switch(j) {
                         case 0:
-                            content = parseHTML('&nbsp;<b>Roheisen</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.fe + '</b>&nbsp;'); break;
                         case 1:
-                            content = parseHTML('&nbsp;<b>Kristalle</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.kris + '</b>&nbsp;'); break;
                         case 2:
-                            content = parseHTML('&nbsp;<b>Frubin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.frub + '</b>&nbsp;'); break;
                         case 3:
-                            content = parseHTML('&nbsp;<b>Orizin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.ori + '</b>&nbsp;'); break;
                         case 4:
-                            content = parseHTML('&nbsp;<b>Frurozin</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.fruro + '</b>&nbsp;'); break;
                         case 5:
-                            content = parseHTML('&nbsp;<b>Gold</b>&nbsp;'); break;
+                            content = parseHTML('&nbsp;<b>' + langString.res.gold + '</b>&nbsp;'); break;
                     }
                 }
                 if (i==1){
@@ -1176,6 +1139,7 @@
     var currentStorageCapa = new Array(0,0,0,0,0,0)
 
     function countRunningTrades(){
+        if(debug)console.log(langString.debug.countRunningTrades)
 
         var table = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(6) > tbody")
         if(table == null) table = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody")
@@ -1183,12 +1147,12 @@
         var tableRows = table.children
         var ress = [0,0,0,0,0,0]
 
-        const expression_FE = /Roheisen: (\d+)/i;
-        const expression_KR = /Kristalle: (\d+)/i;
-        const expression_FB = /Frubin: (\d+)/i;
-        const expression_OR = /Orizin: (\d+)/i;
-        const expression_FR = /Frurozin: (\d+)/i;
-        const expression_AU = /Gold: (\d+)/i;
+        const expression_FE = new RegExp(langString.res.fe + ": (\\d+)","i")
+        const expression_KR = new RegExp(langString.res.kris + ": (\\d+)","i")
+        const expression_FB = new RegExp(langString.res.frub + ": (\\d+)","i")
+        const expression_OR = new RegExp(langString.res.ori + ": (\\d+)","i")
+        const expression_FR = new RegExp(langString.res.fruro + ": (\\d+)","i")
+        const expression_AU = new RegExp(langString.res.gold + ": (\\d+)","i")
 
         for (let i = 2; i < tableRows.length; i++) {
             if(tableRows[i].children.length == 6 ){
@@ -1229,7 +1193,6 @@
     }
 
 
-
     //   ________________________________
     //  |                                |
     //  |       Handel Tool Gebäude      |
@@ -1250,19 +1213,19 @@
         })
 
         var optionGroup_haupt = document.createElement('OPTGROUP')
-        optionGroup_haupt.label = "Hauptgebäude"
+        optionGroup_haupt.label = langString.constructions.specialBuildingMainBuilding
         var optionGroup_res = document.createElement('OPTGROUP')
-        optionGroup_res.label = "Rohstoffgebäude"
+        optionGroup_res.label = langString.constructions.resourceDepot
         var optionGroup_lager = document.createElement('OPTGROUP')
-        optionGroup_lager.label = "Lagergebäude"
+        optionGroup_lager.label = langString.constructions.depot
         var optionGroup_energie = document.createElement('OPTGROUP')
-        optionGroup_energie.label = "Energiegebäude"
+        optionGroup_energie.label = langString.constructions.energyBuilding
         var optionGroup_rsf = document.createElement('OPTGROUP')
-        optionGroup_rsf.label = "Raumschiff- und Verteidigungsgebäude"
+        optionGroup_rsf.label = langString.constructions.spaceshipAndDefenseBuilding
         var optionGroup_handel = document.createElement('OPTGROUP')
-        optionGroup_handel.label = "Handelsgebäude"
+        optionGroup_handel.label = langString.constructions.tradingHouse
         var optionGroup_special = document.createElement('OPTGROUP')
-        optionGroup_special.label = "Special Building"
+        optionGroup_special.label = langString.constructions.specialBuilding
 
         for (var i= 0; i < 10; i++) {
             if(build[i]!=null){
@@ -1374,8 +1337,6 @@
         window[6].document.getElementById("tab_res_au").innerText = currentRes[RES_AU]
     }
 
-    var getBuildLvl_COUNTER = 0
-
     function resetBuild(){
         build[INDEX_HQ][LVL] = ""
         build[INDEX_BZ][LVL] = ""
@@ -1408,19 +1369,21 @@
         build[INDEX_REC][LVL] = ""
     }
 
+    var getBuildLvl_COUNTER = 0
+
     function getBuildLvl(){
         getBuildLvl_COUNTER++
+        if(getBuildLvl_COUNTER>20){
+            getBuildLvl_COUNTER = 0
+            return
+        }
         var sringSplit = ""
         try {
             var string = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2)").innerText
-            if(!string.includes("Handelsgebäude"))setTimeout(getBuildLvl,200)
+            if(!string.includes(langString.constructions.tradingHouse))setTimeout(getBuildLvl,200)
             sringSplit = string.split("\n")
         } catch (error) {
             getBuildLvl_COUNTER ++
-            if(getBuildLvl_COUNTER>20){
-                getBuildLvl_COUNTER = 0
-                return
-            }
             setTimeout(getBuildLvl,200)
         }
 
@@ -1459,131 +1422,131 @@
         for (let i = 0; i < sringSplit.length-1; i++) {
 
             //Hauptgebäude
-            if(sringSplit[i].includes("Hauptquartier Stufe")){
+            if(sringSplit[i].includes(langString.constructions.headquarter + " " + langString.constructions.level)){
                 build[INDEX_HQ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_HQ][LVL]++
             }
-            if(sringSplit[i].includes("Bauzentrale Stufe")){
+            if(sringSplit[i].includes(langString.constructions.constructionCenter + " " + langString.constructions.level)){
                 build[INDEX_BZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_BZ][LVL]++
             }
-            if(sringSplit[i].includes("Forschungszentrale Stufe")){
+            if(sringSplit[i].includes(langString.constructions.researchCenter + " " + langString.constructions.level)){
                 build[INDEX_FZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FZ][LVL]++
             }
-            if(sringSplit[i].includes("Spionagestation Stufe")){
+            if(sringSplit[i].includes(langString.constructions.espionageStation + " " + langString.constructions.level)){
                 build[INDEX_SS][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_SS][LVL]++
             }
 
             //Rohstoffgebäude
-            if(sringSplit[i].includes("Roheisen Mine Stufe")){
+            if(sringSplit[i].includes(langString.constructions.pigIronMine + " " + langString.constructions.level)){
                 build[INDEX_FE][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FE][LVL]++
             }
-            if(sringSplit[i].includes("Kristall Förderungsanlage Stufe")){
+            if(sringSplit[i].includes(langString.constructions.crystalMine + " " + langString.constructions.level)){
                 build[INDEX_KR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_KR][LVL]++
             }
-            if(sringSplit[i].includes("Frubin Sammler Stufe")){
+            if(sringSplit[i].includes(langString.constructions.frubinCollector + " " + langString.constructions.level)){
                 build[INDEX_FR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FR][LVL]++
             }
-            if(sringSplit[i].includes("Orizin Gewinnungsanlage Stufe")){
+            if(sringSplit[i].includes(langString.constructions.orizinSynthesizer + " " + langString.constructions.level)){
                 build[INDEX_OR][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_OR][LVL]++
             }
-            if(sringSplit[i].includes("Frurozin Herstellung Stufe")){
+            if(sringSplit[i].includes(langString.constructions.frurozinProduction + " " + langString.constructions.level)){
                 build[INDEX_FU][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FU][LVL]++
             }
-            if(sringSplit[i].includes("Goldmine Stufe")){
+            if(sringSplit[i].includes(langString.constructions.goldMine + " " + langString.constructions.level)){
                 build[INDEX_AU][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_AU][LVL]++
             }
 
             //Lagergebäude
-            if(sringSplit[i].includes("Roheisen Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.pigIronDepot + " " + langString.constructions.level)){
                 build[INDEX_FEL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FEL][LVL]++
             }
-            if(sringSplit[i].includes("Kristall Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.crystalDepot + " " + langString.constructions.level)){
                 build[INDEX_KRL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_KRL][LVL]++
             }
-            if(sringSplit[i].includes("Frubin Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.frubinDepot + " " + langString.constructions.level)){
                 build[INDEX_FRL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FRL][LVL]++
             }
-            if(sringSplit[i].includes("Orizin Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.orizinDepot + " " + langString.constructions.level)){
                 build[INDEX_ORL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_ORL][LVL]++
             }
-            if(sringSplit[i].includes("Frurozin Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.frurozinDepot + " " + langString.constructions.level)){
                 build[INDEX_FUL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FUL][LVL]++
             }
-            if(sringSplit[i].includes("Gold Lager Stufe")){
+            if(sringSplit[i].includes(langString.constructions.goldDepot + " " + langString.constructions.level)){
                 build[INDEX_AUL][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_AUL][LVL]++
             }
 
             //Energiegebäude
-            if(sringSplit[i].includes("Kernkraftwerk Stufe")){
+            if(sringSplit[i].includes(langString.constructions.nuclearPowerPlant + " " + langString.constructions.level)){
                 build[INDEX_KKW][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_KKW][LVL]++
             }
-            if(sringSplit[i].includes("Fusionskraftwerk Stufe")){
+            if(sringSplit[i].includes(langString.constructions.fusionPowerPlant + " " + langString.constructions.level)){
                 build[INDEX_FKW][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FKW][LVL]++
             }
 
             //Raumschiff- und Verteidigungs-Gebäude
-            if(sringSplit[i].includes("Raumschiff Fabrik Stufe")){
+            if(sringSplit[i].includes(langString.constructions.shipFactory + " " + langString.constructions.level)){
                 build[INDEX_RSF][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_RSF][LVL]++
             }
-            if(sringSplit[i].includes("Verteidigungsstation Stufe")){
+            if(sringSplit[i].includes(langString.constructions.defenseStation + " " + langString.constructions.level)){
                 build[INDEX_VTS][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_VTS][LVL]++
             }
-            if(sringSplit[i].includes("Spionageabwehr Stufe")){
+            if(sringSplit[i].includes(langString.constructions.counterEspionageStation + " " + langString.constructions.level)){
                 build[INDEX_SPA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_SPA][LVL]++
             }
-            if(sringSplit[i].includes("Frühwarnanlage Stufe")){
+            if(sringSplit[i].includes(langString.constructions.threatDetectionPhalanx + " " + langString.constructions.level)){
                 build[INDEX_FWA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_FWA][LVL]++
             }
 
             //Handelsgebäude
-            if(sringSplit[i].includes("Handelsposten Stufe")){
+            if(sringSplit[i].includes(langString.constructions.tradingPost + " " + langString.constructions.level)){
                 build[INDEX_HP][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_HP][LVL]++
             }
-            if(sringSplit[i].includes("Handelszentrum Stufe")){
+            if(sringSplit[i].includes(langString.constructions.tradingCenter + " " + langString.constructions.level)){
                 build[INDEX_HZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_HZ][LVL]++
             }
-            if(sringSplit[i].includes("X-Wars Bank Stufe")){
+            if(sringSplit[i].includes(langString.constructions.xWarsBank + " " + langString.constructions.level)){
                 build[INDEX_BA][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_BA][LVL]++
             }
 
             //Spezialgebäude
-            if(sringSplit[i].includes("Geheimdienstzentrum Stufe")){
+            if(sringSplit[i].includes(langString.constructions.intelligenceCenter + " " + langString.constructions.level)){
                 build[INDEX_GDZ][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_GDZ][LVL]++
             }
-            if(sringSplit[i].includes("X-Wars Kreditinstitut Stufe")){
+            if(sringSplit[i].includes(langString.constructions.xWarsCreditInstitution + " " + langString.constructions.level)){
                 build[INDEX_KRE][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_KRE][LVL]++
             }
-            if(sringSplit[i].includes("Werkstatt Stufe")){
+            if(sringSplit[i].includes(langString.constructions.workshop + " " + langString.constructions.level)){
                 build[INDEX_WER][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_WER][LVL]++
             }
-            if(sringSplit[i].includes("Recycler Stufe")){
+            if(sringSplit[i].includes(langString.constructions.recycler + " " + langString.constructions.level)){
                 build[INDEX_REC][LVL] = parseInt(sringSplit[i].match(/[0-9]+/)[0])
                 if(sringSplit[i+1].includes("%")) build[INDEX_REC][LVL]++
             }
@@ -1652,47 +1615,42 @@
                 if(j == 0 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Gebäude&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.constructions.building + "&nbsp;</b>");
                 }
                 if(j == 1 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Stufe&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.constructions.level + "&nbsp;</b>");
                 }
                 if(j == 2 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Roheisen&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.fe + "&nbsp;</b>");
                 }
                 if(j == 3 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Kristall&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.kris + "&nbsp;</b>");
                 }
                 if(j == 4 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Frubin&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.frub + "&nbsp;</b>");
                 }
                 if(j == 5 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Orizin&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.ori + "&nbsp;</b>");
                 }
                 if(j == 6 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Frurozin&nbsp;</b>");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.fruro + "&nbsp;</b>");
                 }
                 if(j == 7 && i == 0){
                     cell = document.createElement("td");
                     cell.className = "first"
-                    cellText = parseHTML("<b>&nbsp;Gold&nbsp;</b>");
-                }
-                if(j == 8 && i == 0){
-                    cell = document.createElement("th");
-                    cell.classList = ""
-                    cellText = document.createTextNode("Dauer");
+                    cellText = parseHTML("<b>&nbsp;" + langString.res.gold + "&nbsp;</b>");
                 }
                 if(j == 0 && i == 1){
                     cell = document.createElement("td");
@@ -1755,13 +1713,13 @@
         const setTrade_td = setTrade_tr.insertCell();
         const setTrade_content = document.createElement("div");
 
-        var btn = parseHTML(' [  <a href="#" id="trade_build_request">fordern</a>  ] ')
+        var btn = parseHTML(' [  <a href="#" id="trade_build_request">' + langString.trade.request + '</a>  ] ')
         setTrade_content.appendChild(btn)
 
-        var btn2 = parseHTML(' [  <a href="#" id="trade_build_save">saven</a>  ] ')
+        var btn2 = parseHTML(' [  <a href="#" id="trade_build_save">' + langString.trade.save + '</a>  ] ')
         setTrade_content.appendChild(btn2)
 
-        var btn3 = parseHTML(' [  <a href="#" id="trade_build_requestPlus">fordern +</a>  ] ')
+        var btn3 = parseHTML(' [  <a href="#" id="trade_build_requestPlus">' + langString.trade.requestPlus + '</a>  ] ')
         setTrade_content.appendChild(btn3)
 
         setTrade_td.className="first"
@@ -1804,7 +1762,7 @@
         const heute = new Date();
         var h = (heute.getHours())%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " Stufe "+(lvl+1)
+        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " " + langString.constructions.level + " "+(lvl+1)
     }
 
     function setTradePlus(){
@@ -1835,7 +1793,7 @@
         const heute = new Date();
         var h = (heute.getHours())%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " Stufe "+(lvl+1)
+        window[6].document.getElementsByName("trade_comment")[0].value = h.padStart(2, '0')+":" + m.padStart(2, '0') + " // " + build[id][STRING] + " " + langString.constructions.level + " " +(lvl+1)
     }
 
     function setSave(){
@@ -1858,7 +1816,7 @@
         const heute = new Date();
         var h = (heute.getHours()+8)%24+""
         var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# Ende " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE# // " + build[id][STRING] + " Stufe "+(lvl+1)
+        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + langString.trade.end + " " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE# // " + build[id][STRING] + " " + langString.constructions.level + " "+(lvl+1)
         var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
         var save_planetNR = 0
         if (planet_selector.selectedIndex == 0) save_planetNR = 1
@@ -1885,7 +1843,9 @@
     var symbol_false
     var indexFavShip
 
-    getJSON("https://raw.githubusercontent.com/BenniBaerenstark/XWars-Tool/main/shipsValues.json",
+    var langString
+
+    getJSON("https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/shipsValues.json",
             function(err, data) {
         if (err !== null) {
             console.log('Something went wrong: ' + err);
@@ -1896,6 +1856,8 @@
             indexFavShip = data.indexFavShip
         }
     });
+
+
 
 
     function generateShipMarket(){
@@ -1925,7 +1887,7 @@
         max.addEventListener("click", maxShip, false);
 
         var btn = document.createElement("a");
-        btn.innerHTML = ' [  <a href="#" id="trade_ship_set">stellen</a>  ] '
+        btn.innerHTML = ' [  <a href="#" id="trade_ship_set">' + langString.trade.place + '</a>  ] '
         btn.addEventListener("click", setShipTrade, false);
 
         var values = getShipNames();
@@ -1934,15 +1896,15 @@
         ship_select.id = "shipSelect"
 
         var optionGroup_drones = document.createElement('OPTGROUP')
-        optionGroup_drones.label = "Flugkörper"
+        optionGroup_drones.label = langString.trade.missiles
         var optionGroup_tactical = document.createElement('OPTGROUP')
-        optionGroup_tactical.label = "Taktische Waffen"
+        optionGroup_tactical.label = langString.trade.tacticalWeapons
         var optionGroup_light = document.createElement('OPTGROUP')
-        optionGroup_light.label = "Leichte Schiffe"
+        optionGroup_light.label = langString.trade.lightShips
         var optionGroup_middle = document.createElement('OPTGROUP')
-        optionGroup_middle.label = "Mittlere Schiffe"
+        optionGroup_middle.label = langString.trade.mediumShips
         var optionGroup_heavy = document.createElement('OPTGROUP')
-        optionGroup_heavy.label = "Schwere Schiffe"
+        optionGroup_heavy.label = langString.trade.heavyShips
 
         ship_select.appendChild(optionGroup_drones)
 
@@ -2016,32 +1978,32 @@
         name_Titel.className = "first"
         //firstRow.appendChild(name_Titel)
         var sClass = document.createElement("td")
-        sClass.innerHTML = "<b>&nbsp;Klasse&nbsp;</b>"
+        sClass.innerHTML = "<b>&nbsp;" + langString.trade.class + "&nbsp;</b>"
         sClass.className = "first"
         firstRow.appendChild(sClass)
         var attDef = document.createElement("td")
-        attDef.innerHTML = "<b>&nbsp;Att / Def&nbsp;</b>"
+        attDef.innerHTML = "<b>&nbsp;" + langString.trade.attDef + "&nbsp;</b>"
         attDef.className = "first"
         firstRow.appendChild(attDef)
         var drive_Titel = document.createElement("td")
-        drive_Titel.innerHTML = "<b>&nbsp;Antrieb&nbsp;</b>"
+        drive_Titel.innerHTML = "<b>&nbsp;" + langString.trade.drive + "&nbsp;</b>"
         drive_Titel.className = "first"
         firstRow.appendChild(drive_Titel)
         var freight_Titel = document.createElement("td")
-        freight_Titel.innerHTML = "<b>&nbsp;Fracht&nbsp;</b>"
+        freight_Titel.innerHTML = "<b>&nbsp;" + langString.trade.freight + "&nbsp;</b>"
         freight_Titel.className = "first"
         firstRow.appendChild(freight_Titel)
         var lKom_Titel = document.createElement("td")
-        lKom_Titel.innerHTML = "<b>&nbsp;L-Kom&nbsp;</b>"
+        lKom_Titel.innerHTML = "<b>&nbsp;" + langString.trade.lKom + "&nbsp;</b>"
         lKom_Titel.className = "first"
         firstRow.appendChild(lKom_Titel)
         var tt_Titel = document.createElement("td")
-        tt_Titel.innerHTML = "<b>&nbsp;TT&nbsp;</b>"
+        tt_Titel.innerHTML = "<b>&nbsp;" + langString.trade.tt + "&nbsp;</b>"
         tt_Titel.className = "first"
         firstRow.appendChild(tt_Titel)
         table.appendChild(firstRow)
         var carrier_Titel = document.createElement("td")
-        carrier_Titel.innerHTML = "<b>&nbsp;Träger&nbsp;</b>"
+        carrier_Titel.innerHTML = "<b>&nbsp;" + langString.trade.carrier + "&nbsp;</b>"
         carrier_Titel.className = "first"
         firstRow.appendChild(carrier_Titel)
         table.appendChild(firstRow)
@@ -2253,8 +2215,8 @@
         input_td.className="fourth"
         input_td.colSpan = "7"
         input_td.style.textAlign = "center"
-
-        input_td.appendChild(parseHTML("<b>Rohstoffproduktion</b>"))
+        langString.resources.resourcesProduction
+        input_td.appendChild(parseHTML("<b>" + langString.resources.resourcesProduction + "</b>"))
         input_tr.appendChild(input_td)
         table.appendChild(input_tr)
 
@@ -2310,7 +2272,7 @@
 
         row = document.createElement("tr")
         var td_tot_h = document.createElement("td")
-        td_tot_h.innerHTML = "<a>&nbsp;Total pro Stunde&nbsp;</a>"
+        td_tot_h.innerHTML = "<a>&nbsp;" + langString.resources.TotalPerHour + "&nbsp;</a>"
         td_tot_h.className = "fourth"
         td_tot_h.style.textAlign = "center"
         row.appendChild(td_tot_h)
@@ -2325,7 +2287,7 @@
 
         row = document.createElement("tr")
         var td_tot_d = document.createElement("td")
-        td_tot_d.innerHTML = "<a>&nbsp;Total pro Tag&nbsp;</a>"
+        td_tot_d.innerHTML = "<a>&nbsp;" + langString.resources.TotalPerDay + "&nbsp;</a>"
         td_tot_d.className = "fourth"
         td_tot_d.style.textAlign = "center"
         row.appendChild(td_tot_d)
@@ -2448,7 +2410,7 @@
         }
         setAllObsLink_COUNTER++
         try{
-            if(!window[6].document.querySelector("body").innerText.includes("Flottenbewegungen")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.main.fleetMovements)){
                 setTimeout(setAllObsLink,200)
                 return
             }
@@ -2473,10 +2435,10 @@
         }
         setAllObsLinkOverview_COUNTER++
         try{
-            if(!window[6].document.querySelector("body").innerText.includes("Gesamtpunkte:")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.main.totalPoints + ":")){
                 setTimeout(setAllObsLinkOverview,200)
                 return}
-            if(!window[6].document.querySelector("body").innerText.includes("lotte")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.main.shortFleet)){
                 return
             }
         }
@@ -2488,11 +2450,13 @@
         const tr = window[6].document.getElementsByTagName("tr")
         for(let i=5; i<tr.length-1; i++){
             addObsLinkOverview(tr[i].children[0])
-            if(tr[i].children[0].innerText.includes("Planetenübersicht"))return
+            if(tr[i].children[0].innerText.includes(langString.main.planetOverview))return
         }
     }
 
     function addObsLink(table){
+
+
 
         const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
         const colorDefOnWay = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
@@ -2503,32 +2467,32 @@
         const atts = table.children
         if(atts.length < 2) return
         for(let i=2; i<atts.length-1; i++){
-            if(atts[i].innerText.includes("Eigene Angriffsflotte")){
+            if(atts[i].innerText.includes(langString.fleets.ownAttack)){
                 setOwnAttObsLink(atts[i].children[0].children[0])
             }
-            if(atts[i].innerText.includes("Angriffsflotte von")){
+            if(atts[i].innerText.includes(langString.fleets.attackFrom) && langString.fleets.attackFrom != ""){
                 setEnemyAttObsLink(atts[i].children[0].children[0])
             }
-            if(atts[i].innerText.includes("kehrt zurück zur Basis")){
+            if(atts[i].innerText.includes(langString.fleets.returnsToBase)){
                 //changeBGColor(atts[i])
                 //changeBGColor(atts[i+1])
             }
-            if(atts[i].innerText.includes("wird überstellt auf")){
+            if(atts[i].innerText.includes(langString.fleets.transfer)){
                 changeBGColor(atts[i], atts[i+1], colorTransfer)
             }
-            if(atts[i].innerText.includes("Verteidigungsflotte") && (atts[i].innerText.includes("ist unterwegs zu Planet") || atts[i].innerText.includes("ist unterwegs zu deinem Planet"))){
+            if(atts[i].innerText.includes(langString.fleets.defFleet) && (atts[i].innerText.includes(langString.fleets.isOnTheWay) || atts[i].innerText.includes(langString.fleets.isOnTheWayToYourPlanet))){
                 changeBGColor(atts[i], atts[i+1], colorDefOnWay)
             }
-            if(atts[i].innerText.includes("verteidigt Planet")){
+            if(atts[i].innerText.includes(langString.fleets.isDefending)){
                 changeBGColor(atts[i], atts[i+1], colorDef)
             }
-            if(atts[i].innerText.includes("kehrt zurück zur Basis")){
+            if(atts[i].innerText.includes(langString.fleets.returnsToBase)){
                 changeBGColor(atts[i], atts[i+1], colorRet)
             }
-            if(atts[i].innerText.includes("transportiert Rohstoffe")){
+            if(atts[i].innerText.includes(langString.fleets.transport)){
                 changeBGColor(atts[i], atts[i+1], colorTransport)
             }
-            if(atts[i].innerText.includes(" fliegt als neue Basis deinen")){
+            if(atts[i].innerText.includes(langString.fleets.newHomeBase)){
                 changeBGColor(atts[i], atts[i+1], colorBaseChange)
             }
 
@@ -2542,29 +2506,25 @@
         const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
         const colorRet = 'rgb(' + 120 + ',' + 123 + ',' + 129 + ')';
         const colorTransport = 'rgb(' + 62 + ',' + 66 + ',' + 72 + ')';
-        if(tr.innerText.includes("Eigene Angriffsflotte")){
+        if(tr.innerText.includes(langString.fleets.ownAttack)){
             //setOwnAttObsLink(tr.children[0].children[0])
         }
-        if(tr.innerText.includes("Angriffsflotte von")){
+        if(tr.innerText.includes(langString.fleets.attackFrom) && langString.fleets.attackFrom != ""){
             setEnemyAttObsLinkOverview(tr)
         }
-        if(tr.innerText.includes("kehrt zurück zur Basis")){
-            //changeBGColor(atts[i])
-            //changeBGColor(atts[i+1])
-        }
-        if(tr.innerText.includes("wird überstellt auf")){
+        if(tr.innerText.includes(langString.fleets.transfer)){
             changeBGColorOverview(tr, colorTransfer)
         }
-        if(tr.innerText.includes("Eigene Verteidigungsflotte") && tr.innerText.includes("ist unterwegs zu Planet")){
+        if(tr.innerText.includes(langString.fleets.defFleet) && tr.innerText.includes(langString.fleets.isOnTheWay)){
             changeBGColorOverview(tr, colorDefOnWay)
         }
-        if(tr.innerText.includes("verteidigt Planet")){
+        if(tr.innerText.includes(langString.fleets.isDefending)){
             changeBGColorOverview(tr, colorDef)
         }
-        if(tr.innerText.includes("kehrt zurück zur Basis")){
+        if(tr.innerText.includes(langString.fleets.returnsToBase)){
             changeBGColorOverview(tr, colorRet)
         }
-        if(tr.innerText.includes("transportiert Rohstoffe")){
+        if(tr.innerText.includes(langString.fleets.transportingResources)){
             changeBGColorOverview(tr, colorTransport)
         }
 
@@ -2573,8 +2533,9 @@
 
     function setOwnAttObsLink(element){
         var html = element.innerHTML
-        const startCoords = html.indexOf("Planet")+7
-        const endCoords = html.indexOf(" an")
+        const startCoords = html.indexOf(langString.fleets.attackStringBevorCords) + langString.fleets.attackStringBevorCords.length + 1
+        var endCoords = html.length
+        if(langString.fleets.attackStringAfterCords) endCoords = html.indexOf(langString.fleets.attackStringAfterCords)
         const htmlPart1 = html.substring(0,startCoords)
         const htmlPart2 = html.substring(endCoords,html.length)
         const coords = html.substring(startCoords,endCoords)
@@ -2593,8 +2554,9 @@
 
     function setEnemyAttObsLinkOverview(element){
         var html = element.innerHTML
-        const startCoords = html.indexOf("von")+4
-        const endCoords = html.indexOf(" greift")
+        if(!langString.fleets.attackedStringBevorCords)return
+        const startCoords = html.indexOf(langString.fleets.attackedStringBevorCords)+ langString.fleets.attackedStringBevorCords.length + 1
+        const endCoords = html.indexOf(langString.fleets.attackedStringAfterCords)
         const htmlPart1 = html.substring(0,startCoords)
         const htmlPart2 = html.substring(endCoords,html.length)
         const coords = html.substring(startCoords,endCoords)
@@ -2634,8 +2596,9 @@
 
     function setEnemyAttObsLink(element){
         var html = element.innerHTML
-        const startCoords = html.indexOf("von")+4
-        const endCoords = html.indexOf(" greift")
+        if(!langString.fleets.attackedStringBevorCords)return
+        const startCoords = html.indexOf(langString.fleets.attackedStringBevorCords)+ langString.fleets.attackedStringBevorCords.length + 1
+        const endCoords = html.indexOf(langString.fleets.attackedStringAfterCords)
         const htmlPart1 = html.substring(0,startCoords)
         const htmlPart2 = html.substring(endCoords,html.length)
         const coords = html.substring(startCoords,endCoords)
@@ -2676,22 +2639,22 @@
         fillOutLastCommand_COUNTER = 0
         var txtLastCommand = getLastCommand(txtFullLastCommand)
         switch (txtLastCommand) {
-            case "Angriff":fillOutAttack(txtFullLastCommand);break;
-            case "Überstellung":break
+            case langString.fleets.commandAttack:fillOutAttack(txtFullLastCommand);break;
+            case langString.fleets.commandTransfer:break
 
         }
     }
 
     function getLastCommand(string){
-        const start = string.indexOf("Letzte Operation ")+17
-        var stop = string.indexOf(" auf")
-        if(stop == -1) stop = string.indexOf(" nach")
+        const start = string.indexOf(langString.fleets.lastOperation)+langString.fleets.lastOperatio.length
+        var stop = string.indexOf(langString.fleets.on)
+        if(stop == -1) stop = string.indexOf(langString.fleets.at)
         return string.substring(start,stop)
     }
 
     function fillOutAttack(string){
         window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(2) > input[type=radio]:nth-child(1)").click()
-        const start = string.indexOf("auf ")+4
+        const start = string.indexOf(langString.fleets.on)+langString.fleets.on.length
         const stop = string.indexOf(" (")
         window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(3) > input[type=text]").value = string.substring(start,stop)
     }
@@ -2711,7 +2674,7 @@
         }
         generateSpaceDockTools_COUNTER++
         try{
-            if(!window[6].document.querySelector("body > table > tbody").innerText.includes("Flotte gründen")){
+            if(!window[6].document.querySelector("body > table > tbody").innerText.includes(langString.fleets.createFleet)){
                 setTimeout(generateSpaceDockTools,200)
                 return
             }
@@ -2725,7 +2688,7 @@
         const tbodys = window[6].document.getElementsByTagName("tbody")
         const tr = tbodys[tbodys.length-2].children[0]
         var td = document.createElement("td")
-        var allShip = parseHTML('&nbsp;&nbsp; [&nbsp;<a href="#">alle Schiffe</a>&nbsp;]')
+        var allShip = parseHTML('&nbsp;&nbsp; [&nbsp;<a href="#">' + langString.fleets.allShips + '</a>&nbsp;]')
         td.appendChild(allShip)
         tr.appendChild(td)
 
@@ -2780,7 +2743,7 @@
             return
         }
         try{
-            if(!window[6].document.querySelector("body").innerText.includes("Nächste Berechnung")){
+            if(!window[6].document.querySelector("body").innerText.includes(langString.trade.nextCalculation)){
                 setTimeout(generateBankePage,200)
                 return
             }
@@ -2790,7 +2753,7 @@
             return
         }
 
-        if(!window[6].document.querySelector("body").innerText.includes("Neue Banktransaktionen für"))return
+        if(!window[6].document.querySelector("body").innerText.includes(langString.trade.newBankTransactionFor))return
 
         const electTransactionType = window[6].document.getElementsByName("transaction_type")[0]
         electTransactionType.selectedIndex = 1
@@ -2818,7 +2781,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res0').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res0').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res0').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res0').value = availRess
                 else window[6].document.getElementById('res0').value = freeCapa
             }
@@ -2833,7 +2796,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res1').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res1').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res1').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res1').value = availRess
                 else window[6].document.getElementById('res1').value = freeCapa
             }
@@ -2848,7 +2811,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res2').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res2').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res2').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res2').value = availRess
                 else window[6].document.getElementById('res2').value = freeCapa
             }
@@ -2863,7 +2826,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res3').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res3').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res3').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res3').value = availRess
                 else window[6].document.getElementById('res3').value = freeCapa
             }
@@ -2878,7 +2841,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res4').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res4').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res4').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res4').value = availRess
                 else window[6].document.getElementById('res4').value = freeCapa
             }
@@ -2893,7 +2856,7 @@
             var maxCapaMinusInterest = getMaxCapaMinusInterest()
             window[6].document.getElementById('res5').value = 0
             if(isDeposit()){
-                if(freeCapa < 0) window[6].document.getElementById('res5').value = "überbucht [" + ((-1)*freeCapa) + "]"
+                if(freeCapa < 0) window[6].document.getElementById('res5').value = langString.trade.overbooked + " [" + ((-1)*freeCapa) + "]"
                 else if(freeCapa > availRess) window[6].document.getElementById('res5').value = availRess
                 else window[6].document.getElementById('res5').value = freeCapa
             }
@@ -2940,12 +2903,12 @@
                 var ressString = null
                 var ressValue = 0
                 var isDeposit = false
-                if(tds[j].innerText.includes("Transaktion") && j==0){
+                if(tds[j].innerText.includes(langString.trade.transaction) && j==0){
                     if(i>8){
                         transactions.push(transaction)
                         transaction = {date:null, deposits:new Array(0,0,0,0,0,0), debits:new Array(0,0,0,0,0,0)};
                     }
-                    var dateString = tds[j].innerText.replace("Transaktion ")
+                    var dateString = tds[j].innerText.replace(langString.trade.transaction + " ")
                     transaction.date = getDate(dateString)
                 }
                 if((trs[i].children.length == 2 && j == 0)){
@@ -2964,22 +2927,22 @@
                 }
                 if(ressString != null && isDeposit){
                     switch (ressString) {
-                        case "Roheisen":transaction.deposits[0] = ressValue;break;
-                        case "Kristalle":transaction.deposits[1] = ressValue;break;
-                        case "Frubin":transaction.deposits[2] = ressValue;break;
-                        case "Orizin":transaction.deposits[3] = ressValue;break;
-                        case "Frurozin":transaction.deposits[4] = ressValue;break;
+                        case langString.res.fe:transaction.deposits[0] = ressValue;break;
+                        case langString.res.kris:transaction.deposits[1] = ressValue;break;
+                        case langString.res.frub:transaction.deposits[2] = ressValue;break;
+                        case langString.res.ori:transaction.deposits[3] = ressValue;break;
+                        case langString.res.fruro:transaction.deposits[4] = ressValue;break;
                         case "Gold":transaction.deposits[5] = ressValue;break;
                     }
                 }
                 if(ressString != null && !isDeposit){
                     switch (ressString) {
-                        case "Roheisen":transaction.debits[0] = ressValue;break;
-                        case "Kristalle":transaction.debits[1] = ressValue;break;
-                        case "Frubin":transaction.debits[2] = ressValue;break;
-                        case "Orizin":transaction.debits[3] = ressValue;break;
-                        case "Frurozin":transaction.debits[4] = ressValue;break;
-                        case "Gold":transaction.debits[5] = ressValue;break;
+                        case langString.res.fe:transaction.debits[0] = ressValue;break;
+                        case langString.res.kris:transaction.debits[1] = ressValue;break;
+                        case langString.res.frub:transaction.debits[2] = ressValue;break;
+                        case langString.res.ori:transaction.debits[3] = ressValue;break;
+                        case langString.res.fruro:transaction.debits[4] = ressValue;break;
+                        case langString.res.gold:transaction.debits[5] = ressValue;break;
                     }
                 }
             }
@@ -3107,126 +3070,132 @@
     const RES_FU = 4
     const RES_AU = 5
 
-    build[INDEX_HQ] = new Array()
-    build[INDEX_BZ] = new Array()
-    build[INDEX_FZ] = new Array()
-    build[INDEX_SS] = new Array()
-    build[INDEX_FE] = new Array()
-    build[INDEX_KR] = new Array()
-    build[INDEX_FR] = new Array()
-    build[INDEX_OR] = new Array()
-    build[INDEX_FU] = new Array()
-    build[INDEX_AU] = new Array()
-    build[INDEX_FEL] = new Array()
-    build[INDEX_KRL] = new Array()
-    build[INDEX_FRL] = new Array()
-    build[INDEX_ORL] = new Array()
-    build[INDEX_FUL] = new Array()
-    build[INDEX_AUL] = new Array()
-    build[INDEX_KKW] = new Array()
-    build[INDEX_FKW] = new Array()
-    build[INDEX_RSF] = new Array()
-    build[INDEX_VTS] = new Array()
-    build[INDEX_SPA] = new Array()
-    build[INDEX_FWA] = new Array()
-    build[INDEX_HP] = new Array()
-    build[INDEX_HZ] = new Array()
-    build[INDEX_BA] = new Array()
-    build[INDEX_GDZ] = new Array()
-    build[INDEX_KRE] = new Array()
-    build[INDEX_WER] = new Array()
-    build[INDEX_REC] = new Array()
-
-    build[INDEX_HQ][LW_ID] = HAUPTQUARTIER
-    build[INDEX_BZ][LW_ID] = BAUZENTRALE
-    build[INDEX_FZ][LW_ID] = FORSCHUNG
-    build[INDEX_SS][LW_ID] = SPIOSTATION
-    build[INDEX_FE][LW_ID] = ROHEISEN
-    build[INDEX_KR][LW_ID] = KRISTALL
-    build[INDEX_FR][LW_ID] = FRUBIN
-    build[INDEX_OR][LW_ID] = ORIZIN
-    build[INDEX_FU][LW_ID] = FUROZIN
-    build[INDEX_AU][LW_ID] = GOLD
-    build[INDEX_FEL][LW_ID] = EISENLAGER
-    build[INDEX_KRL][LW_ID] = KRISLAGER
-    build[INDEX_FRL][LW_ID] = FRUBLAGER
-    build[INDEX_ORL][LW_ID] = ORILAGER
-    build[INDEX_FUL][LW_ID] = FUROLAGER
-    build[INDEX_AUL][LW_ID] = GOLDLAGER
-    build[INDEX_KKW][LW_ID] = KERNKRAFTWERK
-    build[INDEX_FKW][LW_ID] = FUSIONSKRAFTWERK
-    build[INDEX_RSF][LW_ID] = WERFT
-    build[INDEX_VTS][LW_ID] = VERTEIDIGUNG
-    build[INDEX_SPA][LW_ID] = SPIOABWEHR
-    build[INDEX_FWA][LW_ID] = FRUHWARN
-    build[INDEX_HP][LW_ID] = HANDELSPOSTEN
-    build[INDEX_HZ][LW_ID] = HANDELSZENTRUM
-    build[INDEX_BA][LW_ID] = BANKK
-    build[INDEX_GDZ][LW_ID] = GEHEIMDIENST
-    build[INDEX_KRE][LW_ID] = KREDIT
-    build[INDEX_WER][LW_ID] = WERKSTATT
-    build[INDEX_REC][LW_ID] = RECYCLING
 
 
-    build[INDEX_HQ][STRING] = "Hauptquartier"
-    build[INDEX_BZ][STRING] = "Bauzentrale"
-    build[INDEX_FZ][STRING] = "Forschungszentrale"
-    build[INDEX_SS][STRING] = "Spionagestation"
-    build[INDEX_FE][STRING] = "Roheisen Mine"
-    build[INDEX_KR][STRING] = "Kristall Förderungsanlage"
-    build[INDEX_FR][STRING] = "Frubin Sammler"
-    build[INDEX_OR][STRING] = "Orizin Gewinnungsanlage"
-    build[INDEX_FU][STRING] = "Frurozin Herstellung"
-    build[INDEX_AU][STRING] = "Gold Mine"
-    build[INDEX_FEL][STRING] = "Roheisen Lager"
-    build[INDEX_KRL][STRING] = "Kristall Lager"
-    build[INDEX_FRL][STRING] = "Frubin Lager"
-    build[INDEX_ORL][STRING] = "Orizin Lager"
-    build[INDEX_FUL][STRING] = "Frurozin Lager"
-    build[INDEX_AUL][STRING] = "Gold Lager"
-    build[INDEX_KKW][STRING] = "Kernkraftwerk"
-    build[INDEX_FKW][STRING] = "Fusionskraftwerk"
-    build[INDEX_RSF][STRING] = "Raumschiff Fabrik"
-    build[INDEX_VTS][STRING] = "Verteidigungsstation"
-    build[INDEX_SPA][STRING] = "Spionageabwehr"
-    build[INDEX_FWA][STRING] = "Frühwarnanlage"
-    build[INDEX_HP][STRING] = "Handelsposten"
-    build[INDEX_HZ][STRING] = "Handelszentrum"
-    build[INDEX_BA][STRING] = "X-Wars Bank"
-    build[INDEX_GDZ][STRING] = "Geheimdienstzentrum"
-    build[INDEX_KRE][STRING] = "Kreditinstitut"
-    build[INDEX_WER][STRING] = "Werkstatt"
-    build[INDEX_REC][STRING] = "Recycler"
+    function initDB(){
+        build[INDEX_HQ] = new Array()
+        build[INDEX_BZ] = new Array()
+        build[INDEX_FZ] = new Array()
+        build[INDEX_SS] = new Array()
+        build[INDEX_FE] = new Array()
+        build[INDEX_KR] = new Array()
+        build[INDEX_FR] = new Array()
+        build[INDEX_OR] = new Array()
+        build[INDEX_FU] = new Array()
+        build[INDEX_AU] = new Array()
+        build[INDEX_FEL] = new Array()
+        build[INDEX_KRL] = new Array()
+        build[INDEX_FRL] = new Array()
+        build[INDEX_ORL] = new Array()
+        build[INDEX_FUL] = new Array()
+        build[INDEX_AUL] = new Array()
+        build[INDEX_KKW] = new Array()
+        build[INDEX_FKW] = new Array()
+        build[INDEX_RSF] = new Array()
+        build[INDEX_VTS] = new Array()
+        build[INDEX_SPA] = new Array()
+        build[INDEX_FWA] = new Array()
+        build[INDEX_HP] = new Array()
+        build[INDEX_HZ] = new Array()
+        build[INDEX_BA] = new Array()
+        build[INDEX_GDZ] = new Array()
+        build[INDEX_KRE] = new Array()
+        build[INDEX_WER] = new Array()
+        build[INDEX_REC] = new Array()
 
-    build[INDEX_HQ][RES] = ress_HQ
-    build[INDEX_BZ][RES] = ress_BZ
-    build[INDEX_FZ][RES] = ress_FZ
-    build[INDEX_SS][RES] = ress_SS
-    build[INDEX_FE][RES] = ress_FE
-    build[INDEX_KR][RES] = ress_KR
-    build[INDEX_FR][RES] = ress_FR
-    build[INDEX_OR][RES] = ress_OR
-    build[INDEX_FU][RES] = ress_FU
-    build[INDEX_AU][RES] = ress_AU
-    build[INDEX_FEL][RES] = ress_FEL
-    build[INDEX_KRL][RES] = ress_KRL
-    build[INDEX_FRL][RES] = ress_FRL
-    build[INDEX_ORL][RES] = ress_ORL
-    build[INDEX_FUL][RES] = ress_FUL
-    build[INDEX_AUL][RES] = ress_AUL
-    build[INDEX_KKW][RES] = ress_KKW
-    build[INDEX_FKW][RES] = ress_FKW
-    build[INDEX_RSF][RES] = ress_RSF
-    build[INDEX_VTS][RES] = ress_VTS
-    build[INDEX_SPA][RES] = ress_SPA
-    build[INDEX_FWA][RES] = ress_FWA
-    build[INDEX_HP][RES] = ress_HP
-    build[INDEX_HZ][RES] = ress_HZ
-    build[INDEX_BA][RES] = ress_BA
-    build[INDEX_GDZ][RES] = ress_GDZ
-    build[INDEX_KRE][RES] = ress_KRE
-    build[INDEX_WER][RES] = ress_WER
-    build[INDEX_REC][RES] = ress_REC
+        build[INDEX_HQ][LW_ID] = HAUPTQUARTIER
+        build[INDEX_BZ][LW_ID] = BAUZENTRALE
+        build[INDEX_FZ][LW_ID] = FORSCHUNG
+        build[INDEX_SS][LW_ID] = SPIOSTATION
+        build[INDEX_FE][LW_ID] = ROHEISEN
+        build[INDEX_KR][LW_ID] = KRISTALL
+        build[INDEX_FR][LW_ID] = FRUBIN
+        build[INDEX_OR][LW_ID] = ORIZIN
+        build[INDEX_FU][LW_ID] = FUROZIN
+        build[INDEX_AU][LW_ID] = GOLD
+        build[INDEX_FEL][LW_ID] = EISENLAGER
+        build[INDEX_KRL][LW_ID] = KRISLAGER
+        build[INDEX_FRL][LW_ID] = FRUBLAGER
+        build[INDEX_ORL][LW_ID] = ORILAGER
+        build[INDEX_FUL][LW_ID] = FUROLAGER
+        build[INDEX_AUL][LW_ID] = GOLDLAGER
+        build[INDEX_KKW][LW_ID] = KERNKRAFTWERK
+        build[INDEX_FKW][LW_ID] = FUSIONSKRAFTWERK
+        build[INDEX_RSF][LW_ID] = WERFT
+        build[INDEX_VTS][LW_ID] = VERTEIDIGUNG
+        build[INDEX_SPA][LW_ID] = SPIOABWEHR
+        build[INDEX_FWA][LW_ID] = FRUHWARN
+        build[INDEX_HP][LW_ID] = HANDELSPOSTEN
+        build[INDEX_HZ][LW_ID] = HANDELSZENTRUM
+        build[INDEX_BA][LW_ID] = BANKK
+        build[INDEX_GDZ][LW_ID] = GEHEIMDIENST
+        build[INDEX_KRE][LW_ID] = KREDIT
+        build[INDEX_WER][LW_ID] = WERKSTATT
+        build[INDEX_REC][LW_ID] = RECYCLING
+
+
+        build[INDEX_HQ][STRING] = langString.constructions.headquarter
+        build[INDEX_BZ][STRING] = langString.constructions.constructionCenter
+        build[INDEX_FZ][STRING] = langString.constructions.researchCenter
+        build[INDEX_SS][STRING] = langString.constructions.espionageStation
+        build[INDEX_FE][STRING] = langString.constructions.pigIronMine
+        build[INDEX_KR][STRING] = langString.constructions.crystalMine
+        build[INDEX_FR][STRING] = langString.constructions.frubinCollector
+        build[INDEX_OR][STRING] = langString.constructions.orizinSynthesizer
+        build[INDEX_FU][STRING] = langString.constructions.frurozinProduction
+        build[INDEX_AU][STRING] = langString.constructions.goldMine
+        build[INDEX_FEL][STRING] = langString.constructions.pigIronDepot
+        build[INDEX_KRL][STRING] = langString.constructions.crystalDepot
+        build[INDEX_FRL][STRING] = langString.constructions.frubinDepot
+        build[INDEX_ORL][STRING] = langString.constructions.orizinDepot
+        build[INDEX_FUL][STRING] = langString.constructions.frurozinDepot
+        build[INDEX_AUL][STRING] = langString.constructions.goldDepot
+        build[INDEX_KKW][STRING] = langString.constructions.nuclearPowerPlant
+        build[INDEX_FKW][STRING] = langString.constructions.fusionPowerPlant
+        build[INDEX_RSF][STRING] = langString.constructions.shipFactory
+        build[INDEX_VTS][STRING] = langString.constructions.defenseStation
+        build[INDEX_SPA][STRING] = langString.constructions.counterEspionageStation
+        build[INDEX_FWA][STRING] = langString.constructions.threatDetectionPhalanx
+        build[INDEX_HP][STRING] = langString.constructions.tradingPost
+        build[INDEX_HZ][STRING] = langString.constructions.tradingCenter
+        build[INDEX_BA][STRING] = langString.constructions.xWarsBank
+        build[INDEX_GDZ][STRING] = langString.constructions.intelligenceCenter
+        build[INDEX_KRE][STRING] = langString.constructions.xWarsCreditInstitution
+        build[INDEX_WER][STRING] = langString.constructions.workshop
+        build[INDEX_REC][STRING] = langString.constructions.recycler
+
+        build[INDEX_HQ][RES] = ress_HQ
+        build[INDEX_BZ][RES] = ress_BZ
+        build[INDEX_FZ][RES] = ress_FZ
+        build[INDEX_SS][RES] = ress_SS
+        build[INDEX_FE][RES] = ress_FE
+        build[INDEX_KR][RES] = ress_KR
+        build[INDEX_FR][RES] = ress_FR
+        build[INDEX_OR][RES] = ress_OR
+        build[INDEX_FU][RES] = ress_FU
+        build[INDEX_AU][RES] = ress_AU
+        build[INDEX_FEL][RES] = ress_FEL
+        build[INDEX_KRL][RES] = ress_KRL
+        build[INDEX_FRL][RES] = ress_FRL
+        build[INDEX_ORL][RES] = ress_ORL
+        build[INDEX_FUL][RES] = ress_FUL
+        build[INDEX_AUL][RES] = ress_AUL
+        build[INDEX_KKW][RES] = ress_KKW
+        build[INDEX_FKW][RES] = ress_FKW
+        build[INDEX_RSF][RES] = ress_RSF
+        build[INDEX_VTS][RES] = ress_VTS
+        build[INDEX_SPA][RES] = ress_SPA
+        build[INDEX_FWA][RES] = ress_FWA
+        build[INDEX_HP][RES] = ress_HP
+        build[INDEX_HZ][RES] = ress_HZ
+        build[INDEX_BA][RES] = ress_BA
+        build[INDEX_GDZ][RES] = ress_GDZ
+        build[INDEX_KRE][RES] = ress_KRE
+        build[INDEX_WER][RES] = ress_WER
+        build[INDEX_REC][RES] = ress_REC
+    }
+
+
 
     var $ = document.getElementById;
 
