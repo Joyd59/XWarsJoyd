@@ -68,11 +68,27 @@
       "updateUebersicht": "--> Update Übersicht"
     },
     "fleets": {
+      "allShips": "alle Schiffe",
+      "at": " nach",
       "attackFrom": "Angriffsflotte von",
       "attackStringAfterCords": " an",
       "attackStringBevorCords": "Planet",
+      "attackedStringAfterCords": " greift",
+      "attackedStringBevorCords": "von",
+      "commandAttack": "Angriff",
+      "commandTransfer": "Überstellung",
+      "createFleet": "\"Flotte gründen\"",
+      "defFleet": "Verteidigungsflotte",
+      "isDefending": "verteidigt Planet",
+      "isOnTheWay": "ist unterwegs zu Planet",
+      "isOnTheWayToYourPlanet": "ist unterwegs zu deinem Planet",
+      "lastOperation": "Letzte Operation ",
+      "newHomeBase": "fliegt als neue Basis deinen",
+      "on": " auf",
       "ownAttack": "Eigene Angriffsflotte",
       "returnsToBase": "kehrt zurück zur Basis",
+      "transfer": "wird überstellt auf",
+      "transport": "transportiert Rohstoffe",
       "transportingResources": "transportiert Rohstoffe"
     },
     "main": {
@@ -165,6 +181,9 @@
       "lightShips": "Leichte Schiffe",
       "mediumShips": "Mittlere Schiffe",
       "missiles": "Flugkörper",
+      "newBankTransactionFor": "Neue Banktransaktionen für",
+      "nextCalculation": "Nächste Berechnung",
+      "overbooked": "überbucht",
       "ownPlanets": "Eigene Planeten",
       "place": "stellen",
       "proceed": "weiter",
@@ -180,6 +199,7 @@
       "totalResInSaveTrades": "Total Ressourcen in Savehandel",
       "tradingHistory": "Historie",
       "tradingOffer": "Handelsauftrag",
+      "transaction": "Transaktion",
       "transactions": "Transaktionen",
       "tt": "TT"
     }
