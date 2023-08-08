@@ -68,6 +68,9 @@
       "updateUebersicht": "--> Update Übersicht"
     },
     "fleets": {
+      "attackAfterCords": " an",
+      "attackFrom": "Angriffsflotte von",
+      "attackStringBevorCords": "Planet",
       "returnsToBase": "kehrt zurück zur Basis",
       "transportingResources": "transportiert Rohstoffe"
     },
