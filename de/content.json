@@ -75,6 +75,7 @@
       "attackStringBevorCords": "Planet",
       "attackedStringAfterCords": " greift",
       "attackedStringBevorCords": "von",
+      "change": "ändern",
       "commandAttack": "Angriff",
       "commandTransfer": "Überstellung",
       "createFleet": "Flotte gründen",
