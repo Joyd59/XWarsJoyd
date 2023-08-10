@@ -1,7 +1,7 @@
 {
   "symbol_true": "✅",
   "symbol_false": "❌",
-  "indexFavShip": "13",
+  "indexFavShip": "14",
   "ships": [
     {
       "name": "Hyp Aufklärer-Klasse",
@@ -92,6 +92,24 @@
       "or": 5532,
       "fz": 2668,
       "au": 0
+    },
+    {
+      "name": "SOE TIE-Interceptor-Klasse",
+      "shipClass": "Leicht",
+      "att": 585,
+      "def": 613,
+      "drive": "NUK",
+      "drive_s": 124,
+      "freight": 0,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 1645,
+      "kr": 2290,
+      "fr": 2900,
+      "or": 1065,
+      "fz": 2385,
+      "au": 250
     },
     {
       "name": "SOE TIE-Fighter-Klasse",
