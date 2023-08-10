@@ -310,6 +310,24 @@
       "au": 120
     },
     {
+      "name": "SOE Arquitens-Klasse",
+      "shipClass": "Schwer",
+      "att": 1203,
+      "def": 1488,
+      "drive": "HYP",
+      "drive_s": 160,
+      "freight": 26880,
+      "lkom": true,
+      "tt": false,
+      "carrier": false,
+      "fe": 32920,
+      "kr": 28920,
+      "fr": 13480,
+      "or": 29400,
+      "fz": 12600,
+      "au": 120
+    },
+    {
       "name": "SOE Detainer CC-2200-Klasse",
       "shipClass": "Schwer",
       "att": 10282,
