@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.8.0
+// @version      1.8.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -1733,12 +1733,12 @@
 
     function getCurrentRes(resID){
         switch(resID) {
-            case RES_FE: return parseInt(window[4].document.getElementById("res0").innerText.replace('.', ''))
-            case RES_KR: return parseInt(window[4].document.getElementById("res1").innerText.replace('.', ''))
-            case RES_FR: return parseInt(window[4].document.getElementById("res2").innerText.replace('.', ''))
-            case RES_OR: return parseInt(window[4].document.getElementById("res3").innerText.replace('.', ''))
-            case RES_FU: return parseInt(window[4].document.getElementById("res4").innerText.replace('.', ''))
-            case RES_AU: return parseInt(window[4].document.getElementById("res5").innerText.replace('.', ''))
+            case RES_FE: return parseInt(window[4].document.getElementById("res0").innerText.replace('.', '').replace(',', ''))
+            case RES_KR: return parseInt(window[4].document.getElementById("res1").innerText.replace('.', '').replace(',', ''))
+            case RES_FR: return parseInt(window[4].document.getElementById("res2").innerText.replace('.', '').replace(',', ''))
+            case RES_OR: return parseInt(window[4].document.getElementById("res3").innerText.replace('.', '').replace(',', ''))
+            case RES_FU: return parseInt(window[4].document.getElementById("res4").innerText.replace('.', '').replace(',', ''))
+            case RES_AU: return parseInt(window[4].document.getElementById("res5").innerText.replace('.', '').replace(',', ''))
         }
     }
 
