@@ -1171,9 +1171,9 @@
                 case 'save2h+': prepareCountdown(trade);setTradeColor(trade,'DarkGreen');checkOverflow(trade);; break;
                 case 'save2h-30min': prepareCountdown(trade);setTradeColor(trade,'#ff6600');checkOverflow(trade); break;
                 case 'save30min-': prepareCountdown(trade); setTradeColor(trade,'#ff0000'); checkOverflow(trade);break;
-                case 'incomingTradeDonation': prepareCountdown(trade); setTradeColor(trade,'#3399ff'); break;
+                case 'incomingTradeDonation': prepareCountdown(trade); setTradeColor(trade,'#006CFF'); break;
                 case 'incomingTradeRequest': prepareCountdown(trade);setTradeColor(trade,'#b84dff'); break;
-                case 'outgoingTradeDonation': prepareCountdown(trade);setTradeColor(trade,'#004080'); break;
+                case 'outgoingTradeDonation': prepareCountdown(trade);setTradeColor(trade,'1F43B2'); break;
                 case 'outgoingTradeRequest': prepareCountdown(trade);setTradeColor(trade,'#7a00cc'); break;
             }
 
@@ -1293,6 +1293,7 @@
 
 
     function setTradeColor(trade,color){
+        console.log(color,trade)
         for(let i=0; i<trade.children.length; i++){
             trade.children[i].style.backgroundColor = color
         }
