@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.8.1
+// @version      1.9.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -20,9 +20,10 @@
     //  |_____________________________|
 
     const debug = false
-    const configFile = "configfile_170"
+    const configFile = "configfile_b190"
+    const delayTime = 600
 
-    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeLogTool_enabled:true, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
+    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeView_enabled:true, tradeLogTool_enabled:true, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
     var userLang = navigator.language || navigator.userLanguage
     var langFile = null
 
@@ -37,6 +38,7 @@
         } else {
             langString = data.langString
             initDB()
+            console.log(langString)
         }
     });
 
@@ -50,7 +52,7 @@
             setTimeout(addConfigButton,200)
             return
         }
-        if(window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2) > a:nth-child(35)").innerText.includes("SOE Tool")) return
+        if(window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)").innerText.includes("SOE Tool")) return
 
         const parent = window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)")
         const btn = parseHTML('<a id="config_button" href="#">SOE Tool</a>')
@@ -173,6 +175,7 @@
         // Options 
         table.appendChild(generateOnOFF_option(langString.soe_tool_settings.buildingCost, "buildTool"))
         table.appendChild(generateOnOFF_option(langString.soe_tool_settings.shipMarket, "shipTool"))
+        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.tradeView, "tradeView"))
         const user = getUserName()
         if((user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus" || user == "Macallen"))table.appendChild(generateOnOFF_option(langString.soe_tool_settings.tradeLog, "tradeLogTool"))
         if((user == "DarthRevan")) table.appendChild(generateOnOFF_option(langString.soe_tool_settings.eventNotification, "notification"))
@@ -182,17 +185,19 @@
 
         window[6].document.getElementsByName("saveBtn")[0].onclick = saveConfig
 
-        try{
+       //try{
             if(!saveFile.buildTool_enabled)window[6].document.getElementById("on_buildTool").onclick = saveOnOFF_option
             if(saveFile.buildTool_enabled)window[6].document.getElementById("off_buildTool").onclick =saveOnOFF_option
             if(!saveFile.shipTool_enabled)window[6].document.getElementById("on_shipTool").onclick = saveOnOFF_option
             if(saveFile.shipTool_enabled)window[6].document.getElementById("off_shipTool").onclick = saveOnOFF_option
+            if(!saveFile.tradeView_enabled)window[6].document.getElementById("on_tradeView").onclick = saveOnOFF_option
+            if(saveFile.tradeView_enabled)window[6].document.getElementById("off_tradeView").onclick = saveOnOFF_option
             if(!saveFile.tradeLogTool_enabled)window[6].document.getElementById("on_tradeLogTool").onclick = saveOnOFF_option
             if(saveFile.tradeLogTool_enabled)window[6].document.getElementById("off_tradeLogTool").onclick = saveOnOFF_option
             if(!saveFile.notification_enabled)window[6].document.getElementById("on_notification").onclick = saveOnOFF_option
             if(saveFile.notification_enabled)window[6].document.getElementById("off_notification").onclick = saveOnOFF_option
-        }
-        catch{}
+        //}
+        //catch{}
 
         //  Abstand
         tr = document.createElement("tr")
@@ -350,6 +355,7 @@
             case "shipTool": return saveFile.shipTool_enabled
             case "tradeLogTool": return saveFile.tradeLogTool_enabled
             case "notification": return saveFile.notification_enabled
+            case "tradeView": return saveFile.tradeView_enabled
         }
     }
 
@@ -360,6 +366,7 @@
             case "shipTool": saveFile.shipTool_enabled = !saveFile.shipTool_enabled;break;
             case "tradeLogTool": saveFile.tradeLogTool_enabled = !saveFile.tradeLogTool_enabled;break;
             case "notification": saveFile.notification_enabled = !saveFile.notification_enabled;break;
+            case "tradeView": saveFile.tradeView_enabled = !saveFile.tradeView_enabled;break;
         }
         GM_setValue(configFile, saveFile);
     }
@@ -505,7 +512,7 @@
 
         if(clickedElement.srcElement.innerText.includes(langString.menu.fleetBase)){
             if(debug)console.log('%c'+langString.menu.fleetBase,'color: lime')
-            setTimeout(setAllObsLink,200)
+            setTimeout(setAllObsLink,delayTime)
         }
 
         var elementText = clickedElement.srcElement.innerText
@@ -513,50 +520,50 @@
                 // Handel
             case langString.trade.transactions:
                 if(debug)console.log('%c'+langString.trade.transactions,'color: lime')
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.tradingHistory:
                 if(debug)console.log('%c'+langString.trade.tradingHistory,'color: lime')
                 break;
             case langString.trade.createTradingOffer:
                 if(debug)console.log('%c'+langString.trade.createTradingOffer,'color: lime')
-                setTimeout(generateTradePage,300)
+                setTimeout(generateTradePage,delayTime)
                 break;
             case langString.trade.credit:
                 if(debug)console.log('%c'+langString.trade.credit,'color: lime')
                 break;
             case langString.trade.startInquiry:
                 if(debug)console.log('%c'+langString.trade.startInquiry,'color: lime')
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.show:
                 if(debug)console.log('%c'+langString.trade.show,'color: lime')
-                setTimeout(addLogButton,300)
+                setTimeout(addLogButton,delayTime)
                 break;
             case langString.trade.acceptPlusLog:
                 if(debug)console.log('%c'+langString.trade.acceptPlusLog,'color: lime')
                 logTrade()
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.accept:
                 if(debug)console.log('%c'+langString.trade.accept,'color: lime')
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.cancel:
                 if(debug)console.log('%c'+langString.trade.cancel,'color: lime')
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.refuse:
                 if(debug)console.log('%c'+langString.trade.refuse,'color: lime')
-                setTimeout(hideSaveTrades,300)
+                setTimeout(hideSaveTrades,delayTime)
                 break;
             case langString.trade.bank:
                 if(debug)console.log('%c'+langString.trade.bank,'color: lime')
-                setTimeout(generateBankePage,300)
+                setTimeout(generateBankePage,delayTime)
                 break;
             case langString.trade.proceed:
                 if(debug)console.log('%c'+langString.trade.proceed,'color: lime')
-                setTimeout(generateBankePage,300)
+                setTimeout(generateBankePage,delayTime)
                 break;
 
 
@@ -569,35 +576,39 @@
                 break;
             case langString.main.planetObservation:
                 if(debug)console.log('%c'+langString.main.planetObservation,'color: lime')
-                setTimeout(getallObservers,300)
+                setTimeout(getallObservers,delayTime)
                 break;
 
                 // Rohstoffe
             case langString.main.resources:
                 if(debug)console.log('%c'+langString.main.resources,'color: lime')
-                setTimeout(generateRPH,500)
+                setTimeout(generateRPH,delayTime)
                 break;
 
                 // Flotten
             case langString.main.allFleetBases:
                 if(debug)console.log('%c'+langString.main.allFleetBases,'color: lime')
-                setTimeout(setAllObsLink,200)
+                setTimeout(setAllObsLink,delayTime)
                 break;
             case langString.main.fleetMovements:
                 if(debug)console.log('%c'+langString.main.fleetMovements,'color: lime')
-                setTimeout(setAllObsLink,200)
+                setTimeout(setAllObsLink,delayTime)
                 break;
             case langString.main.orders:
                 if(debug)console.log('%c'+langString.main.orders,'color: lime')
-                setTimeout(fillOutLastCommand,200)
+                setTimeout(fillOutLastCommand,delayTime)
                 break;
             case langString.main.spaceDock:
                 if(debug)console.log('%c'+langString.main.spaceDock,'color: lime')
-                setTimeout(generateSpaceDockTools,200)
+                setTimeout(generateSpaceDockTools,delayTime)
                 break;
             case langString.main.disband:
                 if(debug)console.log('%c'+langString.main.disband,'color: lime')
-                setTimeout(generateSpaceDockTools,200)
+                setTimeout(generateSpaceDockTools,delayTime)
+                break;
+            case langString.fleets.change:
+                if(debug)console.log('%c'+langString.fleets.change,'color: lime')
+                setTimeout(generateSpaceDockTools,delayTime)
                 break;
 
 
@@ -730,6 +741,7 @@
         }catch (error) {
         }
         countSaveRes()
+        optimizeTradeView()
 
     }
 
@@ -855,12 +867,10 @@
 
     function tradeToSave(){
         if(debug)console.log(langString.debug.tradeToSave)
-        const heute = new Date();
-        var h = (heute.getHours()+8)%24+""
-        var m = heute.getMinutes()+""
+        const dateString = getDateTimeString(addHoursToDate(new Date(),8))
         window[6].document.getElementsByName("tt_res[0]")[0].value = ""
         window[6].document.getElementsByName("tt_res[5]")[0].value = 99999999
-        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + langString.trade.end + " " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE#"
+        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + dateString + " #SAVE#"
         if(saveFile.saveCoords ==""){
             var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
             var save_planetNR = 0
@@ -886,20 +896,26 @@
 
     function addLogButton(){
         if(!saveFile.tradeLogTool_enabled)return
+        if(addLogButton_COUNTER > 30){
+            addLogButton_COUNTER = 0
+            return
+        }
+        addLogButton_COUNTER++
         if(debug)console.log(langString.debug.addLogButton)
         try {
-            addLogButton_COUNTER++
-            var test = window[6].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2)")
-            if (test == null){
-                if(addLogButton_COUNTER < 10)setTimeout(addLogButton,200)
+            if(!window[6].document.querySelector("body").innerHTML.includes(langString.trade.verfication)){
+                setTimeout(addLogButton,200)
                 return
             }
+
         }catch (error) {
+            setTimeout(addLogButton,200)
+            return
         }
         addLogButton_COUNTER = 0
         if(window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText.match(/\b(\w+)\b/g) != langString.menu.trade) return
         const user = window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText
-        
+
         if(debug)console.log("Handellog Button hinzufügen")
         const trader = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2)").innerText
         if(trader.includes(user)) return
@@ -1134,7 +1150,230 @@
         const tradeTable = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table")
         parentDiv.insertBefore(tbl,tradeTable);
         parentDiv.insertBefore(document.createElement("p"),tradeTable);
+
+
+
     }
+
+
+    function optimizeTradeView(){
+        if(!saveFile.tradeView_enabled)return
+
+        const trades = window[6].document.querySelectorAll('*[trade-id]');
+
+        for( let i=0; i<trades.length;i++){
+            var trade = trades[i]
+            var tradeState = ""
+            tradeState = getTradeState(trade)
+
+            switch (tradeState) {
+                case 'running': setTradeColor(trade,'#383838'); break;
+                case 'save2h+': prepareCountdown(trade);setTradeColor(trade,'DarkGreen');checkOverflow(trade);; break;
+                case 'save2h-30min': prepareCountdown(trade);setTradeColor(trade,'#ff6600');checkOverflow(trade); break;
+                case 'save30min-': prepareCountdown(trade); setTradeColor(trade,'#ff0000'); checkOverflow(trade);break;
+                case 'incomingTradeDonation': prepareCountdown(trade); setTradeColor(trade,'#3399ff'); break;
+                case 'incomingTradeRequest': prepareCountdown(trade);setTradeColor(trade,'#b84dff'); break;
+                case 'outgoingTradeDonation': prepareCountdown(trade);setTradeColor(trade,'#004080'); break;
+                case 'outgoingTradeRequest': prepareCountdown(trade);setTradeColor(trade,'#7a00cc'); break;
+            }
+
+        }
+        setCountdownIntervall()
+
+    }
+
+    function checkOverflow(trade,currentRes){
+
+        setTimeout(function(){
+
+            const expression_FE = new RegExp(langString.res.fe + ": (\\d+)","i")
+            const expression_KR = new RegExp(langString.res.kris + ": (\\d+)","i")
+            const expression_FB = new RegExp(langString.res.frub + ": (\\d+)","i")
+            const expression_OR = new RegExp(langString.res.ori + ": (\\d+)","i")
+            const expression_FR = new RegExp(langString.res.fruro + ": (\\d+)","i")
+            const expression_AU = new RegExp(langString.res.gold + ": (\\d+)","i")
+
+            const tradeElements = trade.children
+            const delivery = tradeElements[1]
+            const cancel = tradeElements[5].children[0]
+
+            var ress = new Array(0,0,0,0,0,0)
+            var resString = delivery.innerText
+            if(window[4].resources){
+                ress[0] += findNumber(resString, expression_FE) + window[4].resources[0]
+                ress[1] += findNumber(resString, expression_KR) + window[4].resources[1]
+                ress[2] += findNumber(resString, expression_FB) + window[4].resources[2]
+                ress[3] += findNumber(resString, expression_OR) + window[4].resources[3]
+                ress[4] += findNumber(resString, expression_FR) + window[4].resources[4]
+                ress[5] += findNumber(resString, expression_AU) + window[4].resources[5]
+            }
+
+            var overflow = false
+            for(let i=0; i<6; i++){
+                if(ress[i] >= currentStorageCapa[i]){
+                    overflow = true
+                }
+            }
+
+            if(overflow){
+                cancel.innerText = langString.trade.overflow
+                cancel.style.fontWeight = 'bold';
+            }
+        }
+                   ,1000)
+
+    }
+
+
+
+    function prepareCountdown(trade){
+        var comment = null
+        if(trade.nextElementSibling){
+            if(trade.nextElementSibling.children.length < 3)comment = trade.nextElementSibling.children[1]
+        }
+        if(comment == null)return
+        const commentStr = comment.innerText
+        const date = getDateFromString(commentStr)
+        if (isNaN(date)) return
+        const td_button = trade.children[5]
+        const now = new Date()
+        var distance = date - now;
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + "";
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)) + "";
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000) + "";
+        comment.style.textAlign = "left";
+        removeMetadata(comment)
+        td_button.appendChild(document.createElement("br"))
+        td_button.appendChild(parseHTML('<a name="countdown" id="' + commentStr + '">' + hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0") + '</a>'))
+    }
+
+    function removeMetadata(commentElement){
+        var str = commentElement.innerText
+        if(str.includes("#SAVE#")){
+            let end = 0
+            var indices = [];
+            for(var i=0; i<str.length;i++) {
+                if (str[i] === "#") end = i
+            }
+            str = str.slice(end+1)
+            str = str.replaceAll("/","")            
+        }
+        if(str.includes(":")){
+            let i = str.indexOf(":")
+            str = str.slice(i+3)
+            str = str.replaceAll("/","")
+        }
+        commentElement.innerText = str
+        if(str.length < 2){
+            commentElement.parentElement.hidden = true
+        }
+    }
+
+    function setCountdownIntervall(){
+        var x = setInterval(function() {
+
+            const countdowns = window[6].document.getElementsByName("countdown")
+            if(countdowns.length < 1){
+                clearInterval(x)
+                return
+            }
+
+            for (let i=0; i < countdowns.length; i++){
+                const date = getDateFromString(countdowns[i].id)
+                const now = new Date()
+                var distance = date - now;
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + "";
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)) + "";
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000) + "";
+                countdowns[i].innerText = hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0")
+            }
+
+        }, 1000);
+    }
+
+
+    function setTradeColor(trade,color){
+        for(let i=0; i<trade.children.length; i++){
+            trade.children[i].style.backgroundColor = color
+        }
+        if(trade.nextElementSibling){
+            if(trade.nextElementSibling.children.length < 4){
+                trade.nextElementSibling.children[0].style.backgroundColor = color
+                trade.nextElementSibling.children[1].style.backgroundColor = color
+                if(trade.nextElementSibling.children[2])trade.nextElementSibling.children[2].style.backgroundColor = color
+            }
+        }
+    }
+
+    function getTradeState(trade){
+        const tradeElements = trade.children
+        const fromTo = tradeElements[0]
+        const delivery = tradeElements[1]
+        const to = tradeElements[2]
+        const returnShipment = tradeElements[3]
+        const status = tradeElements[4]
+        var comment = null
+        if(trade.nextElementSibling)if(trade.nextElementSibling.children.length < 3)comment = trade.nextElementSibling.children[1]
+
+        if(status.innerHTML.includes(langString.trade.transferInProgress))return 'running'
+
+        if(comment){
+            if(comment.innerText.includes("#SAVE#")){
+                if(comment.innerText.includes(langString.trade.end)|| comment.innerText.includes("ENDE")) return 'save2h+'
+                let end = getDateFromString(comment.innerText)
+                let now = new Date()
+                let delta = Math.abs(end - now) / 1000;
+                let days = Math.floor(delta / 86400);
+                delta -= days * 86400;
+                let hours = Math.floor(delta / 3600) % 24;
+                delta -= hours * 3600;
+                let minutes = Math.floor(delta / 60) % 60;
+                delta -= minutes * 60;
+                let seconds = delta % 60;
+                if(hours >= 2) return 'save2h+'
+                if(hours >= 1) return 'save2h-30min'
+                if(minutes >=30) return 'save2h-30min'
+                return 'save30min-'
+            }
+        }
+
+        if(fromTo.innerText.includes(getCurrentCoords())){
+            if(delivery.children.length < 2 && delivery.innerHTML.includes(" 1&nbsp;")) return 'outgoingTradeRequest'
+            return 'outgoingTradeDonation'
+        }
+
+        if(delivery.children.length < 2 && !returnShipment.innerHTML.includes(" 1&nbsp;"))return 'incomingTradeRequest'
+        return 'incomingTradeDonation'
+    }
+
+    function getDateFromString(str){
+        if(str.includes("#SAVE#")){
+            let start = str.indexOf("#",2) + 1
+            let end = str.indexOf("#",start+1) - 1
+            return new Date(str.substring(start,end))
+        }
+        if(str.includes(":")){
+            let i = str.indexOf(":")
+            let hour = parseInt(str.substring(i-2,i))
+            let min = parseInt(str.substring(i+1,i+3))
+            let now = new Date()
+            let end = new Date()
+            end.setMinutes(min)
+            end.setHours(hour)
+            end.setSeconds(0)
+            end = addHoursToDate(end,8)
+            if(end-now<0){
+                let ms = end.getTime() + 86400000;
+                end = new Date(ms);
+            }
+            return end
+        }
+    }
+
+    function addHoursToDate(date, hours) {
+        return new Date(new Date(date).setHours(date.getHours() + hours));
+    }
+
 
     var currentStorageCapa = new Array(0,0,0,0,0,0)
 
@@ -1732,14 +1971,16 @@
     }
 
     function getCurrentRes(resID){
+        var value = null
         switch(resID) {
-            case RES_FE: return parseInt(window[4].document.getElementById("res0").innerText.replace('.', '').replace(',', ''))
-            case RES_KR: return parseInt(window[4].document.getElementById("res1").innerText.replace('.', '').replace(',', ''))
-            case RES_FR: return parseInt(window[4].document.getElementById("res2").innerText.replace('.', '').replace(',', ''))
-            case RES_OR: return parseInt(window[4].document.getElementById("res3").innerText.replace('.', '').replace(',', ''))
-            case RES_FU: return parseInt(window[4].document.getElementById("res4").innerText.replace('.', '').replace(',', ''))
-            case RES_AU: return parseInt(window[4].document.getElementById("res5").innerText.replace('.', '').replace(',', ''))
+            case RES_FE: value = parseInt(window[4].document.getElementById("res0").innerText.replace('.', '').replace(',', '')); break;
+            case RES_KR: value = parseInt(window[4].document.getElementById("res1").innerText.replace('.', '').replace(',', '')); break;
+            case RES_FR: value = parseInt(window[4].document.getElementById("res2").innerText.replace('.', '').replace(',', '')); break;
+            case RES_OR: value = parseInt(window[4].document.getElementById("res3").innerText.replace('.', '').replace(',', '')); break;
+            case RES_FU: value = parseInt(window[4].document.getElementById("res4").innerText.replace('.', '').replace(',', '')); break;
+            case RES_AU: value = parseInt(window[4].document.getElementById("res5").innerText.replace('.', '').replace(',', '')); break;
         }
+        return value
     }
 
     function setTrade(){
@@ -1813,14 +2054,25 @@
         window[6].document.getElementById("tt_res4").value = ""
         window[6].document.getElementById("tt_res5").value = 99999999
 
-        const heute = new Date();
-        var h = (heute.getHours()+8)%24+""
-        var m = heute.getMinutes()+""
-        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + langString.trade.end + " " + h.padStart(2, '0')+":" + m.padStart(2, '0') + " #SAVE# // " + build[id][STRING] + " " + langString.constructions.level + " "+(lvl+1)
+        let currentDate = getDateTimeString(addHoursToDate(new Date(),8))
+        
+        window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + currentDate + " #SAVE# // " + build[id][STRING] + " " + langString.constructions.level + " "+(lvl+1)
         var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
         var save_planetNR = 0
         if (planet_selector.selectedIndex == 0) save_planetNR = 1
         window[6].document.getElementsByName("target")[0].value = planet_selector.options[save_planetNR].innerHTML
+    }
+
+    function getDateTimeString(date){
+        const heute = date
+        let s = heute.getSeconds() + ""
+        let h = heute.getHours() + ""
+        let m = heute.getMinutes()+ ""
+        let day = heute.getDate()+ ""
+        let month = (heute.getMonth() + 1) + ""
+        let year = heute.getFullYear() + ""
+        let currentDate = year + "-" + month.padStart(2,'0') + "-" + day.padStart(2,'0') + " " + h.padStart(2, '0')+":" + m.padStart(2, '0') + ":" + s.padStart(2,'0')
+        return currentDate
     }
 
     function getLose() {
@@ -2435,6 +2687,7 @@
         }
         setAllObsLinkOverview_COUNTER++
         try{
+            console.log()
             if(!window[6].document.querySelector("body").innerText.includes(langString.main.totalPoints + ":")){
                 setTimeout(setAllObsLinkOverview,200)
                 return}
@@ -2455,9 +2708,6 @@
     }
 
     function addObsLink(table){
-
-
-
         const colorTransfer = 'rgb(' + 0 + ',' + 136 + ',' + 255 + ')';
         const colorDefOnWay = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
         const colorDef = 'rgb(' + 35 + ',' + 146 + ',' + 0 + ')';
@@ -2646,7 +2896,7 @@
     }
 
     function getLastCommand(string){
-        const start = string.indexOf(langString.fleets.lastOperation)+langString.fleets.lastOperatio.length
+        const start = string.indexOf(langString.fleets.lastOperation)+langString.fleets.lastOperation.length
         var stop = string.indexOf(langString.fleets.on)
         if(stop == -1) stop = string.indexOf(langString.fleets.at)
         return string.substring(start,stop)
@@ -2773,7 +3023,7 @@
 
 
         var feBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(5) > td:nth-child(1) > a")
-
+        feBtn.removeAttribute("onclick");
         feBtn.onclick = function(){
             var freeCapa = getFreeCapacity(0)
             var availRess = getCurrentRes(0)
@@ -2789,6 +3039,7 @@
         }
 
         var krBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(6) > td:nth-child(1) > a")
+        krBtn.removeAttribute("onclick");
         krBtn.onclick = function(){
             var freeCapa = getFreeCapacity(1)
             var availRess = getCurrentRes(1)
@@ -2804,6 +3055,7 @@
         }
 
         var fbBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(7) > td:nth-child(1) > a")
+        fbBtn.removeAttribute("onclick");
         fbBtn.onclick = function(){
             var freeCapa = getFreeCapacity(2)
             var availRess = getCurrentRes(2)
@@ -2819,6 +3071,7 @@
         }
 
         var orBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(8) > td:nth-child(1) > a")
+        orBtn.removeAttribute("onclick");
         orBtn.onclick = function(){
             var freeCapa = getFreeCapacity(3)
             var availRess = getCurrentRes(3)
@@ -2834,6 +3087,7 @@
         }
 
         var frBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(9) > td:nth-child(1) > a")
+        frBtn.removeAttribute("onclick");
         frBtn.onclick = function(){
             var freeCapa = getFreeCapacity(4)
             var availRess = getCurrentRes(4)
@@ -2849,6 +3103,7 @@
         }
 
         var AuBtn = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(10) > td:nth-child(1) > a")
+        AuBtn.removeAttribute("onclick");
         AuBtn.onclick = function(){
             var freeCapa = getFreeCapacity(5)
             var availRess = getCurrentRes(5)
@@ -2862,9 +3117,31 @@
             }
             else if(freeCapa<0) window[6].document.getElementById('res5').value = (freeCapa*-1)
         }
+        addMaxButtons()
+    }
 
+    function addMaxButtons(){
+        const inputs = window[6].document.getElementsByTagName("input")
+        for(let i=0; i<6; i++){
+            inputs[i].size = 8
+            let maxElement = parseHTML('<a href="#" id= max' + i + '>max</a>')
+            inputs[i].parentElement.appendChild(maxElement)
+            inputs[i].parentElement.height = 30
+        }
+        window[6].document.getElementById('max0').onclick = maxOnClick
+        window[6].document.getElementById('max1').onclick = maxOnClick
+        window[6].document.getElementById('max2').onclick = maxOnClick
+        window[6].document.getElementById('max3').onclick = maxOnClick
+        window[6].document.getElementById('max4').onclick = maxOnClick
+        window[6].document.getElementById('max5').onclick = maxOnClick
 
+    }
 
+    function maxOnClick(element){
+        const inputs = window[6].document.getElementsByTagName("input")
+        const id = parseInt(element.srcElement.id.replace("max",""))
+        if(isDeposit())inputs[id].value = getCurrentRes(id)
+        else inputs[id].value = getAccountStatus(id)
     }
 
     function isDeposit(){
@@ -2873,6 +3150,7 @@
     }
 
     function getMaxCapaMinusInterest(){
+
         var interest = getInterest()
         var maxCapa = getMaxCapa()
         return parseInt(Math.floor(maxCapa/(1+(interest/100))))
