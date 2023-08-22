@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.9.0
+// @version      1.9.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -1293,7 +1293,6 @@
 
 
     function setTradeColor(trade,color){
-        console.log(color,trade)
         for(let i=0; i<trade.children.length; i++){
             trade.children[i].style.backgroundColor = color
         }
@@ -1349,7 +1348,7 @@
 
     function getDateFromString(str){
         if(str.includes("#SAVE#")){
-            let start = str.indexOf("#",2) + 1
+            let start = str.indexOf("#",2) + 2
             let end = str.indexOf("#",start+1) - 1
             return new Date(str.substring(start,end))
         }
