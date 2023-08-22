@@ -75,6 +75,7 @@
       "attackStringBevorCords": "planet",
       "attackedStringAfterCords": " attacks",
       "attackedStringBevorCords": "from",
+      "change": "Change",
       "commandAttack": "Attack",
       "commandTransfer": "Transfer",
       "createFleet": "Create fleet",
@@ -184,6 +185,7 @@
       "newBankTransactionFor": "New bank transaction for",
       "nextCalculation": "next calculation",
       "overbooked": "overbooked",
+      "overflow": "! OVER !",
       "ownPlanets": "Own planets",
       "place": "place",
       "proceed": "proceed",
@@ -201,7 +203,9 @@
       "tradingOffer": "Trading offer",
       "transaction": "Transaction",
       "transactions": "Transactions",
-      "tt": "TT"
+      "transferInProgress": "Transfer in progress",
+      "tt": "TT",
+      "verfication": "Verfication"
     }
   }
 }
