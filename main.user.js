@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.9.1
+// @version      1.9.2
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -185,7 +185,7 @@
 
         window[6].document.getElementsByName("saveBtn")[0].onclick = saveConfig
 
-       //try{
+       try{
             if(!saveFile.buildTool_enabled)window[6].document.getElementById("on_buildTool").onclick = saveOnOFF_option
             if(saveFile.buildTool_enabled)window[6].document.getElementById("off_buildTool").onclick =saveOnOFF_option
             if(!saveFile.shipTool_enabled)window[6].document.getElementById("on_shipTool").onclick = saveOnOFF_option
@@ -196,8 +196,8 @@
             if(saveFile.tradeLogTool_enabled)window[6].document.getElementById("off_tradeLogTool").onclick = saveOnOFF_option
             if(!saveFile.notification_enabled)window[6].document.getElementById("on_notification").onclick = saveOnOFF_option
             if(saveFile.notification_enabled)window[6].document.getElementById("off_notification").onclick = saveOnOFF_option
-        //}
-        //catch{}
+        }
+        catch{}
 
         //  Abstand
         tr = document.createElement("tr")
