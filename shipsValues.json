@@ -470,6 +470,42 @@
       "or": 29400,
       "fz": 12600,
       "au": 12920
+    },
+    {
+      "name": "SOE BFF-3-Klasse",
+      "shipClass": "Schwer",
+      "att": 2949,
+      "def": 4864,
+      "drive": "GTY",
+      "drive_s": 100,
+      "freight": 496000,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 132000,
+      "kr": 104000,
+      "fr": 34000,
+      "or": 49200,
+      "fz": 63600,
+      "au": 14400
+    },
+    {
+      "name": "SOE SuperTodesstern-Klasse",
+      "shipClass": "Schwer",
+      "att": 28983,
+      "def": 13810,
+      "drive": "GTY",
+      "drive_s": 100,
+      "freight": 0,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 82000,
+      "kr": 106000,
+      "fr": 80000,
+      "or": 48000,
+      "fz": 100000,
+      "au": 38400
     }
   ]
 }
