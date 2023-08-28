@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.9.2
+// @version      1.9.3
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -1318,8 +1318,8 @@
         if(status.innerHTML.includes(langString.trade.transferInProgress))return 'running'
 
         if(comment){
-            if(comment.innerText.includes("#SAVE#")){
-                if(comment.innerText.includes(langString.trade.end)|| comment.innerText.includes("ENDE")) return 'save2h+'
+            if(comment.innerText.includes("SAVE")){
+                //if(comment.innerText.includes(langString.trade.end) || comment.innerText.includes("ENDE")) return 'save2h+'
                 let end = getDateFromString(comment.innerText)
                 let now = new Date()
                 let delta = Math.abs(end - now) / 1000;
