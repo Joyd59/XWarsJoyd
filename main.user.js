@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SOE XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.9.3
+// @version      1.9.4
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -1263,8 +1263,12 @@
             str = str.slice(i+3)
             str = str.replaceAll("/","")
         }
+
+        str = str.replaceAll("ENDE","")
+        str = str.replaceAll("SAVE","")
+
         commentElement.innerText = str
-        if(str.length < 2){
+        if(str.replaceAll(" ","").length < 2){
             commentElement.parentElement.hidden = true
         }
     }
@@ -1359,6 +1363,7 @@
             let now = new Date()
             let end = new Date()
             end.setMinutes(min)
+            if(str.includes("ENDE")) hour -= 8
             end.setHours(hour)
             end.setSeconds(0)
             end = addHoursToDate(end,8)
@@ -3850,9 +3855,6 @@
         res[RES_AU] = 0
         return res
     }
-
-
-
 
 
 })();
