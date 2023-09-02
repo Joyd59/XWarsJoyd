@@ -1,0 +1,624 @@
+﻿{
+    "coords": [
+        {
+            "gala": "16",
+            "sys": "149",
+            "planet": "9"
+        },
+        {
+            "gala": "16",
+            "sys": "150",
+            "planet": "7"
+        },
+        {
+            "gala": "16",
+            "sys": "154",
+            "planet": "2"
+        },
+        {
+            "gala": "16",
+            "sys": "160",
+            "planet": "7"
+        },
+        {
+            "gala": "16",
+            "sys": "162",
+            "planet": "4"
+        },
+        {
+            "gala": "16",
+            "sys": "167",
+            "planet": "3"
+        },
+        {
+            "gala": "16",
+            "sys": "170",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "171",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "180",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "184",
+            "planet": "2"
+        },
+        {
+            "gala": "16",
+            "sys": "192",
+            "planet": "2"
+        },
+        {
+            "gala": "16",
+            "sys": "193",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "194",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "196",
+            "planet": "3"
+        },
+        {
+            "gala": "16",
+            "sys": "197",
+            "planet": "4"
+        },
+        {
+            "gala": "16",
+            "sys": "198",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "199",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "200",
+            "planet": "8"
+        },
+        {
+            "gala": "16",
+            "sys": "4",
+            "planet": "2"
+        },
+        {
+            "gala": "16",
+            "sys": "10",
+            "planet": "4"
+        },
+        {
+            "gala": "16",
+            "sys": "11",
+            "planet": "9"
+        },
+        {
+            "gala": "16",
+            "sys": "14",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "21",
+            "planet": "4"
+        },
+        {
+            "gala": "16",
+            "sys": "22",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "23",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "27",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "29",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "30",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "33",
+            "planet": "3"
+        },
+        {
+            "gala": "16",
+            "sys": "49",
+            "planet": "3"
+        },
+        {
+            "gala": "16",
+            "sys": "50",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "51",
+            "planet": "7"
+        },
+        {
+            "gala": "16",
+            "sys": "63",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "64",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "65",
+            "planet": "4"
+        },
+        {
+            "gala": "16",
+            "sys": "70",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "75",
+            "planet": "6"
+        },
+        {
+            "gala": "16",
+            "sys": "77",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "79",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "80",
+            "planet": "9"
+        },
+        {
+            "gala": "16",
+            "sys": "81",
+            "planet": "1"
+        },
+        {
+            "gala": "16",
+            "sys": "85",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "93",
+            "planet": "5"
+        },
+        {
+            "gala": "16",
+            "sys": "96",
+            "planet": "1"
+        },
+        {
+            "gala": "17",
+            "sys": "6",
+            "planet": "4"
+        },
+        {
+            "gala": "17",
+            "sys": "8",
+            "planet": "5"
+        },
+        {
+            "gala": "17",
+            "sys": "53",
+            "planet": "1"
+        },
+        {
+            "gala": "17",
+            "sys": "100",
+            "planet": "1"
+        },
+        {
+            "gala": "17",
+            "sys": "149",
+            "planet": "3"
+        },
+        {
+            "gala": "17",
+            "sys": "150",
+            "planet": "1"
+        },
+        {
+            "gala": "17",
+            "sys": "200",
+            "planet": "6"
+        },
+        {
+            "gala": "15",
+            "sys": "1",
+            "planet": "1"
+        },
+        {
+            "gala": "15",
+            "sys": "49",
+            "planet": "1"
+        },
+        {
+            "gala": "15",
+            "sys": "100",
+            "planet": "2"
+        },
+        {
+            "gala": "15",
+            "sys": "150",
+            "planet": "1"
+        },
+        {
+            "gala": "14",
+            "sys": "2",
+            "planet": "1"
+        },
+        {
+            "gala": "14",
+            "sys": "49",
+            "planet": "3"
+        },
+        {
+            "gala": "14",
+            "sys": "100",
+            "planet": "1"
+        },
+        {
+            "gala": "14",
+            "sys": "150",
+            "planet": "3"
+        },
+        {
+            "gala": "14",
+            "sys": "200",
+            "planet": "2"
+        },
+        {
+            "gala": "13",
+            "sys": "1",
+            "planet": "2"
+        },
+        {
+            "gala": "13",
+            "sys": "51",
+            "planet": "6"
+        },
+        {
+            "gala": "13",
+            "sys": "99",
+            "planet": "6"
+        },
+        {
+            "gala": "13",
+            "sys": "151",
+            "planet": "4"
+        },
+        {
+            "gala": "13",
+            "sys": "200",
+            "planet": "1"
+        },
+        {
+            "gala": "12",
+            "sys": "6",
+            "planet": "5"
+        },
+        {
+            "gala": "12",
+            "sys": "47",
+            "planet": "3"
+        },
+        {
+            "gala": "12",
+            "sys": "101",
+            "planet": "1"
+        },
+        {
+            "gala": "12",
+            "sys": "155",
+            "planet": "2"
+        },
+        {
+            "gala": "11",
+            "sys": "7",
+            "planet": "5"
+        },
+        {
+            "gala": "11",
+            "sys": "44",
+            "planet": "9"
+        },
+        {
+            "gala": "11",
+            "sys": "98",
+            "planet": "4"
+        },
+        {
+            "gala": "11",
+            "sys": "166",
+            "planet": "2"
+        },
+        {
+            "gala": "11",
+            "sys": "193",
+            "planet": "3"
+        },
+        {
+            "gala": "10",
+            "sys": "12",
+            "planet": "6"
+        },
+        {
+            "gala": "10",
+            "sys": "55",
+            "planet": "5"
+        },
+        {
+            "gala": "10",
+            "sys": "98",
+            "planet": "5"
+        },
+        {
+            "gala": "10",
+            "sys": "166",
+            "planet": "5"
+        },
+        {
+            "gala": "10",
+            "sys": "200",
+            "planet": "6"
+        },
+        {
+            "gala": "9",
+            "sys": "8",
+            "planet": "1"
+        },
+        {
+            "gala": "9",
+            "sys": "50",
+            "planet": "9"
+        },
+        {
+            "gala": "9",
+            "sys": "100",
+            "planet": "1"
+        },
+        {
+            "gala": "9",
+            "sys": "155",
+            "planet": "10"
+        },
+        {
+            "gala": "9",
+            "sys": "198",
+            "planet": "6"
+        },
+        {
+            "gala": "8",
+            "sys": "9",
+            "planet": "3"
+        },
+        {
+            "gala": "8",
+            "sys": "51",
+            "planet": "2"
+        },
+        {
+            "gala": "8",
+            "sys": "100",
+            "planet": "3"
+        },
+        {
+            "gala": "8",
+            "sys": "147",
+            "planet": "7"
+        },
+        {
+            "gala": "8",
+            "sys": "182",
+            "planet": "3"
+        },
+        {
+            "gala": "7",
+            "sys": "15",
+            "planet": "1"
+        },
+        {
+            "gala": "7",
+            "sys": "77",
+            "planet": "1"
+        },
+        {
+            "gala": "7",
+            "sys": "106",
+            "planet": "6"
+        },
+        {
+            "gala": "7",
+            "sys": "155",
+            "planet": "2"
+        },
+        {
+            "gala": "7",
+            "sys": "194",
+            "planet": "2"
+        },
+        {
+            "gala": "6",
+            "sys": "20",
+            "planet": "3"
+        },
+        {
+            "gala": "6",
+            "sys": "50",
+            "planet": "6"
+        },
+        {
+            "gala": "6",
+            "sys": "100",
+            "planet": "9"
+        },
+        {
+            "gala": "6",
+            "sys": "153",
+            "planet": "3"
+        },
+        {
+            "gala": "6",
+            "sys": "198",
+            "planet": "6"
+        },
+        {
+            "gala": "5",
+            "sys": "20",
+            "planet": "1"
+        },
+        {
+            "gala": "5",
+            "sys": "55",
+            "planet": "5"
+        },
+        {
+            "gala": "5",
+            "sys": "115",
+            "planet": "5"
+        },
+        {
+            "gala": "5",
+            "sys": "144",
+            "planet": "3"
+        },
+        {
+            "gala": "5",
+            "sys": "197",
+            "planet": "2"
+        },
+        {
+            "gala": "4",
+            "sys": "4",
+            "planet": "8"
+        },
+        {
+            "gala": "4",
+            "sys": "76",
+            "planet": "3"
+        },
+        {
+            "gala": "4",
+            "sys": "100",
+            "planet": "2"
+        },
+        {
+            "gala": "4",
+            "sys": "157",
+            "planet": "2"
+        },
+        {
+            "gala": "4",
+            "sys": "200",
+            "planet": "3"
+        },
+        {
+            "gala": "3",
+            "sys": "3",
+            "planet": "6"
+        },
+        {
+            "gala": "3",
+            "sys": "52",
+            "planet": "1"
+        },
+        {
+            "gala": "3",
+            "sys": "99",
+            "planet": "6"
+        },
+        {
+            "gala": "3",
+            "sys": "160",
+            "planet": "1"
+        },
+        {
+            "gala": "3",
+            "sys": "172",
+            "planet": "6"
+        },
+        {
+            "gala": "2",
+            "sys": "1",
+            "planet": "10"
+        },
+        {
+            "gala": "2",
+            "sys": "32",
+            "planet": "2"
+        },
+        {
+            "gala": "2",
+            "sys": "99",
+            "planet": "5"
+        },
+        {
+            "gala": "2",
+            "sys": "143",
+            "planet": "4"
+        },
+        {
+            "gala": "2",
+            "sys": "192",
+            "planet": "10"
+        },
+        {
+            "gala": "1",
+            "sys": "1",
+            "planet": "2"
+        },
+        {
+            "gala": "1",
+            "sys": "50",
+            "planet": "4"
+        },
+        {
+            "gala": "1",
+            "sys": "100",
+            "planet": "1"
+        },
+        {
+            "gala": "1",
+            "sys": "150",
+            "planet": "3"
+        },
+        {
+            "gala": "1",
+            "sys": "200",
+            "planet": "5"
+        }
+    ]
+}
