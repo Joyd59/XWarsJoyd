@@ -274,10 +274,10 @@
       "au": 120
     },
     {
-      "name": "SOE Tector-II-Klasse",
+      "name": "SOE Tector-III-Klasse",
       "shipClass": "Schwer",
-      "att": 10683,
-      "def": 7783,
+      "att": 12013,
+      "def": 8129,
       "drive": "NUK",
       "drive_s": 160,
       "freight": 0,
@@ -287,8 +287,8 @@
       "fe": 30040,
       "kr": 52200,
       "fr": 520,
-      "or": 21400,
-      "fz": 11240,
+      "or": 22520,
+      "fz": 11960,
       "au": 120
     },
     {
