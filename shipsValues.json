@@ -292,6 +292,24 @@
       "au": 120
     },
     {
+      "name": "SOE Tector-Klasse",
+      "shipClass": "Schwer",
+      "att": 18103,
+      "def": 8229,
+      "drive": "NUK",
+      "drive_s": 148,
+      "freight": 0,
+      "lkom": true,
+      "tt": false,
+      "carrier": false,
+      "fe": 30840,
+      "kr": 52200,
+      "fr": 1320,
+      "or": 29160,
+      "fz": 15600,
+      "au": 120
+    },
+    {
       "name": "SOE Neutron-Star-II-Klasse",
       "shipClass": "Schwer",
       "att": 2685,
