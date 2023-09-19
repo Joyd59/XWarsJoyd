@@ -456,10 +456,10 @@
     {
       "name": "SOE Venator II-Klasse",
       "shipClass": "Schwer",
-      "att": 6090,
-      "def": 3270,
+      "att": 8635,
+      "def": 4033,
       "drive": "NUK",
-      "drive_s": 132,
+      "drive_s": 144,
       "freight": 0,
       "lkom": true,
       "tt": true,
@@ -469,6 +469,24 @@
       "fr": 50520,
       "or": 16680,
       "fz": 8520,
+      "au": 4040
+    },
+    {
+      "name": "SOE Nighthawk-Klasse",
+      "shipClass": "Schwer",
+      "att": 1339,
+      "def": 2143,
+      "drive": "NUK",
+      "drive_s": 153,
+      "freight": 146400,
+      "lkom": true,
+      "tt": true,
+      "carrier": false,
+      "fe": 73960,
+      "kr": 4200,
+      "fr": 44040,
+      "or": 7560,
+      "fz": 3600,
       "au": 4040
     },
     {
