@@ -76,6 +76,24 @@
       "au": 0
     },
     {
+      "name": "SOE Leuchtspur-Klasse",
+      "shipClass": "Taktisch",
+      "att": 4509,
+      "def": 0,
+      "drive": "ION",
+      "drive_s": 118,
+      "freight": 0,
+      "lkom": false,
+      "tt": false,
+      "carrier": false,
+      "fe": 302,
+      "kr": 121,
+      "fr": 211,
+      "or": 3040,
+      "fz": 1970,
+      "au": 0
+    },
+    {
       "name": "SOE Fireball-Klasse",
       "shipClass": "Taktisch",
       "att": 2321,
