@@ -76,22 +76,22 @@
       "au": 0
     },
     {
-      "name": "SOE Leuchtspur-Klasse",
+      "name": "SOE Thermaldetonator-Klasse",
       "shipClass": "Taktisch",
-      "att": 4509,
+      "att": 4757,
       "def": 0,
-      "drive": "ION",
-      "drive_s": 118,
+      "drive": "NUK",
+      "drive_s": 158,
       "freight": 0,
       "lkom": false,
       "tt": false,
       "carrier": false,
-      "fe": 302,
-      "kr": 121,
-      "fr": 211,
-      "or": 3040,
-      "fz": 1970,
-      "au": 0
+      "fe": 275,
+      "kr": 720,
+      "fr": 7240,
+      "or": 554,
+      "fz": 8238,
+      "au": 120
     },
     {
       "name": "SOE Fireball-Klasse",
