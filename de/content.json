@@ -143,6 +143,26 @@
       "TotalPerHour": "Total pro Stunde",
       "resourcesProduction": "Rohstoffproduktion"
     },
+    "tool_settings": {
+      "buildingCost": "Gebäudekosten",
+      "choosePlanet": "Planet auswählen",
+      "coordinates": "Koordinaten",
+      "coordsInvalid": "Koordinaten ungültig",
+      "coordsSaveTrade": "Koordinaten Savehandel",
+      "delete": "löschen",
+      "description": "Beschriftung",
+      "enterTradeCoordinates": "Handelskoordinaten eintragen",
+      "eventNotification": "Ereignis Benachrichtigung",
+      "functionsOnOff": "Funktionen ein/ausschalten",
+      "off": "aus",
+      "on": "ein",
+      "save": "speichern",
+      "shipMarket": "Schiffsmarkt",
+      "titel": "Einstellungen DG Tool",
+      "tradeLog": "Handel Log",
+      "tradeOptionTitel": "Einstellungen für Handel",
+      "tradeView": "verbesserte Handelsübersicht"
+    },
     "trade": {
       "TransactionsForPlanet": "Transaktionen für Planet",
       "accept": "Annehmen",
@@ -188,23 +208,5 @@
       "tt": "TT",
       "verfication": "Überprüfung"
     }
-  },
-  "langString.tool_settings.buildingCost": "Gebäudekosten",
-  "langString.tool_settings.choosePlanet": "Planet auswählen",
-  "langString.tool_settings.coordinates": "Koordinaten",
-  "langString.tool_settings.coordsInvalid": "Koordinaten ungültig",
-  "langString.tool_settings.coordsSaveTrade": "Koordinaten Savehandel",
-  "langString.tool_settings.delete": "löschen",
-  "langString.tool_settings.description": "Beschriftung",
-  "langString.tool_settings.enterTradeCoordinates": "Handelskoordinaten eintragen",
-  "langString.tool_settings.eventNotification": "Ereignis Benachrichtigung",
-  "langString.tool_settings.functionsOnOff": "Funktionen ein/ausschalten",
-  "langString.tool_settings.off": "aus",
-  "langString.tool_settings.on": "ein",
-  "langString.tool_settings.save": "speichern",
-  "langString.tool_settings.shipMarket": "Schiffsmarkt",
-  "langString.tool_settings.titel": "Einstellungen DG Tool",
-  "langString.tool_settings.tradeLog": "Handel Log",
-  "langString.tool_settings.tradeOptionTitel": "Einstellungen für Handel",
-  "langString.tool_settings.tradeView": "verbesserte Handelsübersicht"
+  }
 }
