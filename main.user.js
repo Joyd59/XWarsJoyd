@@ -1,12 +1,11 @@
 // ==UserScript==
-// @name         SOE XWars Tool
+// @name         XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.9.5
+// @version      1.10.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @match        *original.xwars.net/?id*
-// @require      sweetalert2.all.min.js
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
@@ -23,13 +22,13 @@
     const configFile = "configfile_b190"
     const delayTime = 600
 
-    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeView_enabled:true, tradeLogTool_enabled:true, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
+    var saveFile = GM_getValue(configFile, {index_saveCoords:0, saveCoords:"", buildTool_enabled:true, shipTool_enabled:true, tradeView_enabled:true, tradeLogTool_enabled:false, notification_enabled:false, customCoords:new Array(), customCoordsName:new Array()});
     var userLang = navigator.language || navigator.userLanguage
     var langFile = null
 
-    if(userLang.includes("de")||userLang.includes("DE")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/de/content.json"
-    if(userLang.includes("en")||userLang.includes("EN")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/en/content.json"
-    if(userLang.includes("fr")||userLang.includes("FR")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/fr/content.json"
+    if(userLang.includes("de")||userLang.includes("DE")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/DG-Tool/main/de/content.json"
+    if(userLang.includes("en")||userLang.includes("EN")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/DG-Tool/main/en/content.json"
+    if(userLang.includes("fr")||userLang.includes("FR")) langFile = "https://raw.githubusercontent.com/BenniBaerenstark/DG-Tool/main/fr/content.json"
 
     getJSON(langFile,
             function(err, data) {
@@ -52,10 +51,10 @@
             setTimeout(addConfigButton,200)
             return
         }
-        if(window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)").innerText.includes("SOE Tool")) return
+        if(window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)").innerText.includes("Tool Optionen")) return
 
         const parent = window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)")
-        const btn = parseHTML('<a id="config_button" href="#">SOE Tool</a>')
+        const btn = parseHTML('<a id="config_button" href="#">Tool</a>')
         parent.appendChild(btn)
         window[5].document.getElementById("config_button").addEventListener("click", prepareConfigPage)
     }
@@ -64,7 +63,7 @@
         if(debug)console.log(langString.debug.prepareConfigPage)
 
         try{
-            window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText = "SOE Tool"
+            window[6].document.querySelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > font > b > font").innerText = "Tool Optionen"
             window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2)").innerHTML = ""
         }
 
@@ -93,10 +92,10 @@
         tr.appendChild(td)
         table.appendChild(tr)
 
-        // Überschrift SOE Tool
+        // Überschrift Tool
         tr = document.createElement("tr")
         td = document.createElement("td")
-        td.appendChild(parseHTML("<h1>" + langString.soe_tool_settings.titel + "</h1>"))
+        td.appendChild(parseHTML("<h1>" + langString.tool_settings.titel + "</h1>"))
         td.colSpan = "3"
         tr.appendChild(td)
         tr.appendChild(td)
@@ -108,7 +107,7 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "3"
-        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.tradeOptionTitel + '</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.tool_settings.tradeOptionTitel + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
@@ -116,7 +115,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.coordsSaveTrade + ':</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.tool_settings.coordsSaveTrade + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -129,15 +128,23 @@
         td.appendChild(input)
 
         // Switch SaveCoords
-        const select = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select").cloneNode(true)
+        const s = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+        var select
+        if(s == null){
+            select = document.createElement("select")
+            var o = document.createElement("option")
+            o.text = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > b").innerText
+            select.appendChild(o)
+        }
+        else select = s.cloneNode(true)
         select.name = "sel_saveCoords"
         select.onchange = null
         var option = document.createElement("option");
-        option.text = langString.soe_tool_settings.choosePlanet
+        option.text = langString.tool_settings.choosePlanet
         select.add(option,0)
         select.selectedIndex = 0
         select.addEventListener ("change", function () {
-            if(select.options[select.selectedIndex].text != langString.soe_tool_settings.choosePlanet) window[6].document.getElementsByName("input_saveCoords")[0].value = select.options[select.selectedIndex].text
+            if(select.options[select.selectedIndex].text != langString.tool_settings.choosePlanet) window[6].document.getElementsByName("input_saveCoords")[0].value = select.options[select.selectedIndex].text
         })
         td.className = "second"
         td.appendChild(select)
@@ -148,7 +155,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "first"
-        const save_button = parseHTML('[&nbsp;<a href="#" name="saveBtn">' + langString.soe_tool_settings.save + '</a>&nbsp;]')
+        const save_button = parseHTML('[&nbsp;<a href="#" name="saveBtn">' + langString.tool_settings.save + '</a>&nbsp;]')
         td.appendChild(save_button)
         td.colSpan = "3"
         td.align = "center"
@@ -168,17 +175,17 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "2"
-        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.functionsOnOff + '</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.tool_settings.functionsOnOff + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
         // Options 
-        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.buildingCost, "buildTool"))
-        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.shipMarket, "shipTool"))
-        table.appendChild(generateOnOFF_option(langString.soe_tool_settings.tradeView, "tradeView"))
+        table.appendChild(generateOnOFF_option(langString.tool_settings.buildingCost, "buildTool"))
+        table.appendChild(generateOnOFF_option(langString.tool_settings.shipMarket, "shipTool"))
+        table.appendChild(generateOnOFF_option(langString.tool_settings.tradeView, "tradeView"))
         const user = getUserName()
-        if((user == "DarthRevan" || user == "Imperator" || user == "DarthVader" || user == "Saepus" || user == "Macallen"))table.appendChild(generateOnOFF_option(langString.soe_tool_settings.tradeLog, "tradeLogTool"))
-        if((user == "DarthRevan")) table.appendChild(generateOnOFF_option(langString.soe_tool_settings.eventNotification, "notification"))
+        if((user == "DarthRevan" || user == "JohnMcClane"))table.appendChild(generateOnOFF_option(langString.tool_settings.tradeLog, "tradeLogTool"))
+        if((user == "DarthRevan")) table.appendChild(generateOnOFF_option(langString.tool_settings.eventNotification, "notification"))
 
         parent.setAttribute("align", "center");
         parent.appendChild(table)
@@ -212,7 +219,7 @@
         td.style.textAlign = "center"
         td.className = "first"
         td.colSpan = "2"
-        td.appendChild(parseHTML('&nbsp;<b>' + langString.soe_tool_settings.enterTradeCoordinates + '</b>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<b>' + langString.tool_settings.enterTradeCoordinates + '</b>&nbsp;'))
         tr.appendChild(td)
         table.appendChild(tr)
 
@@ -220,7 +227,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.coordinates + ':</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.tool_settings.coordinates + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -233,7 +240,7 @@
         // Beschreibung TradeCoords
         td = document.createElement("td")
         td.className = "second"
-        td.appendChild(parseHTML('&nbsp;<a>' + langString.soe_tool_settings.description + ':</a>&nbsp;'))
+        td.appendChild(parseHTML('&nbsp;<a>' + langString.tool_settings.description + ':</a>&nbsp;'))
         tr.appendChild(td)
 
         // Input SaveCoords
@@ -248,7 +255,7 @@
         tr = document.createElement("tr")
         td = document.createElement("td")
         td.className = "first"
-        const save_button_tradeCoord = parseHTML('[&nbsp;<a href="#" id="saveBtn_tradeCoord">' + langString.soe_tool_settings.save + '</a>&nbsp;]')
+        const save_button_tradeCoord = parseHTML('[&nbsp;<a href="#" id="saveBtn_tradeCoord">' + langString.tool_settings.save + '</a>&nbsp;]')
         td.appendChild(save_button_tradeCoord)
         td.colSpan = "3"
         td.align = "center"
@@ -284,7 +291,7 @@
             var td_btn = document.createElement("td")
             td_btn.align = "right"
             td_btn.className = "second"
-            td_btn.appendChild(parseHTML('[&nbsp;<a href="#" id="deleteKoords_' + i + '">' + langString.soe_tool_settings.delete + '</a>&nbsp;]'))
+            td_btn.appendChild(parseHTML('[&nbsp;<a href="#" id="deleteKoords_' + i + '">' + langString.tool_settings.delete + '</a>&nbsp;]'))
             td_btn.onclick = deleteKoords
             tr.appendChild(td_btn)
             tbody.appendChild(tr)
@@ -310,7 +317,7 @@
         if(coords == "") return
         var regex = /\d{1,2}[x]\d{1,3}[x]\d{1,2}/g
         if(!regex.test(coords)){
-            alert(langString.soe_tool_settings.coordsInvalid + "!")
+            alert(langString.tool_settings.coordsInvalid + "!")
             return
         }
 
@@ -334,15 +341,15 @@
         td = document.createElement("td")
         td.id = tag + "_Btns"
         td.className = "second"
-        var on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.soe_tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-        if(getOptionEnabled(tag))on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.soe_tool_settings.on + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
+        var on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+        if(getOptionEnabled(tag))on = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.tool_settings.on + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
         td.appendChild(on)
         td.align = "left"
         tr.appendChild(td)
 
         // Ausbtn
-        var off = parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.soe_tool_settings.off + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
-        if(getOptionEnabled(tag))off = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.soe_tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+        var off = parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>' + langString.tool_settings.off + '</a>&nbsp;]&nbsp;&nbsp;&nbsp;')
+        if(getOptionEnabled(tag))off = parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
         td.appendChild(off)
         tr.appendChild(td)
         return tr
@@ -386,13 +393,13 @@
         tb.innerHTML = ""
 
         if(!getOptionEnabled(tag)){
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.soe_tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
+            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="on_' + tag + '">' + langString.tool_settings.on + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
             tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;[&nbsp;<a>aus</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
             window[6].document.getElementById("on_" + tag).onclick = saveOnOFF_option
         }
         else{
             tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<a>ein</a>&nbsp;]&nbsp;&nbsp;&nbsp;'))
-            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.soe_tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
+            tb.appendChild(parseHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" name = "' + tag + '" id="off_' + tag + '">' + langString.tool_settings.off + '</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'))
             window[6].document.getElementById("off_"+ tag).onclick = saveOnOFF_option
         }
     }
@@ -597,6 +604,7 @@
             case langString.main.orders:
                 if(debug)console.log('%c'+langString.main.orders,'color: lime')
                 setTimeout(fillOutLastCommand,delayTime)
+                //setTimeout(prepareCollectData,delayTime)
                 break;
             case langString.main.spaceDock:
                 if(debug)console.log('%c'+langString.main.spaceDock,'color: lime')
@@ -624,7 +632,9 @@
 
     function setClickListener(){
         window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)").onclick = menu_clicked
-        window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select").onclick = menu_clicked
+        try{
+            window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select").onclick = menu_clicked
+        }catch{}
         window[6].onclick = main_clicked
         window[8].onclick = main_clicked
     }
@@ -942,7 +952,7 @@
         if(resString.includes(langString.res.fruro)) ress[4] = resString.match(expression_FR)[1]
         if(resString.includes(langString.res.gold)) ress[5] = resString.match(expression_AU)[1]
 
-        fetch('https://sheetdb.io/api/v1/2vz28vdzqhslv?sheet=Datenbank', {
+        fetch('https://sheetdb.io/api/v1/q2fsvw2ghsnxv?sheet=Datenbank', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -951,7 +961,9 @@
             body: JSON.stringify({
                 data: [
                     {
-                        'Zeitstempel': date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + " " + ("0" + date.getHours() ).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2),
+                        'Tag': date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2),
+                        'Zeit':("0" + date.getHours() ).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2),
+                        //'Zeitstempel': date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + " " + ("0" + date.getHours() ).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2),
                         'eingetragen von': window[5].document.querySelector("body > table > tbody > tr:nth-child(3) > td > table > tbody > tr > td:nth-child(2) > b > font").innerText,
                         'Ziel': window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(2) > td:nth-child(2)").innerText,
                         'Besitzer': window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(3) > td:nth-child(2)").innerText,
@@ -2105,7 +2117,7 @@
 
     var langString
 
-    getJSON("https://raw.githubusercontent.com/BenniBaerenstark/SOE-Tool/main/shipsValues.json",
+    getJSON("https://raw.githubusercontent.com/BenniBaerenstark/DG-Tool/main/shipsValues.json",
             function(err, data) {
         if (err !== null) {
             console.log('Something went wrong: ' + err);
@@ -2406,6 +2418,10 @@
     function getAllCoords(){
         var coords = new Array()
         const select = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+        if(select == null){
+            coords[0] == window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > b").innerText
+            return coords
+        }
         for (let i = 0; i < totalRes.length; i++) {
             coords[i] = select.options[i].text;
         }
@@ -2414,6 +2430,9 @@
 
     function getCurrentCoords(){
         const sel = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
+        if(sel == null){
+            return window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > b").innerText
+        }
         return sel.options[sel.selectedIndex].text
     }
 
@@ -3274,6 +3293,100 @@
     }
 
 
+    //   _____________________________
+    //  |                             |
+    //  |       DATA COLLECTOR        |
+    //  |_____________________________|
+
+    var coordinates
+    const dataFileName = "hypfile"
+    var dataFile = GM_getValue(dataFileName, {currentIndexCoords:0, coordinates:null})
+    //dataFile.currentIndexCoords = 0
+    var index = dataFile.currentIndexCoords -1
+
+    getJSON("https://raw.githubusercontent.com/BenniBaerenstark/DG-Tool/main/coords.json",
+                                function(err, data) {
+        if (err !== null) {
+            console.log('Something went wrong: ' + err);
+        } else {
+            coordinates = data.data
+        }
+    });
+
+    function prepareCollectData(){
+        let btns = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(10) > tbody > tr > td.first")
+        btns.innerHTML += '&nbsp;[&nbsp;<a href="#" id="getData">collect data</a>&nbsp;] &nbsp;'
+        window[6].document.getElementById("getData").onclick = collectData
+    }
+
+
+    var speed = 0
+    var speedData = new Array()
+    var delayData = 800
+
+    function setSpeed(){
+        if(speed>160)return
+        try{
+            if(window[6].document.querySelector("body").innerHTML.includes("kann nicht angeflogen")) return
+            //console.log("--> setSpeed")
+            window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form:nth-child(2) > center > table > tbody > tr > td > center > table > tbody > tr:nth-child(7) > td:nth-child(2) > table > tbody > tr > td:nth-child(2) > input[type=text]").value = speed
+            window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(10) > tbody > tr > td.first > a:nth-child(2)").click()
+        }
+        catch{
+            setTimeout(setSpeed,delayData)
+        }
+        speed += 10
+        setTimeout(getData,delayData)
+        setTimeout(setSpeed,2*delayData)
+    }
+
+    function getData(){
+        //console.log("--> getData")
+        //console.log(index,window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form:nth-child(2) > center > table > tbody > tr > td > center > table > tbody > tr:nth-child(7) > td:nth-child(2)").innerText)
+        try{
+            saveSpeed(window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form:nth-child(2) > center > table > tbody > tr > td > center > table > tbody > tr:nth-child(7) > td:nth-child(2)").innerText)
+            window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(10) > tbody > tr > td.first > a:nth-child(1)").click()
+        }
+        catch{
+            setTimeout(getData,delayData)
+        }
+    }
+
+    function returnToCoordInput(){
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(10) > tbody > tr > td.first > a:nth-child(1)").click()
+    }
+
+    function collectData(){
+        index++
+        if(index == coordinates.length) return
+        window[6].document.getElementsByName("orderdata[targetvis]")[0].value = coordArrayToString(coordinates[index])
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(9) > tbody > tr:nth-child(2) > td:nth-child(1) > form > table > tbody > tr > td:nth-child(2) > input[type=radio]:nth-child(3)").click()
+        window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(10) > tbody > tr > td.first > a:nth-child(1)").click()
+        speed = 20
+        setTimeout(setSpeed,delayData)
+        setTimeout(returnToCoordInput,34*delayData)
+        setTimeout(collectData,38*delayData)
+
+    }
+
+    function saveSpeed(str){
+        str = str.substring(0,8)
+        speedData[(speed-20)/10-1] = str
+        if(speed > 160){
+            coordinates[index].speedData = speedData
+            dataFile.coordinates = coordinates
+            dataFile.currentIndexCoords = index
+            GM_setValue(dataFileName, dataFile);
+            console.log(dataFile)
+            speedData = new Array()
+        }
+    }
+
+    function coordArrayToString(coords){
+        return coords.gala + "x" + coords.sys + "x" + coords.planet
+    }
+
+
     //   ________________________________
     //  |                                |
     //  |           Database             |
@@ -3587,7 +3700,7 @@
 
     function ress_FU(lvl){
         var res = new Array()
-        res[RES_FE] = (Math.round(Math.pow((parseInt(lvl)+1)*75/25, 2)+70))
+        res[RES_FE] = (Math.round(Math.pow((parseInt(lvl)+1)*70/25, 2)+70))
         res[RES_KR] = (Math.round(Math.pow((parseInt(lvl)+1)*48/25, 2)+48))
         res[RES_FR] = (Math.round(Math.pow((parseInt(lvl)+1)*60/25, 2)+60))
         res[RES_OR] = 0
@@ -3858,9 +3971,5 @@
         res[RES_AU] = 0
         return res
     }
-
-
-
-
 
 })();
