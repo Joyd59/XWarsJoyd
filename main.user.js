@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.10.0
+// @version      1.10.1
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -877,7 +877,7 @@
 
     function tradeToSave(){
         if(debug)console.log(langString.debug.tradeToSave)
-        const dateString = getDateTimeString(addHoursToDate(new Date(),8))
+        const dateString = getDateTimeString(addHoursToDate(new Date(),12))
         window[6].document.getElementsByName("tt_res[0]")[0].value = ""
         window[6].document.getElementsByName("tt_res[5]")[0].value = 99999999
         window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + dateString + " #SAVE#"
@@ -1378,10 +1378,10 @@
             let now = new Date()
             let end = new Date()
             end.setMinutes(min)
-            if(str.toLowerCase().includes("ende") && str.toLowerCase().includes("save")) hour -= 8
+            if(str.toLowerCase().includes("ende") && str.toLowerCase().includes("save")) hour -= 12
             end.setHours(hour)
             end.setSeconds(0)
-            end = addHoursToDate(end,8)
+            end = addHoursToDate(end,12)
             if(end-now<0){
                 let ms = end.getTime() + 86400000;
                 end = new Date(ms);
@@ -1438,8 +1438,8 @@
     }
 
     function tradeIsRunning(tr){
-        const str = tr.children[5].innerText
-        return str.includes("00:")
+        const str = tr.children[4].innerText
+        return str.includes(langString.trade.tradeRunning)
     }
 
     function isOutgoingTrade(tr){
@@ -2074,7 +2074,7 @@
         window[6].document.getElementById("tt_res4").value = ""
         window[6].document.getElementById("tt_res5").value = 99999999
 
-        let currentDate = getDateTimeString(addHoursToDate(new Date(),8))
+        let currentDate = getDateTimeString(addHoursToDate(new Date(),12))
         
         window[6].document.getElementsByName("trade_comment")[0].value = "#SAVE# " + currentDate + " #SAVE# // " + build[id][STRING] + " " + langString.constructions.level + " "+(lvl+1)
         var planet_selector = window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select")
@@ -3971,5 +3971,9 @@
         res[RES_AU] = 0
         return res
     }
+
+
+
+
 
 })();
