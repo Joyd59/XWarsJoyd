@@ -13,6 +13,7 @@ Um das Tool selber zu installieren [hier](https://github.com/BenniBaerenstark/DG
 <picture>
   <img src="https://cdn.discordapp.com/attachments/768588157780230184/1168265401763901470/image.png?ex=655122f1&is=653eadf1&hm=a03f7c3baaf342d191e1e62afe950ae25e2583b7982a37b7089a5b1322c63143&">
 </picture>
+
 ## Handel
 ### Handelsangebot stellen
 - Savehandel können mit einem Klick ausgefüllt werden => die Savehandel mit „#SAVE#“ markiert, werden auf dem gestellten Planet nicht mehr angezeigt.
