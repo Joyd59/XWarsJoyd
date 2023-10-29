@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.10.1
+// @version      1.10.2
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
@@ -1243,11 +1243,13 @@
         if(trade.nextElementSibling){
             if(trade.nextElementSibling.children.length < 3)comment = trade.nextElementSibling.children[1]
         }
-        if(comment == null)return
+        //if(comment == null)return
+        var dateData = trade.children[0]
+        if(dateData == null) return
         const commentStr = comment.innerText
-        const date = getDateFromString(commentStr)
+        const date = getDateFromString(dateData.innerText)
         if (isNaN(date)) return
-        const td_button = trade.children[5]
+        const td_button = trade.children[0]
         const now = new Date()
         var distance = date - now;
         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + "";
@@ -1255,8 +1257,7 @@
         var seconds = Math.floor((distance % (1000 * 60)) / 1000) + "";
         comment.style.textAlign = "left";
         removeMetadata(comment)
-        td_button.appendChild(document.createElement("br"))
-        td_button.appendChild(parseHTML('<a name="countdown" id="' + commentStr + '">' + hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0") + '</a>'))
+        td_button.innerHTML = '<a name="countdown" id="' + commentStr + '">' + hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0") + '</a>'
     }
 
     function removeMetadata(commentElement){
@@ -1268,7 +1269,7 @@
                 if (str[i] === "#") end = i
             }
             str = str.slice(end+1)
-            str = str.replaceAll("/","")            
+            str = str.replaceAll("/","")
         }
         if(str.includes(":")){
             let i = str.indexOf(":")
@@ -1284,7 +1285,7 @@
 
         commentElement.innerText = str
         if(str.replaceAll(" ","").length < 2){
-            commentElement.parentElement.hidden = true
+            //commentElement.parentElement.hidden = true
         }
     }
 
@@ -1326,11 +1327,11 @@
 
     function getTradeState(trade){
         const tradeElements = trade.children
-        const fromTo = tradeElements[0]
-        const delivery = tradeElements[1]
-        const to = tradeElements[2]
-        const returnShipment = tradeElements[3]
-        const status = tradeElements[4]
+        const fromTo = tradeElements[1]
+        const delivery = tradeElements[2]
+        const to = tradeElements[3]
+        const returnShipment = tradeElements[4]
+        const status = tradeElements[5]
         var comment = null
         if(trade.nextElementSibling)if(trade.nextElementSibling.children.length < 3)comment = trade.nextElementSibling.children[1]
 
