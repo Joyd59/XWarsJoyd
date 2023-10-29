@@ -45,4 +45,35 @@ Handel werden nach Typ farblich markiert. Weiter werden alle unnötigen Informat
 
 ### Handel Loggen
 **NUR** für die Pushaccounts gibt es die Möglichkeit alle Handel zu tracken und in eine Datenbank einzutragen. 
+##Flotten
+### Flotten kategorisieren
+Fliegende Flotten werden nach Mission farblich markiert:
+
+|Farbe   | Mission |
+| ------------ | ------------ |
+|  rot | Angriff |
+| grün | Verteidiung |
+| schwarz | Transport  |
+| blau | Überstellen |
+| grau | Rückkehr |
+
+### Einbindung Observerlink
+Wenn ein Observer beim Angreiffer/Angegriffenen vorhanden ist, wird der Direktlink im Flottenmenu angezeit. Damit das Tool die Informationen bekomment muss zuvor die Observerseite besucht werden.
+<picture>
+  <img src="https://cdn.discordapp.com/attachments/1129020455924269116/1131981916313231380/image.png?ex=654e5650&is=653be150&hm=0e63da4afbf26c5170d0f55dbed777ab77112eea0977847739e557975bda9740&">
+</picture>
+
+### Raumdock
+- Im Raumdock gibt es einen neuen Button "alle Schiffe", der die maximale Anzahl aller verfügbarer Schiffe einträgt ( ACHUTUNG noch nicht mit Träger geteset!) Weiter kann auf die Nummer der maximal verfügbaren Schffe pro Klasse geklickt werden um die Maximalzahl der Schiffe dieser Klasse einzutragen.
+<picture>
+  <img src="https://cdn.discordapp.com/attachments/1129020455924269116/1132119300791074896/image.png?ex=654ed643&is=653c6143&hm=f63f78b8ccd54df19678cb8f30f5d862a9c77568ac16b3c65213c950a0a7bed9&">
+</picture>
+
+## Bank
+- Standardmäßig ist der Übertragungstyp auf "Resourcen übermitteln" eingestellt.
+- Die maximale Lagermenge abzüglich aktuellem Zins wird in Klammer neben der Max. Lagerkapazität angezeigt.
+- Ist der Übertragungstyp auf übermitteln eingestellt, wird mit dem Klick auf den Ressourcennamen die maximale Anzahl an Rohstoffen übermittelt, bis die Bank die maximale Lagerkapazität erreicht hat (das beinhaltet auch schon laufende Einzahlungen).
+- Ist der Übertragungstyp auf abbuchen eingestellt, kann ebenfalls mit dem Klick auf die Ressourcennamen so viel Rohstoffe abgebucht werden, damit die maximale Kontostand abzüglich Zins wieder erreicht ist.
+## Sprachen
+Das Tool ist ins englische und französiche übersetzt und übernimmt die Spracheinstellungen im Browsers
 
