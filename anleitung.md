@@ -5,11 +5,20 @@ Um das Tool nutzen zu können muss im Browser das AddOn Tampermonkey installiert
 Um das Tool selber zu installieren [hier](https://github.com/BenniBaerenstark/DG-Tool/raw/main/main.user.js) klicken. Weiter dann auf "Installieren" oder "Update" klicken.
 [![](https://cdn.discordapp.com/attachments/768588157780230184/1168268077377540199/image.png?ex=6551256f&is=653eb06f&hm=ad0c06ca7c61e50f4705e96851b7d365c89b0c7d0b2d59f5c5c06b2f96cc15bb&)](https://cdn.discordapp.com/attachments/768588157780230184/1168268077377540199/image.png?ex=6551256f&is=653eb06f&hm=ad0c06ca7c61e50f4705e96851b7d365c89b0c7d0b2d59f5c5c06b2f96cc15bb&)
 # Funktionen
+## Einstellungen
+Über das XWars Menü kann die Seite "Tool" geöffnet werden. Darüber können folgende Einstellungen gemacht werden:
+- Die Standartkoordinate für Savehandel kann festgelegt werden. Wir das nicht gemacht wählt das Tool automatisch einen Planeten in deinem Besitz aus.
+- Funktionen des Tool können ein-/ausgeschalten werden.
+- Koordinaten können mit Kommentaren eingetragen werden. Die sind beim Handelstellen unter den eigenen Koordinaten auswählbar.
+<picture>
+  <img src="https://cdn.discordapp.com/attachments/768588157780230184/1168265401763901470/image.png?ex=655122f1&is=653eadf1&hm=a03f7c3baaf342d191e1e62afe950ae25e2583b7982a37b7089a5b1322c63143&">
+</picture>
 ## Handel
 ### Handelsangebot stellen
 - Savehandel können mit einem Klick ausgefüllt werden => die Savehandel mit „#SAVE#“ markiert, werden auf dem gestellten Planet nicht mehr angezeigt.
 - Mit dem Gebäude-Formular können Kosten für Gebäude nachgeschaut werden und dann gesaved oder gefordert werden. „Fordern + „ ergänzt noch die Kosten für den Handel, so dass nach dem Handel die Ress auch gesaved werden können.
-- Mit dem Schiffe-Formular können die Kosten für Schiffe direkt in den Handel eingetragen werden
+- Mit dem Schiffe-Formular können die Kosten für Schiffe direkt in den Handel eingetragen werden. Das Angebot der  Schiffe werden nach Bedarf von Admins ergänzt/aktuallisiert
+- unter den Tool Einstellungen können eigene Koordinaten eingetragen werden 
 <picture>
   <img src="https://cdn.discordapp.com/attachments/1129020455924269116/1129031948887670894/image.png">
 </picture>
