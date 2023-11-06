@@ -1,17 +1,22 @@
 // ==UserScript==
 // @name         XWars Tool
 // @namespace    http://tampermonkey.net/
-// @version      1.10.2
+// @version      1.11.0
 // @description  
 // @author       DartRevan
 // @match        *original.xwars.net/index.php?id=&method*
 // @match        *original.xwars.net/?id*
+// @match        *original.xwars.net/reports*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    window.onclick = function(e){
+        console.log(e)
+    }
 
     //   _____________________________
     //  |                             |
@@ -37,7 +42,7 @@
         } else {
             langString = data.langString
             initDB()
-            console.log(langString)
+            if(debug)console.log(langString)
         }
     });
 
@@ -184,7 +189,7 @@
         table.appendChild(generateOnOFF_option(langString.tool_settings.shipMarket, "shipTool"))
         table.appendChild(generateOnOFF_option(langString.tool_settings.tradeView, "tradeView"))
         const user = getUserName()
-        if((user == "DarthRevan" || user == "JohnMcClane"))table.appendChild(generateOnOFF_option(langString.tool_settings.tradeLog, "tradeLogTool"))
+        if((user == "DarthRevan" || user == "JohnMcClane" || user == "SkaT"))table.appendChild(generateOnOFF_option(langString.tool_settings.tradeLog, "tradeLogTool"))
         if((user == "DarthRevan")) table.appendChild(generateOnOFF_option(langString.tool_settings.eventNotification, "notification"))
 
         parent.setAttribute("align", "center");
@@ -412,28 +417,74 @@
     //  |           START             |
     //  |_____________________________|
 
-    setInterval(function () {runWhenReady(setClickListener)}, 1000);
+    runWhenPageLoaded(setClickListener)
+    setInterval(setClickListener,500)
     if(saveFile.notification_enabled)setInterval(timerIncrement, 1000)
-    setTimeout(setAllObsLinkOverview,300)
-    setTimeout(addConfigButton,1000)
 
     //--------------------------------------------------
+    var runWhenPageLoaded_Counter = 0
 
-    function runWhenReady(callback) {
-        var numAttempts = 0;
-        var tryNow = function() {
-            if (window[8].document.querySelector("body > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td:nth-child(3) > map > area")) {
-                callback();
-            } else {
-                numAttempts++;
-                if (numAttempts >= 34) {
-                    console.warn('Giving up after 34 attempts.');
-                } else {
-                    setTimeout(tryNow, 250 * Math.pow(1.1, numAttempts));
-                }
-            }
-        };
-        tryNow();
+    function runWhenPageLoaded(callFunction){
+        if(!window[4]){
+            if(setParseButton())return
+            setTimeout(runWhenPageLoaded,20,callFunction)
+            runWhenPageLoaded_Counter++
+            return
+        }
+
+        if(runWhenPageLoaded_Counter > 100){
+            console.log("%c Page not found => Tool not ready",'color: red')
+            runWhenPageLoaded_Counter = 0
+            return
+        }
+        var testElement1 = window[4].document.querySelector("body > table > tbody")
+        var testElement2 = window[9].document.querySelector("body > div")
+        if(window[9].document.getElementById("notChanged")){
+            setTimeout(runWhenPageLoaded,20,callFunction)
+            runWhenPageLoaded_Counter++
+            return
+        }
+        if(!(testElement1 && testElement2)){
+            setTimeout(runWhenPageLoaded,20,callFunction)
+            runWhenPageLoaded_Counter++
+            return
+        }
+        runWhenPageLoaded_Counter = 0
+        var notChangedElement = window[9].document.querySelector("body > div")
+        notChangedElement.appendChild(parseHTML('<a id="notChanged"></a>'))
+        window[6].document.getElementsByTagName("tbody")[0].appendChild(parseHTML('<tr><td><a id="notChanged"></a></td></tr>'))
+        setTimeout(callFunction,100)
+        setTimeout(addConfigButton,100)
+        setTimeout(setAllObsLinkOverview,100)
+        if(debug)console.log("runWhenPageLoaded")
+    }
+
+    var runWhenMainLoaded_Counter = 0
+
+    function runMainPageLoaded(callFunction){
+
+        if(runWhenMainLoaded_Counter > 100){
+            console.log("%c Page not found => Tool not ready",'color: red')
+            runWhenMainLoaded_Counter = 0
+            return
+        }
+        var testElement1 = window[6].document.getElementsByTagName("tbody")
+        //var testElement2 = window[6].document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(2) > tbody")
+        if(window[6].document.getElementById("notChanged")){
+            setTimeout(runMainPageLoaded,20,callFunction)
+            runWhenMainLoaded_Counter++
+            return
+        }
+        if(!(testElement1.length >0)){
+            setTimeout(runMainPageLoaded,20,callFunction)
+            runWhenMainLoaded_Counter++
+            return
+        }
+        runWhenMainLoaded_Counter = 0
+        testElement1[0].appendChild(parseHTML('<tr><td><a id="notChanged"></a></td></tr>'))
+        setTimeout(callFunction,200)
+        setTimeout(setClickListener,200)
+        if(debug)console.log("runMainPageLoaded")
     }
 
     function menu_clicked(clickedElement){
@@ -447,11 +498,11 @@
         switch(elementText){
             case langString.menu.overview:
                 if(debug)console.log('%c'+langString.menu.overview,'color: aqua')
-                setTimeout(setAllObsLinkOverview,300)
+                runMainPageLoaded(setAllObsLinkOverview)
                 break;
             case langString.menu.construction:
                 if(debug)console.log('%c'+langString.menu.construction,'color: aqua')
-                setTimeout(getBuildLvl,500)
+                runMainPageLoaded(getBuildLvl)
                 break;
             case langString.menu.research:
                 if(debug)console.log('%c'+langString.menu.research,'color: aqua')
@@ -464,15 +515,15 @@
                 break;
             case langString.menu.fleets:
                 if(debug)console.log('%c'+langString.menu.fleets,'color: aqua')
-                setTimeout(setAllObsLink,200)
+                runMainPageLoaded(setAllObsLink)
                 break;
             case langString.menu.trade:
                 if(debug)console.log('%c'+langString.menu.trade,'color: aqua')
-                setTimeout(hideSaveTrades,300)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.menu.resources:
                 if(debug)console.log('%c'+langString.menu.resources,'color: aqua')
-                setTimeout(generateRPH,200)
+                runMainPageLoaded(generateRPH)
                 break;
             case langString.menu.planets:
                 if(debug)console.log('%c'+langString.menu.planets,'color: aqua')
@@ -494,7 +545,6 @@
                 break;
         }
 
-
     }
 
     function main_clicked(clickedElement){
@@ -508,6 +558,7 @@
 
         if(clickedElement.srcElement.title == "Galaxy" && clickedElement.srcElement.target == "inhalt"){
             if(debug)console.log('%c'+langString.menu.navigationEspionage,'color: lime')
+            runMainPageLoaded()
         }
 
         if(clickedElement.srcElement.innerText.split("x").length == 3 && clickedElement.srcElement.localName == "b"){
@@ -527,50 +578,59 @@
                 // Handel
             case langString.trade.transactions:
                 if(debug)console.log('%c'+langString.trade.transactions,'color: lime')
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.tradingHistory:
                 if(debug)console.log('%c'+langString.trade.tradingHistory,'color: lime')
+                runMainPageLoaded()
+                break;
+            case langString.trade.shipMarket:
+                if(debug)console.log('%c'+langString.trade.shipMarket,'color: lime')
+                runMainPageLoaded()
+                break;
+            case langString.trade.verify:
+                if(debug)console.log('%c'+langString.trade.verify,'color: lime')
+                runMainPageLoaded()
                 break;
             case langString.trade.createTradingOffer:
                 if(debug)console.log('%c'+langString.trade.createTradingOffer,'color: lime')
-                setTimeout(generateTradePage,delayTime)
+                runMainPageLoaded(generateTradePage)
                 break;
             case langString.trade.credit:
                 if(debug)console.log('%c'+langString.trade.credit,'color: lime')
                 break;
             case langString.trade.startInquiry:
                 if(debug)console.log('%c'+langString.trade.startInquiry,'color: lime')
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.show:
                 if(debug)console.log('%c'+langString.trade.show,'color: lime')
-                setTimeout(addLogButton,delayTime)
+                runMainPageLoaded(addLogButton)
                 break;
             case langString.trade.acceptPlusLog:
                 if(debug)console.log('%c'+langString.trade.acceptPlusLog,'color: lime')
                 logTrade()
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.accept:
                 if(debug)console.log('%c'+langString.trade.accept,'color: lime')
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.cancel:
                 if(debug)console.log('%c'+langString.trade.cancel,'color: lime')
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.refuse:
                 if(debug)console.log('%c'+langString.trade.refuse,'color: lime')
-                setTimeout(hideSaveTrades,delayTime)
+                runMainPageLoaded(hideSaveTrades)
                 break;
             case langString.trade.bank:
                 if(debug)console.log('%c'+langString.trade.bank,'color: lime')
-                setTimeout(generateBankePage,delayTime)
+                runMainPageLoaded(generateBankePage)
                 break;
             case langString.trade.proceed:
                 if(debug)console.log('%c'+langString.trade.proceed,'color: lime')
-                setTimeout(generateBankePage,delayTime)
+                runMainPageLoaded(generateBankePage)
                 break;
 
 
@@ -583,54 +643,52 @@
                 break;
             case langString.main.planetObservation:
                 if(debug)console.log('%c'+langString.main.planetObservation,'color: lime')
-                setTimeout(getallObservers,delayTime)
+                runMainPageLoaded(getallObservers)
                 break;
 
                 // Rohstoffe
             case langString.main.resources:
                 if(debug)console.log('%c'+langString.main.resources,'color: lime')
-                setTimeout(generateRPH,delayTime)
+                runMainPageLoaded(generateRPH)
                 break;
 
                 // Flotten
             case langString.main.allFleetBases:
                 if(debug)console.log('%c'+langString.main.allFleetBases,'color: lime')
-                setTimeout(setAllObsLink,delayTime)
+                runMainPageLoaded(setAllObsLink)
                 break;
             case langString.main.fleetMovements:
                 if(debug)console.log('%c'+langString.main.fleetMovements,'color: lime')
-                setTimeout(setAllObsLink,delayTime)
+                runMainPageLoaded(setAllObsLink)
                 break;
             case langString.main.orders:
                 if(debug)console.log('%c'+langString.main.orders,'color: lime')
-                setTimeout(fillOutLastCommand,delayTime)
+                runMainPageLoaded(fillOutLastCommand)
                 //setTimeout(prepareCollectData,delayTime)
                 break;
             case langString.main.spaceDock:
                 if(debug)console.log('%c'+langString.main.spaceDock,'color: lime')
-                setTimeout(generateSpaceDockTools,delayTime)
+                runMainPageLoaded(generateSpaceDockTools)
                 break;
             case langString.main.disband:
                 if(debug)console.log('%c'+langString.main.disband,'color: lime')
-                setTimeout(generateSpaceDockTools,delayTime)
+                runMainPageLoaded(generateSpaceDockTools)
                 break;
             case langString.fleets.change:
                 if(debug)console.log('%c'+langString.fleets.change,'color: lime')
-                setTimeout(generateSpaceDockTools,delayTime)
+                runMainPageLoaded(generateSpaceDockTools)
                 break;
-
-
-
         }
+
     }
 
     function planetChange(){
         resetBuild()
-        setTimeout(addConfigButton,800)
-        setTimeout(setAllObsLinkOverview,500)
+        runWhenPageLoaded(setClickListener)
     }
 
     function setClickListener(){
+        //if(debug)console.log("%csetClickListener",'color: orange')
         window[5].document.querySelector("body > table > tbody > tr:nth-child(5) > td > table > tbody > tr > td:nth-child(2)").onclick = menu_clicked
         try{
             window[5].document.querySelector("body > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td:nth-child(2) > b > font > select").onclick = menu_clicked
@@ -678,6 +736,7 @@
     function checkForMessages(){
         //if(debug)console.log(langString.debug.checkForMessages)
         if(!saveFile.notification_enabled)return
+        if(!window[6])return
         var nachricht = false
         for (const a of window[6].document.querySelectorAll("a")) {
             if (a.textContent.includes(langString.msg.message)) {
@@ -994,7 +1053,6 @@
     var countSaveRes_COUNTER = 0
 
     function countSaveRes(){
-        if(debug)console.log(langString.debug.countSaveRes)
         const expression_FE = new RegExp(langString.res.fe + ": (\\d+)","i")
         const expression_KR = new RegExp(langString.res.kris + ": (\\d+)","i")
         const expression_FB = new RegExp(langString.res.frub + ": (\\d+)","i")
@@ -1010,6 +1068,7 @@
             }
         }catch (error) {
         }
+        if(debug)console.log(langString.debug.countSaveRes)
         var ress = [0,0,0,0,0,0]
         try {
             countSaveRes_COUNTER = 0
@@ -1020,7 +1079,7 @@
             
             for (i in tradesRows) {
                 if(tradesRows[i].innerHTML.includes("#SAVE#") && tradesRows[i-1].innerHTML.includes(langString.trade.cancel)){
-                    resString = tradesRows[i-1].cells[1].innerText
+                    resString = tradesRows[i-1].cells[2].innerText
                     ress[0] += findNumber(resString, expression_FE)
                     ress[1] += findNumber(resString, expression_KR)
                     ress[2] += findNumber(resString, expression_FB)
@@ -1253,11 +1312,11 @@
         const now = new Date()
         var distance = date - now;
         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + "";
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)) + "";
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)) + "";9
         var seconds = Math.floor((distance % (1000 * 60)) / 1000) + "";
         comment.style.textAlign = "left";
         removeMetadata(comment)
-        td_button.innerHTML = '<a name="countdown" id="' + commentStr + '">' + hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0") + '</a>'
+        td_button.innerHTML = '<a name="countdown" id="' + date + '">' + hours.padStart(2, "0") + ":"+ minutes.padStart(2, "0") + ":" + seconds.padStart(2, "0") + '</a>'
     }
 
     function removeMetadata(commentElement){
@@ -1299,7 +1358,7 @@
             }
 
             for (let i=0; i < countdowns.length; i++){
-                const date = getDateFromString(countdowns[i].id)
+                const date = new Date(countdowns[i].id)
                 const now = new Date()
                 var distance = date - now;
                 var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + "";
@@ -1415,13 +1474,13 @@
         const expression_AU = new RegExp(langString.res.gold + ": (\\d+)","i")
 
         for (let i = 2; i < tableRows.length; i++) {
-            if(tableRows[i].children.length == 6 ){
+            if(tableRows[i].children.length == 7 ){
                 var resString = ""
                 if(tradeIsRunning(tableRows[i]) && !isOutgoingTrade(tableRows[i])){
-                    resString = tableRows[i].children[1].innerText
+                    resString = tableRows[i].children[2].innerText
                     }
                 if(tradeIsRunning(tableRows[i]) && isOutgoingTrade(tableRows[i])){
-                    resString = tableRows[i].children[3].innerText
+                    resString = tableRows[i].children[4].innerText
                     }
                 ress[0] += findNumber(resString, expression_FE)
                 ress[1] += findNumber(resString, expression_KR)
@@ -1439,12 +1498,12 @@
     }
 
     function tradeIsRunning(tr){
-        const str = tr.children[4].innerText
+        const str = tr.children[5].innerText
         return str.includes(langString.trade.tradeRunning)
     }
 
     function isOutgoingTrade(tr){
-        const coords = tr.children[0].innerHTML.replace(/\&nbsp;/g, '')
+        const coords = tr.children[1].innerHTML.replace(/\&nbsp;/g, '')
         return coords == getCurrentCoords()
     }
 
@@ -3296,8 +3355,67 @@
 
     //   _____________________________
     //  |                             |
-    //  |       DATA COLLECTOR        |
+    //  |   SPIO/OBS DATA COLLECTOR   |
     //  |_____________________________|
+
+    function setParseButton(){
+        var body = document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody")
+        if(!body) return false
+        var first = body.firstChild
+        var button = (parseHTML('<tr><td id="parseSpio" colspan="4" align="center">[<a href=#>Parse</a>]</td></tr><tr><br><td></td></tr>'))
+        body.insertBefore(button,first)
+        document.getElementById("parseSpio").onclick = parseSpio
+        return true
+    }
+
+    function parseSpio(){
+        var constructions = new Array()
+        var constructionsTable = document.querySelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody")
+        if(constructionsTable){
+            var constructionElements = constructionsTable.children
+            for(let i=0;i<constructionElements.length;i++){
+                var str = constructionElements[i].innerText
+                var stufe = str.match(/\d+/)[0]
+                str = str.replace(/[0-9]/g, '')
+                str = str.slice(0, -1)
+                console.log(str)
+                switch (str) {
+                    case langString.constructions.headquarter:constructions[0]=stufe;break;
+                    case langString.constructions.constructionCenter:constructions[1]=stufe;break;
+                    case langString.constructions.researchCenter:constructions[2]=stufe;break;
+                    case langString.constructions.espionageStation:constructions[3]=stufe;break;
+                    case langString.constructions.pigIronMine:constructions[4]=stufe;break;
+                    case langString.constructions.crystalMine:constructions[5]=stufe;break;
+                    case langString.constructions.frubinCollector:constructions[6]=stufe;break;
+                    case langString.constructions.orizinSynthesizer:constructions[7]=stufe;break;
+                    case langString.constructions.frurozinProduction:constructions[8]=stufe;break;
+                    case langString.constructions.goldMine:constructions[9]=stufe;break;
+                    case langString.constructions.pigIronDepot:constructions[10]=stufe;break;
+                    case langString.constructions.crystalDepot:constructions[11]=stufe;break;
+                    case langString.constructions.frubinDepot:constructions[12]=stufe;break;
+                    case langString.constructions.orizinDepot:constructions[13]=stufe;break;
+                    case langString.constructions.frurozinDepot:constructions[14]=stufe;break;
+                    case langString.constructions.goldDepot:constructions[15]=stufe;break;
+                    case langString.constructions.nuclearPowerPlant:constructions[16]=stufe;break;
+                    case langString.constructions.fusionPowerPlant:constructions[17]=stufe;break;
+                    case langString.constructions.shipFactory:constructions[18]=stufe;break;
+                    case langString.constructions.defenseStation:constructions[19]=stufe;break;
+                    case langString.constructions.counterEspionageStation:constructions[20]=stufe;break;
+                    case langString.constructions.threatDetectionPhalanx:constructions[21]=stufe;break;
+                    case langString.constructions.tradingPost:constructions[22]=stufe;break;
+                    case langString.constructions.tradingCenter:constructions[23]=stufe;break;
+                    case langString.constructions.xWarsBank:constructions[24]=stufe;break;
+                    case langString.constructions.intelligenceCenter:constructions[25]=stufe;break;
+                    case langString.constructions.xWarsCreditInstitution:constructions[26]=stufe;break;
+                    case langString.constructions.workshop:
+                    case langString.constructions.recycler:
+                }
+
+            }
+        }
+        console.log(constructions)
+    }
+
 
     var coordinates
     const dataFileName = "hypfile"
